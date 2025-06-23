@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class WebController {
-    @GetMapping("/shop ")
+    @GetMapping("/shop")
     public String home() {
-        return "shop";
+        return "shop.html";
     }
 
     @GetMapping("/about")
     public String aboutpage() {
-        return "about"; // about.html trong templates
+        return "shop-details.html"; // about.html trong templates
     }
 }
