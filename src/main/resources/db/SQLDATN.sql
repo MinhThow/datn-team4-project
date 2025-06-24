@@ -93,6 +93,69 @@ select * from Products
 select * From Categories
 
 
+-- Trigger sau INSERT
+CREATE TRIGGER trg_OrderItems_AfterInsert
+ON OrderItems
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Orders
+    SET Total = (
+        SELECT SUM(Quantity * Price)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = inserted.OrderID
+    )
+    FROM Orders
+    INNER JOIN inserted
+    ON Orders.OrderID = inserted.OrderID;
+END;
+GO
+
+-- Trigger sau UPDATE
+CREATE TRIGGER trg_OrderItems_AfterUpdate
+ON OrderItems
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Orders
+    SET Total = (
+        SELECT SUM(Quantity * Price)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = inserted.OrderID
+    )
+    FROM Orders
+    INNER JOIN inserted
+    ON Orders.OrderID = inserted.OrderID;
+END;
+GO
+
+-- Trigger sau DELETE
+CREATE TRIGGER trg_OrderItems_AfterDelete
+ON OrderItems
+AFTER DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Orders
+    SET Total = (
+        SELECT COALESCE(SUM(Quantity * Price), 0)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = deleted.OrderID
+    )
+    FROM Orders
+    INNER JOIN deleted
+    ON Orders.OrderID = deleted.OrderID;
+END;
+GO
+
+
+
+
 
 
 

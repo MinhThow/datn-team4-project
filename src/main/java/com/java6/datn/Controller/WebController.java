@@ -12,6 +12,14 @@ public class WebController {
 
     @GetMapping("/about")
     public String aboutpage() {
-        return "shop-details.html"; // about.html trong templates
+        return "index"; // about.html trong templates
     }
+
+
+    @GetMapping("/login")
+    public String showLogin() {
+        return "Login_Register.html"; // trả file login.html
+    }
+
+
 }
