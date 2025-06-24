@@ -89,7 +89,8 @@ CREATE TABLE PaymentMethods (
     Description NVARCHAR(MAX)
 );
 
-
+select * from Products
+select * From Categories
 
 
 
