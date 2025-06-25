@@ -1,0 +1,52 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# Spring Data JPA Standards
+
+## Context
+
+- Apply when implementing database access in Spring applications
+- Ensures consistent and efficient data access patterns
+- Promotes maintainable entity relationships
+
+## Critical Rules
+
+- Use Spring Data repositories for standard CRUD operations
+- Define custom queries with `@Query` annotation instead of complex method names
+- Properly annotate all entities with `@Entity` and `@Table`
+- Configure lazy loading for non-essential associations to improve performance
+- Use `@Transactional(readOnly = true)` for read-only operations
+- Implement proper pagination for queries returning large datasets
+- Define meaningful names for database tables and columns
+- Include validation constraints on entity fields
+
+## Examples
+
+<example>
+// Good practice
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, length = 50)
+    private String username;
+    
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Order> orders;
+}
+</example>
+
+<example type="invalid">
+// Bad practice - Missing proper annotations and constraints
+public class User {
+    private Long id;
+    private String username;
+    private List<Order> orders;
+}
+</example> 

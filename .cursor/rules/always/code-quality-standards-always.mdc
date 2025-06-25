@@ -1,0 +1,93 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Code Quality Standards
+
+## Context
+
+- Apply to all code in the project
+- Ensures consistent code quality and maintainability
+- Promotes best practices across all technologies
+
+## Critical Rules
+
+- Follow consistent code formatting in each file
+- Add meaningful comments for complex logic, not for obvious operations
+- Use descriptive variable and method names that explain their purpose
+- Keep methods short and focused on a single responsibility
+- Follow SOLID principles in object-oriented design
+- Avoid code duplication by extracting common functionality
+- Handle exceptions properly with specific exception types
+- Regularly review SonarQube findings and address issues
+- Include appropriate unit tests for all new code
+- Perform code reviews for all changes
+
+## Examples
+
+<example>
+// Good practice
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final PaymentService paymentService;
+    
+    // Constructor injection of dependencies
+    public OrderService(OrderRepository orderRepository, PaymentService paymentService) {
+        this.orderRepository = orderRepository;
+        this.paymentService = paymentService;
+    }
+    
+    // Clear single responsibility
+    public Order processOrder(OrderRequest request) {
+        Order order = createOrderFromRequest(request);
+        processPayment(order);
+        return saveOrder(order);
+    }
+    
+    private Order createOrderFromRequest(OrderRequest request) {
+        // Implementation
+    }
+    
+    private void processPayment(Order order) {
+        // Implementation
+    }
+    
+    private Order saveOrder(Order order) {
+        // Implementation
+    }
+}
+</example>
+
+<example type="invalid">
+// Bad practice - Long method, multiple responsibilities
+public class OrderService {
+    private OrderRepository orderRepository;
+    private PaymentService paymentService;
+    
+    public Order processOrder(OrderRequest request) {
+        // Create order from request
+        Order order = new Order();
+        order.setCustomerId(request.getCustomerId());
+        order.setItems(request.getItems());
+        order.setTotalAmount(calculateTotal(request.getItems()));
+        
+        // Process payment
+        try {
+            PaymentResult result = paymentService.processPayment(order);
+            if (result.isSuccess()) {
+                order.setStatus("PAID");
+            } else {
+                order.setStatus("PAYMENT_FAILED");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            order.setStatus("ERROR");
+        }
+        
+        // Save order
+        return orderRepository.save(order);
+    }
+}
+</example> 

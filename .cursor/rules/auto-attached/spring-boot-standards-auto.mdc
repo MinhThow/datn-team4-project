@@ -1,0 +1,47 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# Spring Boot Standards
+
+## Context
+
+- Apply when developing Spring Boot applications
+- Ensures consistent application structure and configuration
+- Promotes maintainable and secure code practices
+
+## Critical Rules
+
+- Use `@SpringBootApplication` annotation only on the main application class
+- Externalize all configuration in `application.properties` or `application.yml` files
+- Implement global exception handling with `@ControllerAdvice` and `@ExceptionHandler`
+- Always use `@Transactional` annotations for methods that modify database state
+- Enable and configure Spring Boot Actuator endpoints for monitoring
+- Structure packages by feature rather than by layer
+- Use constructor injection rather than field injection
+- Avoid using `@Autowired` directly on fields
+
+## Examples
+
+<example>
+// Good practice - Constructor injection
+@Service
+public class UserService {
+    private final UserRepository userRepository;
+    
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+}
+</example>
+
+<example type="invalid">
+// Bad practice - Field injection
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+}
+</example> 

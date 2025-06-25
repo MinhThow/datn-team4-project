@@ -1,52 +1,55 @@
-﻿Create database DATN;
-Go
-
-Use DATN;
-Go
+﻿-- H2 Database compatible SQL script for DATN project
 
 CREATE TABLE Users (
-    UserID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100),
-    Email NVARCHAR(100) UNIQUE,
-    Password NVARCHAR(255),
-    Phone NVARCHAR(20),
-    Address NVARCHAR(MAX),
-    Role NVARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
-    CreatedAt DATETIME DEFAULT GETDATE()
+    UserID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
+    Password VARCHAR(255),
+    Phone VARCHAR(20),
+    Address TEXT,
+    Role VARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Categories (
-    CategoryID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    Description NVARCHAR(MAX)
+    CategoryID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT
 );
 
 CREATE TABLE Products (
-    ProductID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(150) NOT NULL,
-    Description NVARCHAR(MAX),
+    ProductID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(150) NOT NULL,
+    Description TEXT,
     Price DECIMAL(10,2) NOT NULL,
     Stock INT DEFAULT 0,
-    Image NVARCHAR(255),
+    Image VARCHAR(255),
     CategoryID INT,
-    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
-    Size NVARCHAR(50)
+    Size VARCHAR(50),
+    FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+);
+
+-- Phương thức thanh toán (moved up to be referenced by Orders)
+CREATE TABLE PaymentMethods (
+    PaymentMethodID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,        
+    Description TEXT
 );
 
 CREATE TABLE Orders (
-    OrderID INT PRIMARY KEY IDENTITY(1,1),
+    OrderID INT IDENTITY PRIMARY KEY,
     UserID INT,
     Total DECIMAL(10,2),
-    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy','Trả hàng')),
-    OrderDate DATETIME DEFAULT GETDATE(),
-    ShippingAddress NVARCHAR(MAX),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    Status VARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy','Trả hàng')),
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ShippingAddress TEXT,
+    PaymentMethodID INT,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
 );
-ALTER TABLE Orders
-ADD PaymentMethodID INT FOREIGN KEY REFERENCES PaymentMethods(PaymentMethodID);
 
 CREATE TABLE OrderItems (
-    OrderItemID INT PRIMARY KEY IDENTITY(1,1),
+    OrderItemID INT IDENTITY PRIMARY KEY,
     OrderID INT,
     ProductID INT,
     Quantity INT,
@@ -56,43 +59,36 @@ CREATE TABLE OrderItems (
 );
 
 CREATE TABLE CartItems (
-    CartItemID INT PRIMARY KEY IDENTITY(1,1),
+    CartItemID INT IDENTITY PRIMARY KEY,
     UserID INT,
     ProductID INT,
     Quantity INT DEFAULT 1,
-    AddedAt DATETIME DEFAULT GETDATE(),
+    AddedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
 CREATE TABLE Reviews (
-    ReviewID INT PRIMARY KEY IDENTITY(1,1),
+    ReviewID INT IDENTITY PRIMARY KEY,
     ProductID INT,
     UserID INT,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
-    Comment NVARCHAR(MAX),
-    ReviewDate DATETIME DEFAULT GETDATE(),
+    Comment TEXT,
+    ReviewDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
--- Phương thức thanh toán
-CREATE TABLE PaymentMethods (
-    PaymentMethodID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,        
-    Description NVARCHAR(MAX)
-);
-
 CREATE TABLE Sales (
-    SaleID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(255),                -- Tên chương trình sale
-    Description NVARCHAR(MAX),         -- Mô tả
-    StartDate DATETIME,                -- Thời gian bắt đầu
-    EndDate DATETIME                   -- Thời gian kết thúc
+    SaleID INT IDENTITY PRIMARY KEY,
+    Name VARCHAR(255),                -- Tên chương trình sale
+    Description TEXT,                 -- Mô tả
+    StartDate TIMESTAMP,              -- Thời gian bắt đầu
+    EndDate TIMESTAMP                 -- Thời gian kết thúc
 );
 
 CREATE TABLE SaleDetails (
-    SaleDetailID INT PRIMARY KEY IDENTITY(1,1),
+    SaleDetailID INT IDENTITY PRIMARY KEY,
     SaleID INT,
     ProductID INT,
     SalePrice DECIMAL(10,2) NOT NULL,  -- Giá sale cho sản phẩm này
@@ -102,35 +98,35 @@ CREATE TABLE SaleDetails (
 
 -- Dữ liệu mẫu cho Users
 INSERT INTO Users (Name, Email, Password, Phone, Address, Role) VALUES
-(N'Nguyễn Văn A', N'a@gmail.com', N'123456', N'0123456789', N'Hà Nội', N'customer'),
-(N'Trần Thị B', N'b@gmail.com', N'123456', N'0987654321', N'Hồ Chí Minh', N'customer'),
-(N'Admin', N'admin@gmail.com', N'admin123', N'0123123123', N'Hà Nội', N'admin');
+('Nguyễn Văn A', 'a@gmail.com', '123456', '0123456789', 'Hà Nội', 'customer'),
+('Trần Thị B', 'b@gmail.com', '123456', '0987654321', 'Hồ Chí Minh', 'customer'),
+('Admin', 'admin@gmail.com', 'admin123', '0123123123', 'Hà Nội', 'admin');
 
 -- Dữ liệu mẫu cho Categories
 INSERT INTO Categories (Name, Description) VALUES
-(N'Áo', N'Các loại áo thời trang nam'),
-(N'Quần', N'Các loại quần thời trang nam'),
-(N'Giày', N'Các loại giày nam'),
-(N'Phụ kiện', N'Phụ kiện thời trang nam');
+('Áo', 'Các loại áo thời trang nam'),
+('Quần', 'Các loại quần thời trang nam'),
+('Giày', 'Các loại giày nam'),
+('Phụ kiện', 'Phụ kiện thời trang nam');
 
 -- Dữ liệu mẫu cho Products
 INSERT INTO Products (Name, Description, Price, Stock, Image, CategoryID, Size)
 VALUES
-(N'Áo thun basic', N'Áo thun cotton co giãn', 199000, 50, N'product-1.jpg', 1, N'M'),
-(N'Áo khoác bomber', N'Áo khoác thời trang nam', 499000, 30, N'product-2.jpg', 1, N'L'),
-(N'Quần jeans slimfit', N'Quần jeans co giãn', 399000, 40, N'product-3.jpg', 2, N'32'),
-(N'Giày sneaker trắng', N'Giày sneaker nam trẻ trung', 599000, 20, N'product-4.jpg', 3, N'42'),
-(N'Balo thời trang', N'Balo vải canvas', 299000, 25, N'product-5.jpg', 4, N'Free');
+('Áo thun basic', 'Áo thun cotton co giãn', 199000, 50, 'product-1.jpg', 1, 'M'),
+('Áo khoác bomber', 'Áo khoác thời trang nam', 499000, 30, 'product-2.jpg', 1, 'L'),
+('Quần jeans slimfit', 'Quần jeans co giãn', 399000, 40, 'product-3.jpg', 2, '32'),
+('Giày sneaker trắng', 'Giày sneaker nam trẻ trung', 599000, 20, 'product-4.jpg', 3, '42'),
+('Balo thời trang', 'Balo vải canvas', 299000, 25, 'product-5.jpg', 4, 'Free');
 
 -- Dữ liệu mẫu cho PaymentMethods
 INSERT INTO PaymentMethods (Name, Description) VALUES
-(N'Thanh toán khi nhận hàng', N'Thanh toán trực tiếp khi nhận hàng'),
-(N'Chuyển khoản ngân hàng', N'Thanh toán qua tài khoản ngân hàng');
+('Thanh toán khi nhận hàng', 'Thanh toán trực tiếp khi nhận hàng'),
+('Chuyển khoản ngân hàng', 'Thanh toán qua tài khoản ngân hàng');
 
 -- Dữ liệu mẫu cho Sales
 INSERT INTO Sales (Name, Description, StartDate, EndDate) VALUES
-(N'Sale Hè 2024', N'Giảm giá đặc biệt cho mùa hè', '2024-06-01', '2024-06-30'),
-(N'Flash Sale 7.7', N'Giảm giá sốc trong ngày 7/7', '2024-07-07', '2024-07-07');
+('Sale Hè 2024', 'Giảm giá đặc biệt cho mùa hè', '2024-06-01 00:00:00', '2024-06-30 23:59:59'),
+('Flash Sale 7.7', 'Giảm giá sốc trong ngày 7/7', '2024-07-07 00:00:00', '2024-07-07 23:59:59');
 
 -- Dữ liệu mẫu cho SaleDetails
 INSERT INTO SaleDetails (SaleID, ProductID, SalePrice) VALUES

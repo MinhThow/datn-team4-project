@@ -1,0 +1,60 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# API Documentation Standards
+
+## Context
+
+- Apply when creating REST APIs in Spring Boot applications
+- Ensures comprehensive and consistent API documentation
+- Promotes API discoverability and usability
+
+## Critical Rules
+
+- Document all APIs using SpringDoc OpenAPI annotations
+- Use `@Operation` to describe each API endpoint functionality
+- Document all request parameters with `@Parameter`
+- Use `@ApiResponse` to document all possible response scenarios
+- Enable and configure SpringDoc UI for interactive API exploration
+- Use `@Schema` to document DTOs and domain entities
+- Document security requirements for protected endpoints
+- Provide examples for request/response payloads
+
+## Examples
+
+<example>
+// Good practice
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @Operation(
+        summary = "Create a new user",
+        description = "Creates a new user with the provided information"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "User created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid user data provided")
+    })
+    @PostMapping
+    public ResponseEntity<User> createUser(
+        @Parameter(description = "User data") @Valid @RequestBody UserDTO userDTO
+    ) {
+        // Implementation
+    }
+}
+</example>
+
+<example type="invalid">
+// Bad practice - No documentation
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
+        // Implementation
+    }
+}
+</example> 
