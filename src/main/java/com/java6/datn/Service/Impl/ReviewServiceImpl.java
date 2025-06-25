@@ -35,17 +35,17 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewDTO> getReviewsByProduct(Long productID) {
+    public List<ReviewDTO> getReviewsByProduct(Integer productID) {
         return reviewRepository.findByProductProductID(productID).stream().map(ReviewMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<ReviewDTO> getReviewsByUser(Long userID) {
+    public List<ReviewDTO> getReviewsByUser(Integer userID) {
         return reviewRepository.findByUserUserID(userID).stream().map(ReviewMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public ReviewDTO getReviewById(Long reviewID) {
+    public ReviewDTO getReviewById(Integer reviewID) {
         return ReviewMapper.toDTO(
                 reviewRepository.findById(reviewID).orElseThrow(() -> new RuntimeException("Review not found"))
         );
@@ -68,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewDTO updateReview(Long reviewID, ReviewDTO reviewDTO) {
+    public ReviewDTO updateReview(Integer reviewID, ReviewDTO reviewDTO) {
         Review existing = reviewRepository.findById(reviewID)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
@@ -78,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReview(Long reviewID) {
+    public void deleteReview(Integer reviewID) {
         reviewRepository.deleteById(reviewID);
     }
 }

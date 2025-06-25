@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface OrderItemService {
     List<OrderItemDTO> getAllOrderItems();
-    List<OrderItemDTO> getOrderItemsByOrder(Long orderID);
-    OrderItemDTO getOrderItemById(Long id);
+    List<OrderItemDTO> getOrderItemsByOrder(Integer orderID);
+    OrderItemDTO getOrderItemById(Integer id);
     OrderItemDTO createOrderItem(OrderItemDTO orderItemDTO);
-    OrderItemDTO updateOrderItem(Long id, OrderItemDTO orderItemDTO);
-    void deleteOrderItem(Long id);
+    OrderItemDTO updateOrderItem(Integer id, OrderItemDTO orderItemDTO);
+    void deleteOrderItem(Integer id);
 }
 

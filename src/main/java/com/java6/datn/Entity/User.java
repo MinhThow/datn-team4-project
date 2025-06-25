@@ -1,6 +1,8 @@
 package com.java6.datn.Entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Column;
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,7 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userID;
+    private Integer userID;
 
     @Column(nullable = false, length = 100)
     private String name;

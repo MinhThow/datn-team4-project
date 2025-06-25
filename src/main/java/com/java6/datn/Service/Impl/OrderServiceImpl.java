@@ -35,12 +35,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> getOrdersByUser(Long userID) {
+    public List<OrderDTO> getOrdersByUser(Integer userID) {
         return orderRepository.findByUserUserID(userID).stream().map(OrderMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public OrderDTO getOrderById(Long id) {
+    public OrderDTO getOrderById(Integer id) {
         return OrderMapper.toDTO(orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found")));
     }
 
@@ -61,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrder(Long id, OrderDTO orderDTO) {
+    public OrderDTO updateOrder(Integer id, OrderDTO orderDTO) {
         Order existing = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
         if (orderDTO.getUserID() != null) {
             existing.setUser(userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new RuntimeException("User not found")));
@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long id) {
+    public void deleteOrder(Integer id) {
         orderRepository.deleteById(id);
     }
 }

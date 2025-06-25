@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO getCategoryById(Long id) {
+    public CategoryDTO getCategoryById(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         return CategoryMapper.toDTO(category);
@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(Integer id, CategoryDTO categoryDTO) {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long id) {
+    public void deleteCategory(Integer id) {
         categoryRepository.deleteById(id);
     }
 }

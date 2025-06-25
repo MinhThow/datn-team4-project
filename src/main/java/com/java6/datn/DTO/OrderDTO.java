@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 @Data
 public class OrderDTO {
-    private Long orderID;
-    private Long userID;
+    private Integer orderID;
+    private Integer userID;
     private BigDecimal total;
     private String status;
     private LocalDateTime orderDate;
     private String shippingAddress;
-    private Long paymentMethodID;
+    private Integer paymentMethodID;
 }
 

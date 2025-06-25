@@ -37,14 +37,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public List<OrderItemDTO> getOrderItemsByOrder(Long orderID) {
+    public List<OrderItemDTO> getOrderItemsByOrder(Integer orderID) {
         return orderItemRepository.findByOrderOrderID(orderID).stream()
                 .map(OrderItemMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public OrderItemDTO getOrderItemById(Long id) {
+    public OrderItemDTO getOrderItemById(Integer id) {
         return OrderItemMapper.toDTO(orderItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("OrderItem not found")));
     }
@@ -66,7 +66,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public OrderItemDTO updateOrderItem(Long id, OrderItemDTO orderItemDTO) {
+    public OrderItemDTO updateOrderItem(Integer id, OrderItemDTO orderItemDTO) {
         OrderItem existing = orderItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("OrderItem not found"));
 
@@ -85,7 +85,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public void deleteOrderItem(Long id) {
+    public void deleteOrderItem(Integer id) {
         orderItemRepository.deleteById(id);
     }
 }

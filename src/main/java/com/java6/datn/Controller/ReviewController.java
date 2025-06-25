@@ -23,17 +23,17 @@ public class ReviewController {
     }
 
     @GetMapping("/product/{productID}")
-    public List<ReviewDTO> getByProduct(@PathVariable Long productID) {
+    public List<ReviewDTO> getByProduct(@PathVariable Integer productID) {
         return reviewService.getReviewsByProduct(productID);
     }
 
     @GetMapping("/user/{userID}")
-    public List<ReviewDTO> getByUser(@PathVariable Long userID) {
+    public List<ReviewDTO> getByUser(@PathVariable Integer userID) {
         return reviewService.getReviewsByUser(userID);
     }
 
     @GetMapping("/{reviewID}")
-    public ReviewDTO getById(@PathVariable Long reviewID) {
+    public ReviewDTO getById(@PathVariable Integer reviewID) {
         return reviewService.getReviewById(reviewID);
     }
 
@@ -43,12 +43,12 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewID}")
-    public ReviewDTO update(@PathVariable Long reviewID, @RequestBody ReviewDTO reviewDTO) {
+    public ReviewDTO update(@PathVariable Integer reviewID, @RequestBody ReviewDTO reviewDTO) {
         return reviewService.updateReview(reviewID, reviewDTO);
     }
 
     @DeleteMapping("/{reviewID}")
-    public void delete(@PathVariable Long reviewID) {
+    public void delete(@PathVariable Integer reviewID) {
         reviewService.deleteReview(reviewID);
     }
 }

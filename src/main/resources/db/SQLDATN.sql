@@ -154,6 +154,22 @@ END;
 GO
 
 
+INSERT INTO Users (Name, Email, Password, Phone, Address, Role)
+VALUES
+-- 2 admin
+(N'Nguyễn Minh Thơ', N'minhtho.002022@gmail.com', N'123456', N'0703285661', N'Cao đẳng FPT', N'admin'),
+
+-- 2 customer
+(N'Phạm Văn C', N'user1@example.com', N'user123', N'0909123456', N'789 Đường Pasteur, Q3, TP.HCM', N'customer'),
+(N'Lê Thị D', N'user2@example.com', N'qwerty', N'0933445566', N'321 Đường Hai Bà Trưng, Q1, TP.HCM', N'customer');
+
+
+select * from users
+
+UPDATE Users
+SET Password = N'$2a$10$wdiNfp58as8CFI9.kWD9IuPDYLpe836HZ0rVs8/2FIAFcK1ZyCpWO'
+WHERE UserID = 1;
+go 
 
 
 

@@ -37,14 +37,14 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public List<CartItemDTO> getCartItemsByUser(Long userID) {
+    public List<CartItemDTO> getCartItemsByUser(Integer userID) {
         return cartItemRepository.findByUserUserID(userID).stream()
                 .map(CartItemMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CartItemDTO getCartItemById(Long id) {
+    public CartItemDTO getCartItemById(Integer id) {
         CartItem cartItem = cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found"));
         return CartItemMapper.toDTO(cartItem);
@@ -65,7 +65,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public CartItemDTO updateCartItem(Long id, CartItemDTO cartItemDTO) {
+    public CartItemDTO updateCartItem(Integer id, CartItemDTO cartItemDTO) {
         CartItem existing = cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found"));
 
@@ -75,7 +75,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
-    public void deleteCartItem(Long id) {
+    public void deleteCartItem(Integer id) {
         cartItemRepository.deleteById(id);
     }
 }

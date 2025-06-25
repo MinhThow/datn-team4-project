@@ -1,5 +1,7 @@
 package com.java6.datn.Controller;
 
+import ch.qos.logback.core.model.Model;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -21,5 +23,5 @@ public class WebController {
         return "Login_Register.html"; // trả file login.html
     }
 
-
+/// login thành công
 }

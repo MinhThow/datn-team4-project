@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class ReviewDTO {
-    private Long reviewID;
-    private Long productID;
-    private Long userID;
+    private Integer reviewID;
+    private Integer productID;
+    private Integer userID;
     private Integer rating;
     private String comment;
     private String reviewDate; // trả chuỗi ngày
