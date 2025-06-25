@@ -23,5 +23,5 @@ public class WebController {
         return "Login_Register.html"; // trả file login.html
     }
 
-
+/// login thành công
 }
