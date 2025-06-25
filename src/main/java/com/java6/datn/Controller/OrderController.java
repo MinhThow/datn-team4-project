@@ -23,12 +23,12 @@ public class OrderController {
     }
 
     @GetMapping("/user/{userID}")
-    public List<OrderDTO> getByUser(@PathVariable Long userID) {
+    public List<OrderDTO> getByUser(@PathVariable Integer userID) {
         return orderService.getOrdersByUser(userID);
     }
 
     @GetMapping("/{id}")
-    public OrderDTO getById(@PathVariable Long id) {
+    public OrderDTO getById(@PathVariable Integer id) {
         return orderService.getOrderById(id);
     }
 
@@ -38,12 +38,12 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public OrderDTO update(@PathVariable Long id, @RequestBody OrderDTO orderDTO) {
+    public OrderDTO update(@PathVariable Integer id, @RequestBody OrderDTO orderDTO) {
         return orderService.updateOrder(id, orderDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         orderService.deleteOrder(id);
     }
 }

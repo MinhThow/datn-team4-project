@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface ReviewService {
     List<ReviewDTO> getAllReviews();
-    List<ReviewDTO> getReviewsByProduct(Long productID);
-    List<ReviewDTO> getReviewsByUser(Long userID);
-    ReviewDTO getReviewById(Long reviewID);
+    List<ReviewDTO> getReviewsByProduct(Integer productID);
+    List<ReviewDTO> getReviewsByUser(Integer userID);
+    ReviewDTO getReviewById(Integer reviewID);
     ReviewDTO createReview(ReviewDTO reviewDTO);
-    ReviewDTO updateReview(Long reviewID, ReviewDTO reviewDTO);
-    void deleteReview(Long reviewID);
+    ReviewDTO updateReview(Integer reviewID, ReviewDTO reviewDTO);
+    void deleteReview(Integer reviewID);
 }
 

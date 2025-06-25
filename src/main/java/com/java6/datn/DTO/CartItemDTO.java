@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class CartItemDTO {
-    private Long cartItemID;
-    private Long userID;
-    private Long productID;
+    private Integer cartItemID;
+    private Integer userID;
+    private Integer productID;
     private Integer quantity;
     private LocalDateTime addedAt;
 }

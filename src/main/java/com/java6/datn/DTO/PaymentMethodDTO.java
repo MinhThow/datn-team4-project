@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PaymentMethodDTO {
-    private Long paymentMethodID;
+    private Integer paymentMethodID;
     private String name;
     private String description;
 }

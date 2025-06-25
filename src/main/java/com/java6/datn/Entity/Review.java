@@ -14,7 +14,7 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewID;
+    private Integer reviewID;
 
     @ManyToOne
     @JoinColumn(name = "ProductID")

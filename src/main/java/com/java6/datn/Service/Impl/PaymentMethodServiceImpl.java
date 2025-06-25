@@ -28,7 +28,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public PaymentMethodDTO getPaymentMethodById(Long id) {
+    public PaymentMethodDTO getPaymentMethodById(Integer id) {
         PaymentMethod method = paymentMethodRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("PaymentMethod not found"));
         return PaymentMethodMapper.toDTO(method);
@@ -41,7 +41,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public PaymentMethodDTO updatePaymentMethod(Long id, PaymentMethodDTO paymentMethodDTO) {
+    public PaymentMethodDTO updatePaymentMethod(Integer id, PaymentMethodDTO paymentMethodDTO) {
         PaymentMethod existing = paymentMethodRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("PaymentMethod not found"));
 
@@ -52,7 +52,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public void deletePaymentMethod(Long id) {
+    public void deletePaymentMethod(Integer id) {
         paymentMethodRepository.deleteById(id);
     }
 }

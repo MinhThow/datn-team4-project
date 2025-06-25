@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface PaymentMethodService {
     List<PaymentMethodDTO> getAllPaymentMethods();
-    PaymentMethodDTO getPaymentMethodById(Long id);
+    PaymentMethodDTO getPaymentMethodById(Integer id);
     PaymentMethodDTO createPaymentMethod(PaymentMethodDTO paymentMethodDTO);
-    PaymentMethodDTO updatePaymentMethod(Long id, PaymentMethodDTO paymentMethodDTO);
-    void deletePaymentMethod(Long id);
+    PaymentMethodDTO updatePaymentMethod(Integer id, PaymentMethodDTO paymentMethodDTO);
+    void deletePaymentMethod(Integer id);
 }
 

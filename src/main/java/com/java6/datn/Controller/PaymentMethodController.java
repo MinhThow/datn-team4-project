@@ -23,7 +23,7 @@ public class PaymentMethodController {
     }
 
     @GetMapping("/{id}")
-    public PaymentMethodDTO getById(@PathVariable Long id) {
+    public PaymentMethodDTO getById(@PathVariable Integer id) {
         return paymentMethodService.getPaymentMethodById(id);
     }
 
@@ -33,12 +33,12 @@ public class PaymentMethodController {
     }
 
     @PutMapping("/{id}")
-    public PaymentMethodDTO update(@PathVariable Long id, @RequestBody PaymentMethodDTO paymentMethodDTO) {
+    public PaymentMethodDTO update(@PathVariable Integer id, @RequestBody PaymentMethodDTO paymentMethodDTO) {
         return paymentMethodService.updatePaymentMethod(id, paymentMethodDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         paymentMethodService.deletePaymentMethod(id);
     }
 }

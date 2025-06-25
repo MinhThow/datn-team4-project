@@ -23,12 +23,12 @@ public class CartItemController {
     }
 
     @GetMapping("/user/{userID}")
-    public List<CartItemDTO> getByUser(@PathVariable Long userID) {
+    public List<CartItemDTO> getByUser(@PathVariable Integer userID) {
         return cartItemService.getCartItemsByUser(userID);
     }
 
     @GetMapping("/{id}")
-    public CartItemDTO getById(@PathVariable Long id) {
+    public CartItemDTO getById(@PathVariable Integer id) {
         return cartItemService.getCartItemById(id);
     }
 
@@ -38,12 +38,12 @@ public class CartItemController {
     }
 
     @PutMapping("/{id}")
-    public CartItemDTO update(@PathVariable Long id, @RequestBody CartItemDTO cartItemDTO) {
+    public CartItemDTO update(@PathVariable Integer id, @RequestBody CartItemDTO cartItemDTO) {
         return cartItemService.updateCartItem(id, cartItemDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         cartItemService.deleteCartItem(id);
     }
 }

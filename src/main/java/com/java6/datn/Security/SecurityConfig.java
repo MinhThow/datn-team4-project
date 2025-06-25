@@ -2,77 +2,49 @@ package com.java6.datn.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.Customizer; // ✅ Import này
-
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
+
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
+        auth.setUserDetailsService(userDetailsService);
+        auth.setPasswordEncoder(passwordEncoder());
+        return auth;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // Tắt CSRF
-                .csrf(csrf -> csrf.disable())
-
-                // Phân quyền
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Các endpoint giỏ hàng cần đăng nhập
                         .requestMatchers("/cart/**", "/checkout/**").authenticated()
-
-                        // Các request còn lại public
                         .anyRequest().permitAll()
                 )
-
-                // Sử dụng login form tùy chỉnh
                 .formLogin(form -> form
-                        .loginPage("/login")         // Chỉ định view login của bạn
-                        .loginProcessingUrl("/login")// POST xử lý login
-                        .defaultSuccessUrl("/", true) // Thành công về trang chủ
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
-
-                // Nếu không cần http basic
                 .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }
 }
-
-
-
-
-
-
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                // Tắt CSRF
-//                .csrf(csrf -> csrf.disable())
-//
-//                // Quy định phân quyền
-//                .authorizeHttpRequests(auth -> auth
-//                        // ✅ Các API liên quan giỏ hàng và thanh toán yêu cầu đăng nhập
-//                        .requestMatchers("/cart/**", "/checkout/**").authenticated()
-//
-//                        // ✅ Các request còn lại đều cho phép
-//                        .anyRequest().permitAll()
-//                )
-//
-//                // Hiện form login mặc định
-//                .formLogin(Customizer.withDefaults())
-//
-//                // Tắt http basic
-//                .httpBasic(httpBasic -> httpBasic.disable());
-//
-//        return http.build();
-//    }
-//}
-

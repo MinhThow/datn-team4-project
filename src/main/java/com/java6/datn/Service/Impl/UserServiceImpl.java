@@ -6,6 +6,7 @@ import com.java6.datn.Entity.User;
 import com.java6.datn.Mapper.UserMapper;
 import com.java6.datn.Repository.UserRepository;
 import com.java6.datn.Service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +16,11 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public UserDTO getUserById(Integer id) {
         return UserMapper.toDTO(
                 userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"))
         );
@@ -37,7 +40,8 @@ public class UserServiceImpl implements UserService {
         User entity = new User();
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword()); // TODO: mã hóa mật khẩu
+//        entity.setPassword(dto.getPassword()); // TODO: mã hóa mật khẩu
+        entity.setPassword(passwordEncoder.encode(dto.getPassword())); // mã hóa mật khẩu
         entity.setPhone(dto.getPhone());
         entity.setAddress(dto.getAddress());
         entity.setRole(dto.getRole() != null ? dto.getRole() : "customer");
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO updateUser(Long id, UserDTO dto) {
+    public UserDTO updateUser(Integer id, UserDTO dto) {
         User entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         entity.setName(dto.getName());
@@ -56,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 }
