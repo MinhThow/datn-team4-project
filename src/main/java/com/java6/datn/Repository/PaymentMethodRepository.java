@@ -1,6 +1,6 @@
-package com.java6.datn.Repository;
+package com.java6.datn.repository;
 
-import com.java6.datn.Entity.PaymentMethod;
+import com.java6.datn.entity.PaymentMethod;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

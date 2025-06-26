@@ -1,10 +1,10 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.PaymentMethodDTO;
-import com.java6.datn.Entity.PaymentMethod;
-import com.java6.datn.Mapper.PaymentMethodMapper;
-import com.java6.datn.Repository.PaymentMethodRepository;
-import com.java6.datn.Service.PaymentMethodService;
+import com.java6.datn.dto.PaymentMethodDTO;
+import com.java6.datn.entity.PaymentMethod;
+import com.java6.datn.mapper.PaymentMethodMapper;
+import com.java6.datn.repository.PaymentMethodRepository;
+import com.java6.datn.service.PaymentMethodService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

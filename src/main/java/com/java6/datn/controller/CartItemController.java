@@ -1,7 +1,7 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.CartItemDTO;
-import com.java6.datn.Service.CartItemService;
+import com.java6.datn.dto.CartItemDTO;
+import com.java6.datn.service.CartItemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

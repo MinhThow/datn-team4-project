@@ -1,8 +1,8 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.UserCreateDTO;
-import com.java6.datn.DTO.UserDTO;
-import com.java6.datn.Service.UserService;
+import com.java6.datn.dto.UserCreateDTO;
+import com.java6.datn.dto.UserDTO;
+import com.java6.datn.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

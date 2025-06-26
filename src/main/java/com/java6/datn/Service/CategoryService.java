@@ -1,6 +1,6 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.CategoryDTO;
+import com.java6.datn.dto.CategoryDTO;
 import java.util.List;
 
 public interface CategoryService {

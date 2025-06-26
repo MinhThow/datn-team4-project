@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.CartItemDTO;
-import com.java6.datn.Entity.CartItem;
+import com.java6.datn.dto.CartItemDTO;
+import com.java6.datn.entity.CartItem;
 
 public class CartItemMapper {
 

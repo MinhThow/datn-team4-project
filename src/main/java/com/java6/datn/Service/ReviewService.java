@@ -1,6 +1,6 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.ReviewDTO;
+import com.java6.datn.dto.ReviewDTO;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.java6.datn.DTO;
+package com.java6.datn.dto;
 
 
 import jakarta.validation.constraints.*;

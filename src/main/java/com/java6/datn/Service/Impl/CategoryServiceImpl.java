@@ -1,10 +1,10 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.CategoryDTO;
-import com.java6.datn.Entity.Category;
-import com.java6.datn.Mapper.CategoryMapper;
-import com.java6.datn.Repository.CategoryRepository;
-import com.java6.datn.Service.CategoryService;
+import com.java6.datn.dto.CategoryDTO;
+import com.java6.datn.entity.Category;
+import com.java6.datn.mapper.CategoryMapper;
+import com.java6.datn.repository.CategoryRepository;
+import com.java6.datn.service.CategoryService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

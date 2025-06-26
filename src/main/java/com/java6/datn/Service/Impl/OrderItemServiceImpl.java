@@ -1,14 +1,14 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.OrderItemDTO;
-import com.java6.datn.Entity.Order;
-import com.java6.datn.Entity.OrderItem;
-import com.java6.datn.Entity.Product;
-import com.java6.datn.Mapper.OrderItemMapper;
-import com.java6.datn.Repository.OrderItemRepository;
-import com.java6.datn.Repository.OrderRepository;
-import com.java6.datn.Repository.ProductRepository;
-import com.java6.datn.Service.OrderItemService;
+import com.java6.datn.dto.OrderItemDTO;
+import com.java6.datn.entity.Order;
+import com.java6.datn.entity.OrderItem;
+import com.java6.datn.entity.Product;
+import com.java6.datn.mapper.OrderItemMapper;
+import com.java6.datn.repository.OrderItemRepository;
+import com.java6.datn.repository.OrderRepository;
+import com.java6.datn.repository.ProductRepository;
+import com.java6.datn.service.OrderItemService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

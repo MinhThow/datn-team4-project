@@ -1,7 +1,7 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.PaymentMethodDTO;
-import com.java6.datn.Service.PaymentMethodService;
+import com.java6.datn.dto.PaymentMethodDTO;
+import com.java6.datn.service.PaymentMethodService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.java6.datn.Repository;
+package com.java6.datn.repository;
 
-import com.java6.datn.Entity.Review;
+import com.java6.datn.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

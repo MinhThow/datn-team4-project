@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.UserDTO;
-import com.java6.datn.Entity.User;
+import com.java6.datn.dto.UserDTO;
+import com.java6.datn.entity.User;
 
 import java.time.format.DateTimeFormatter;
 

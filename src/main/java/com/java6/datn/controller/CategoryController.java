@@ -1,7 +1,7 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.CategoryDTO;
-import com.java6.datn.Service.CategoryService;
+import com.java6.datn.dto.CategoryDTO;
+import com.java6.datn.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

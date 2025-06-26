@@ -1,6 +1,5 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import ch.qos.logback.core.model.Model;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,7 +1,7 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.ReviewDTO;
-import com.java6.datn.Service.ReviewService;
+import com.java6.datn.dto.ReviewDTO;
+import com.java6.datn.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

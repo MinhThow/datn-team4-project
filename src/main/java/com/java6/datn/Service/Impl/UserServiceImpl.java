@@ -1,11 +1,11 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.UserCreateDTO;
-import com.java6.datn.DTO.UserDTO;
-import com.java6.datn.Entity.User;
-import com.java6.datn.Mapper.UserMapper;
-import com.java6.datn.Repository.UserRepository;
-import com.java6.datn.Service.UserService;
+import com.java6.datn.dto.UserCreateDTO;
+import com.java6.datn.dto.UserDTO;
+import com.java6.datn.entity.User;
+import com.java6.datn.mapper.UserMapper;
+import com.java6.datn.repository.UserRepository;
+import com.java6.datn.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

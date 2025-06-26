@@ -1,4 +1,4 @@
-package com.java6.datn.Security;
+package com.java6.datn.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

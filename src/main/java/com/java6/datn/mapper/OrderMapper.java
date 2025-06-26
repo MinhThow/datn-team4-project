@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.OrderDTO;
-import com.java6.datn.Entity.Order;
+import com.java6.datn.dto.OrderDTO;
+import com.java6.datn.entity.Order;
 
 public class OrderMapper {
 

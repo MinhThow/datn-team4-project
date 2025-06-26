@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.ProductDTO;
-import com.java6.datn.Entity.Product;
+import com.java6.datn.dto.ProductDTO;
+import com.java6.datn.entity.Product;
 
 public class ProductMapper {
 

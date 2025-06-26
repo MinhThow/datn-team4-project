@@ -1,14 +1,14 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.ReviewDTO;
-import com.java6.datn.Entity.Product;
-import com.java6.datn.Entity.Review;
-import com.java6.datn.Entity.User;
-import com.java6.datn.Mapper.ReviewMapper;
-import com.java6.datn.Repository.ProductRepository;
-import com.java6.datn.Repository.ReviewRepository;
-import com.java6.datn.Repository.UserRepository;
-import com.java6.datn.Service.ReviewService;
+import com.java6.datn.dto.ReviewDTO;
+import com.java6.datn.entity.Product;
+import com.java6.datn.entity.Review;
+import com.java6.datn.entity.User;
+import com.java6.datn.mapper.ReviewMapper;
+import com.java6.datn.repository.ProductRepository;
+import com.java6.datn.repository.ReviewRepository;
+import com.java6.datn.repository.UserRepository;
+import com.java6.datn.service.ReviewService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.OrderItemDTO;
+import com.java6.datn.dto.OrderItemDTO;
 
 import java.util.List;
 

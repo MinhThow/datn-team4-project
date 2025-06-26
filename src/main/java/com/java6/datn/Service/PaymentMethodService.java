@@ -1,6 +1,6 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.PaymentMethodDTO;
+import com.java6.datn.dto.PaymentMethodDTO;
 import java.util.List;
 
 public interface PaymentMethodService {

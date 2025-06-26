@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.CategoryDTO;
-import com.java6.datn.Entity.Category;
+import com.java6.datn.dto.CategoryDTO;
+import com.java6.datn.entity.Category;
 
 public class CategoryMapper {
 

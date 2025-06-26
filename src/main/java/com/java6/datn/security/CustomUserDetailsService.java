@@ -1,14 +1,12 @@
-package com.java6.datn.Security;
+package com.java6.datn.security;
 
-import com.java6.datn.Entity.User;
-import com.java6.datn.Repository.UserRepository;
+import com.java6.datn.entity.User;
+import com.java6.datn.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

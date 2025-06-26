@@ -1,7 +1,7 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.OrderItemDTO;
-import com.java6.datn.Service.OrderItemService;
+import com.java6.datn.dto.OrderItemDTO;
+import com.java6.datn.service.OrderItemService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

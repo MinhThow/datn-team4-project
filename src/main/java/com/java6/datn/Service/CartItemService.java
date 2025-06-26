@@ -1,6 +1,6 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.CartItemDTO;
+import com.java6.datn.dto.CartItemDTO;
 
 import java.util.List;
 

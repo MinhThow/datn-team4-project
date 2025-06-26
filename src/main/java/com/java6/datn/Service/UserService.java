@@ -1,7 +1,7 @@
-package com.java6.datn.Service;
+package com.java6.datn.service;
 
-import com.java6.datn.DTO.UserDTO;
-import com.java6.datn.DTO.UserCreateDTO;
+import com.java6.datn.dto.UserDTO;
+import com.java6.datn.dto.UserCreateDTO;
 
 import java.util.List;
 

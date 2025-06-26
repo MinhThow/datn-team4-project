@@ -1,7 +1,7 @@
-package com.java6.datn.Mapper;
+package com.java6.datn.mapper;
 
-import com.java6.datn.DTO.PaymentMethodDTO;
-import com.java6.datn.Entity.PaymentMethod;
+import com.java6.datn.dto.PaymentMethodDTO;
+import com.java6.datn.entity.PaymentMethod;
 
 public class PaymentMethodMapper {
 

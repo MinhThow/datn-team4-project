@@ -1,14 +1,14 @@
-package com.java6.datn.Service.Impl;
+package com.java6.datn.service.impl;
 
-import com.java6.datn.DTO.CartItemDTO;
-import com.java6.datn.Entity.CartItem;
-import com.java6.datn.Entity.Product;
-import com.java6.datn.Entity.User;
-import com.java6.datn.Mapper.CartItemMapper;
-import com.java6.datn.Repository.CartItemRepository;
-import com.java6.datn.Repository.ProductRepository;
-import com.java6.datn.Repository.UserRepository;
-import com.java6.datn.Service.CartItemService;
+import com.java6.datn.dto.CartItemDTO;
+import com.java6.datn.entity.CartItem;
+import com.java6.datn.entity.Product;
+import com.java6.datn.entity.User;
+import com.java6.datn.mapper.CartItemMapper;
+import com.java6.datn.repository.CartItemRepository;
+import com.java6.datn.repository.ProductRepository;
+import com.java6.datn.repository.UserRepository;
+import com.java6.datn.service.CartItemService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

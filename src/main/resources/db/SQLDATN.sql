@@ -81,6 +81,23 @@ CREATE TABLE Reviews (
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
+CREATE TABLE Sales (
+    SaleID INT  PRIMARY KEY IDENTITY(1,1),
+    Name VARCHAR(255),                -- Tên chương trình sale
+    Description TEXT,                 -- Mô tả
+    StartDate TIMESTAMP,              -- Thời gian bắt đầu
+    EndDate TIMESTAMP                 -- Thời gian kết thúc
+);
+
+CREATE TABLE SaleDetails (
+    SaleDetailID INT PRIMARY KEY IDENTITY(1,1),
+    SaleID INT,
+    ProductID INT,
+    SalePrice DECIMAL(10,2) NOT NULL,  -- Giá sale cho sản phẩm này
+    FOREIGN KEY (SaleID) REFERENCES Sales(SaleID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
 
 -- Phương thức thanh toán
 CREATE TABLE PaymentMethods (
