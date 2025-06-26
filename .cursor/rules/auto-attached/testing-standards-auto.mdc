@@ -1,0 +1,65 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# Testing Standards
+
+## Context
+
+- Apply when writing tests for Spring Boot applications
+- Ensures comprehensive test coverage and maintainable tests
+- Promotes reliable and consistent testing practices
+
+## Critical Rules
+
+- Use `@SpringBootTest` for integration tests that require the full application context
+- Implement unit tests with JUnit 5 and Mockito for service and component testing
+- Use `@WebMvcTest` for testing controllers in isolation
+- Implement database tests using TestContainers for real database interactions
+- Use `@DataJpaTest` for repository testing
+- Follow AAA (Arrange-Act-Assert) pattern in all tests
+- Maintain at least 80% code coverage for service and domain logic
+- Mock external dependencies with Mockito
+- Use meaningful test method names that describe the test scenario
+
+## Examples
+
+<example>
+// Good practice
+@SpringBootTest
+class UserServiceIntegrationTest {
+    @Autowired
+    private UserService userService;
+    
+    @Test
+    void shouldCreateUserSuccessfully() {
+        // Arrange
+        UserDTO userDTO = new UserDTO("testuser", "test@example.com");
+        
+        // Act
+        User created = userService.createUser(userDTO);
+        
+        // Assert
+        assertNotNull(created);
+        assertEquals("testuser", created.getUsername());
+    }
+}
+</example>
+
+<example type="invalid">
+// Bad practice - Poorly named test without clear structure
+@SpringBootTest
+class UserServiceTest {
+    @Autowired
+    private UserService userService;
+    
+    @Test
+    void test1() {
+        UserDTO userDTO = new UserDTO("testuser", "test@example.com");
+        User created = userService.createUser(userDTO);
+        assertNotNull(created);
+    }
+}
+</example> 

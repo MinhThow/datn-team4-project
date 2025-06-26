@@ -1,0 +1,52 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# Spring Security Standards
+
+## Context
+
+- Apply when implementing security in Spring applications
+- Ensures consistent and robust security practices
+- Protects against common security vulnerabilities
+
+## Critical Rules
+
+- Use method-level security with `@PreAuthorize` and `@PostAuthorize`
+- Always encode passwords with `BCryptPasswordEncoder` or stronger algorithms
+- Implement JWT-based authentication for stateless applications
+- Enable CSRF protection for non-API web applications
+- Define security roles using `@Secured` or `@RolesAllowed`
+- Implement proper logout mechanisms
+- Set secure and HttpOnly flags for cookies
+- Configure proper CORS settings for cross-origin requests
+- Implement rate limiting for authentication attempts
+
+## Examples
+
+<example>
+// Good practice
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        // Implementation
+    }
+}
+</example>
+
+<example type="invalid">
+// Bad practice - No security annotations
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        // Implementation
+    }
+}
+</example> 

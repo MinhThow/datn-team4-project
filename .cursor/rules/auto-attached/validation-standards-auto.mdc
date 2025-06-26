@@ -1,0 +1,65 @@
+---
+description: 
+globs: **/*.java
+alwaysApply: false
+---
+
+# Input Validation Standards
+
+## Context
+
+- Apply when implementing input validation in Spring applications
+- Ensures robust data validation before processing
+- Prevents many security vulnerabilities and data integrity issues
+
+## Critical Rules
+
+- Use `@Valid` annotation on all DTOs and form objects
+- Apply `@Validated` annotation on controller classes for group validation
+- Implement custom validators using `@Constraint` and `ConstraintValidator`
+- Always validate request parameters with `@RequestParam` and `@Valid`
+- Centralize validation error handling in a `@ControllerAdvice` class
+- Use built-in constraints like `@NotNull`, `@Size`, `@Email`, etc.
+- Apply validation groups for different validation scenarios
+- Validate nested objects in complex DTOs
+
+## Examples
+
+<example>
+// Good practice
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO) {
+        // Implementation
+    }
+}
+
+@Data
+public class UserDTO {
+    @NotBlank(message = "Username is required")
+    @Size(min = 4, max = 50, message = "Username must be between 4 and 50 characters")
+    private String username;
+    
+    @Email(message = "Email must be valid")
+    private String email;
+}
+</example>
+
+<example type="invalid">
+// Bad practice - No validation
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
+        // Implementation
+    }
+}
+
+public class UserDTO {
+    private String username;
+    private String email;
+}
+</example> 
