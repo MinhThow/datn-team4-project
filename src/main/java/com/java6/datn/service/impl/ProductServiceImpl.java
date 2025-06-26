@@ -2,9 +2,9 @@ package com.java6.datn.service.impl;
 
 import com.java6.datn.dto.ProductDTO;
 import com.java6.datn.dto.ProductDTO_V2;
-import com.java6.datn.entity.Category;
-import com.java6.datn.entity.Product;
-import com.java6.datn.entity.SaleDetail;
+import com.java6.datn.Entity.Category;
+import com.java6.datn.Entity.Product;
+import com.java6.datn.Entity.SaleDetail;
 import com.java6.datn.mapper.ProductMapper;
 import com.java6.datn.repository.CategoryRepository;
 import com.java6.datn.repository.ProductRepository;

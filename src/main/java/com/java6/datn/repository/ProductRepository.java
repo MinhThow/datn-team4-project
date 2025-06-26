@@ -1,6 +1,6 @@
 package com.java6.datn.repository;
 
-import com.java6.datn.entity.Product;
+import com.java6.datn.Entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

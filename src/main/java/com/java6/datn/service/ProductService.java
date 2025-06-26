@@ -2,7 +2,7 @@ package com.java6.datn.service;
 
 import com.java6.datn.dto.ProductDTO;
 import com.java6.datn.dto.ProductDTO_V2;
-import com.java6.datn.entity.Product;
+import com.java6.datn.Entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
