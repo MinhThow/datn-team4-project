@@ -1,55 +1,55 @@
-﻿-- H2 Database compatible SQL script for DATN project
+﻿
+Create database DATN;
+Go
+
+Use DATN;
+Go
 
 CREATE TABLE Users (
-    UserID INT IDENTITY PRIMARY KEY,
-    Name VARCHAR(100),
-    Email VARCHAR(100) UNIQUE,
-    Password VARCHAR(255),
-    Phone VARCHAR(20),
-    Address TEXT,
-    Role VARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    UserID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100),
+    Email NVARCHAR(100) UNIQUE,
+    Password NVARCHAR(255),
+    Phone NVARCHAR(20),
+    Address NVARCHAR(MAX),
+    Role NVARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
+    CreatedAt DATETIME DEFAULT GETDATE()
 );
 
 CREATE TABLE Categories (
-    CategoryID INT IDENTITY PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,
-    Description TEXT
+    CategoryID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(MAX)
 );
 
 CREATE TABLE Products (
-    ProductID INT IDENTITY PRIMARY KEY,
-    Name VARCHAR(150) NOT NULL,
-    Description TEXT,
+    ProductID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(150) NOT NULL,
+    Description NVARCHAR(MAX),
     Price DECIMAL(10,2) NOT NULL,
     Stock INT DEFAULT 0,
-    Image VARCHAR(255),
+    Image NVARCHAR(255),
     CategoryID INT,
-    Size VARCHAR(50),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
-
--- Phương thức thanh toán (moved up to be referenced by Orders)
-CREATE TABLE PaymentMethods (
-    PaymentMethodID INT IDENTITY PRIMARY KEY,
-    Name VARCHAR(100) NOT NULL,        
-    Description TEXT
-);
+ALTER TABLE Products
+ADD Size NVARCHAR(50);
 
 CREATE TABLE Orders (
-    OrderID INT IDENTITY PRIMARY KEY,
+    OrderID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT,
     Total DECIMAL(10,2),
-    Status VARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy','Trả hàng')),
-    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ShippingAddress TEXT,
-    PaymentMethodID INT,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy','Trả hàng')),
+    OrderDate DATETIME DEFAULT GETDATE(),
+    ShippingAddress NVARCHAR(MAX),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
+ALTER TABLE Orders
+ADD PaymentMethodID INT FOREIGN KEY REFERENCES PaymentMethods(PaymentMethodID);
+
 
 CREATE TABLE OrderItems (
-    OrderItemID INT IDENTITY PRIMARY KEY,
+    OrderItemID INT PRIMARY KEY IDENTITY(1,1),
     OrderID INT,
     ProductID INT,
     Quantity INT,
@@ -58,81 +58,119 @@ CREATE TABLE OrderItems (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
+
 CREATE TABLE CartItems (
-    CartItemID INT IDENTITY PRIMARY KEY,
+    CartItemID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT,
     ProductID INT,
     Quantity INT DEFAULT 1,
-    AddedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    AddedAt DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
+
 CREATE TABLE Reviews (
-    ReviewID INT IDENTITY PRIMARY KEY,
+    ReviewID INT PRIMARY KEY IDENTITY(1,1),
     ProductID INT,
     UserID INT,
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
-    Comment TEXT,
-    ReviewDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Comment NVARCHAR(MAX),
+    ReviewDate DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );
 
-CREATE TABLE Sales (
-    SaleID INT IDENTITY PRIMARY KEY,
-    Name VARCHAR(255),                -- Tên chương trình sale
-    Description TEXT,                 -- Mô tả
-    StartDate TIMESTAMP,              -- Thời gian bắt đầu
-    EndDate TIMESTAMP                 -- Thời gian kết thúc
+
+-- Phương thức thanh toán
+CREATE TABLE PaymentMethods (
+    PaymentMethodID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,        
+    Description NVARCHAR(MAX)
 );
 
-CREATE TABLE SaleDetails (
-    SaleDetailID INT IDENTITY PRIMARY KEY,
-    SaleID INT,
-    ProductID INT,
-    SalePrice DECIMAL(10,2) NOT NULL,  -- Giá sale cho sản phẩm này
-    FOREIGN KEY (SaleID) REFERENCES Sales(SaleID),
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
-);
+select * from Products
+select * From Categories
 
--- Dữ liệu mẫu cho Users
-INSERT INTO Users (Name, Email, Password, Phone, Address, Role) VALUES
-('Nguyễn Văn A', 'a@gmail.com', '123456', '0123456789', 'Hà Nội', 'customer'),
-('Trần Thị B', 'b@gmail.com', '123456', '0987654321', 'Hồ Chí Minh', 'customer'),
-('Admin', 'admin@gmail.com', 'admin123', '0123123123', 'Hà Nội', 'admin');
 
--- Dữ liệu mẫu cho Categories
-INSERT INTO Categories (Name, Description) VALUES
-('Áo', 'Các loại áo thời trang nam'),
-('Quần', 'Các loại quần thời trang nam'),
-('Giày', 'Các loại giày nam'),
-('Phụ kiện', 'Phụ kiện thời trang nam');
+-- Trigger sau INSERT
+CREATE TRIGGER trg_OrderItems_AfterInsert
+ON OrderItems
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
 
--- Dữ liệu mẫu cho Products
-INSERT INTO Products (Name, Description, Price, Stock, Image, CategoryID, Size)
+    UPDATE Orders
+    SET Total = (
+        SELECT SUM(Quantity * Price)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = inserted.OrderID
+    )
+    FROM Orders
+    INNER JOIN inserted
+    ON Orders.OrderID = inserted.OrderID;
+END;
+GO
+
+-- Trigger sau UPDATE
+CREATE TRIGGER trg_OrderItems_AfterUpdate
+ON OrderItems
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Orders
+    SET Total = (
+        SELECT SUM(Quantity * Price)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = inserted.OrderID
+    )
+    FROM Orders
+    INNER JOIN inserted
+    ON Orders.OrderID = inserted.OrderID;
+END;
+GO
+
+-- Trigger sau DELETE
+CREATE TRIGGER trg_OrderItems_AfterDelete
+ON OrderItems
+AFTER DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE Orders
+    SET Total = (
+        SELECT COALESCE(SUM(Quantity * Price), 0)
+        FROM OrderItems
+        WHERE OrderItems.OrderID = deleted.OrderID
+    )
+    FROM Orders
+    INNER JOIN deleted
+    ON Orders.OrderID = deleted.OrderID;
+END;
+GO
+
+
+INSERT INTO Users (Name, Email, Password, Phone, Address, Role)
 VALUES
-('Áo thun basic', 'Áo thun cotton co giãn', 199000, 50, 'product-1.jpg', 1, 'M'),
-('Áo khoác bomber', 'Áo khoác thời trang nam', 499000, 30, 'product-2.jpg', 1, 'L'),
-('Quần jeans slimfit', 'Quần jeans co giãn', 399000, 40, 'product-3.jpg', 2, '32'),
-('Giày sneaker trắng', 'Giày sneaker nam trẻ trung', 599000, 20, 'product-4.jpg', 3, '42'),
-('Balo thời trang', 'Balo vải canvas', 299000, 25, 'product-5.jpg', 4, 'Free');
+-- 2 admin
+(N'Nguyễn Minh Thơ', N'minhtho.002022@gmail.com', N'123456', N'0703285661', N'Cao đẳng FPT', N'admin'),
 
--- Dữ liệu mẫu cho PaymentMethods
-INSERT INTO PaymentMethods (Name, Description) VALUES
-('Thanh toán khi nhận hàng', 'Thanh toán trực tiếp khi nhận hàng'),
-('Chuyển khoản ngân hàng', 'Thanh toán qua tài khoản ngân hàng');
+-- 2 customer
+(N'Phạm Văn C', N'user1@example.com', N'user123', N'0909123456', N'789 Đường Pasteur, Q3, TP.HCM', N'customer'),
+(N'Lê Thị D', N'user2@example.com', N'qwerty', N'0933445566', N'321 Đường Hai Bà Trưng, Q1, TP.HCM', N'customer');
 
--- Dữ liệu mẫu cho Sales
-INSERT INTO Sales (Name, Description, StartDate, EndDate) VALUES
-('Sale Hè 2024', 'Giảm giá đặc biệt cho mùa hè', '2024-06-01 00:00:00', '2024-06-30 23:59:59'),
-('Flash Sale 7.7', 'Giảm giá sốc trong ngày 7/7', '2024-07-07 00:00:00', '2024-07-07 23:59:59');
 
--- Dữ liệu mẫu cho SaleDetails
-INSERT INTO SaleDetails (SaleID, ProductID, SalePrice) VALUES
-(1, 1, 159000), -- Áo thun basic giảm còn 159k trong Sale Hè
-(1, 3, 349000), -- Quần jeans slimfit giảm còn 349k trong Sale Hè
-(2, 4, 499000); -- Giày sneaker trắng giảm còn 499k trong Flash Sale
+select * from users
+
+UPDATE Users
+SET Password = N'$2a$10$wdiNfp58as8CFI9.kWD9IuPDYLpe836HZ0rVs8/2FIAFcK1ZyCpWO'
+WHERE UserID = 1;
+go 
+
 
 
 
