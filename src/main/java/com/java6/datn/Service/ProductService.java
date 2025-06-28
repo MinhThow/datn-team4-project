@@ -15,5 +15,8 @@ public interface ProductService {
     List<ProductDTO> getNewArrivals(int limit);
     List<ProductDTO> getHotSales(int limit);
     ProductDTO getFeaturedProduct();
+    
+    // Search methods
+    List<ProductDTO> searchProducts(String query);
 }
 

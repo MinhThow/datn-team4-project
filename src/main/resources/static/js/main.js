@@ -22,12 +22,17 @@
             Gallery filter
         --------------------*/
         $('.filter__controls li').on('click', function () {
+            console.log('Filter clicked:', $(this).data('filter'));
             $('.filter__controls li').removeClass('active');
             $(this).addClass('active');
         });
         if ($('.product__filter').length > 0) {
+            console.log('Initializing MixItUp...');
             var containerEl = document.querySelector('.product__filter');
             var mixer = mixitup(containerEl);
+            console.log('MixItUp initialized:', mixer);
+        } else {
+            console.log('No .product__filter found');
         }
     });
 
@@ -39,15 +44,111 @@
         $(this).css('background-image', 'url(' + bg + ')');
     });
 
-    //Search Switch
-    $('.search-switch').on('click', function () {
-        $('.search-model').fadeIn(400);
-    });
+    // Search functionality for direct input (overlay removed)
 
-    $('.search-close-switch').on('click', function () {
-        $('.search-model').fadeOut(400, function () {
-            $('#search-input').val('');
+    // Search functionality for header and mobile search
+    let searchTimeout;
+    const headerSearchInput = $('#header-search-input');
+    const mobileSearchInput = $('#mobile-search-input');
+    const headerSearchResults = $('#header-search-results');
+    const mobileSearchResults = $('#mobile-search-results');
+
+    // Setup search for both header and mobile inputs
+    function setupSearchInput(inputElement, resultsElement) {
+        inputElement.on('input', function() {
+            const query = $(this).val().trim();
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            if (query.length === 0) {
+                resultsElement.hide();
+                return;
+            }
+            
+            // Debounce search requests
+            searchTimeout = setTimeout(function() {
+                performSearch(query, resultsElement);
+            }, 300);
         });
+
+        inputElement.on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                e.preventDefault();
+                const query = $(this).val().trim();
+                if (query.length > 0) {
+                    performSearch(query, resultsElement);
+                }
+            }
+        });
+    }
+
+    // Initialize search for both inputs
+    setupSearchInput(headerSearchInput, headerSearchResults);
+    setupSearchInput(mobileSearchInput, mobileSearchResults);
+
+    function performSearch(query, resultsElement) {
+        console.log('Searching for:', query);
+        
+        // Show loading state
+        resultsElement.html('<div class="search-result-item">Đang tìm kiếm...</div>').show();
+        
+        $.ajax({
+            url: '/api/products/search',
+            method: 'GET',
+            data: { query: query },
+            success: function(products) {
+                console.log('Search results:', products);
+                displaySearchResults(products, resultsElement);
+            },
+            error: function(xhr, status, error) {
+                console.error('Search error:', error);
+                resultsElement.html('<div class="search-result-item">Có lỗi xảy ra khi tìm kiếm</div>').show();
+            }
+        });
+    }
+
+    function displaySearchResults(products, resultsElement) {
+        if (products.length === 0) {
+            resultsElement.html('<div class="search-result-item">Không tìm thấy sản phẩm nào</div>').show();
+            return;
+        }
+        
+        let resultsHtml = '';
+        products.forEach(function(product) {
+            const imageUrl = product.image || 'img/product/product-1.jpg';
+            resultsHtml += `
+                <div class="search-result-item" onclick="selectProduct(${product.productID})">
+                    <img src="${imageUrl}" alt="${product.name}">
+                    <div class="search-result-info">
+                        <h6>${product.name}</h6>
+                        <div class="search-price">$${product.price}</div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        resultsElement.html(resultsHtml).show();
+    }
+
+    function selectProduct(productId) {
+        console.log('Selected product:', productId);
+        // TODO: Navigate to product detail page
+        // For now, just clear search inputs and hide results
+        headerSearchInput.val('');
+        mobileSearchInput.val('');
+        headerSearchResults.hide();
+        mobileSearchResults.hide();
+    }
+
+    // Close search results when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.header__search').length) {
+            headerSearchResults.hide();
+        }
+        if (!$(e.target).closest('.mobile-search').length) {
+            mobileSearchResults.hide();
+        }
     });
 
     /*------------------

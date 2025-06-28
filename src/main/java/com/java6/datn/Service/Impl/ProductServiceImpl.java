@@ -141,5 +141,35 @@ public class ProductServiceImpl implements ProductService {
             return allProducts.isEmpty() ? null : allProducts.get(0);
         }
     }
+
+    @Override
+    public List<ProductDTO> searchProducts(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        
+        String searchQuery = query.trim().toLowerCase();
+        
+        return productRepository.findAll()
+                .stream()
+                .filter(product -> {
+                    // Tìm kiếm theo tên sản phẩm
+                    boolean nameMatch = product.getName() != null && 
+                                      product.getName().toLowerCase().contains(searchQuery);
+                    
+                    // Tìm kiếm theo mô tả
+                    boolean descriptionMatch = product.getDescription() != null && 
+                                             product.getDescription().toLowerCase().contains(searchQuery);
+                    
+                    // Tìm kiếm theo tên category
+                    boolean categoryMatch = product.getCategory() != null && 
+                                          product.getCategory().getName() != null &&
+                                          product.getCategory().getName().toLowerCase().contains(searchQuery);
+                    
+                    return nameMatch || descriptionMatch || categoryMatch;
+                })
+                .map(ProductMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 }
 
