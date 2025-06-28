@@ -1,0 +1,33 @@
+{
+  "project_id": "datn-team4-ecommerce",
+  "created": "2025-01-27T12:41:19",
+  "updated": "2025-01-27T12:41:19",
+  "insights": {
+    "process_insights": [],
+    "efficiency_insights": [],
+    "pattern_insights": [
+      {
+        "id": "spring-boot-gradle-structure",
+        "description": "Project follows standard Spring Boot with Gradle structure",
+        "category": "architecture",
+        "confidence": "high",
+        "created": "2025-01-27T12:41:19"
+      }
+    ],
+    "blocker_insights": []
+  },
+  "metrics": {
+    "task_completion_rate": 0,
+    "average_task_time": 0,
+    "decision_accuracy": 0
+  },
+  "recommendations": [
+    {
+      "id": "setup-dev-environment",
+      "description": "Establish consistent development environment setup process",
+      "priority": "high",
+      "category": "process",
+      "created": "2025-01-27T12:41:19"
+    }
+  ]
+} 
