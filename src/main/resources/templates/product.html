@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+    <!-- Các link CSS bạn đã có -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<!-- Header hoặc navbar -->
+<header>
+    <nav>
+        <!-- Link home, login, logout ... -->
+        <a href="/">Home</a>
+    </nav>
+</header>
+
+<section class="shop spad">
+    <div class="container">
+        <div class="row" th:each="product : ${products}">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="product__item">
+                    <div class="product__item__pic set-bg"
+                         th:attr="data-setbg=@{${product.image}}">
+                        <ul class="product__hover">
+                            <li><a href="#"><img src="/img/icon/heart.png" alt=""></a></li>
+                            <li><a href="#"><img src="/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
+                            <li><a href="#"><img src="/img/icon/search.png" alt=""></a></li>
+                        </ul>
+                    </div>
+                    <div class="product__item__text">
+                        <h6 th:text="${product.name}">Product Name</h6>
+                        <a href="#" class="add-cart">+ Add To Cart</a>
+                        <div class="rating">
+                            <!-- Hiện 5 sao tĩnh -->
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                            <i class="fa fa-star-o"></i>
+                        </div>
+                        <h5 th:text="${'$' + product.price}">$0.00</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Shop</p>
+</footer>
+
+<!-- Các file JS bạn đã có -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+    // JS xử lý set-bg nếu bạn có
+    $('.set-bg').each(function () {
+        var bg = $(this).data('setbg');
+        $(this).css('background-image', 'url(' + bg + ')');
+    });
+</script>
+
+</body>
+</html>

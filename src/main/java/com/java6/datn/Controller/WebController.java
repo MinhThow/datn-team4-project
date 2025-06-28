@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class WebController {
-    @GetMapping("/shop")
-    public String home() {
-        return "shop";
-    }
+//    @GetMapping("/shop")
+//    public String home() {
+//        return "shop";
+//    }
 
     @GetMapping("/about")
     public String aboutpage() {
@@ -23,10 +23,11 @@ public class WebController {
     }
 
 
-    @GetMapping("/login")
-    public String showLogin() {
-        return "Login_Register"; // trả file login.html
-    }
+
+
+
+
+}
 
 /// login thành công
-}
+

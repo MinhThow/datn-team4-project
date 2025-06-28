@@ -22,6 +22,9 @@ CREATE TABLE Categories (
     Description NVARCHAR(MAX)
 );
 
+select *From Categories
+
+
 CREATE TABLE Products (
     ProductID INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(150) NOT NULL,
@@ -171,7 +174,16 @@ SET Password = N'$2a$10$wdiNfp58as8CFI9.kWD9IuPDYLpe836HZ0rVs8/2FIAFcK1ZyCpWO'
 WHERE UserID = 1;
 go 
 
+INSERT INTO Products (Name, Description, Price, Stock, Image, CategoryID, Size)
+VALUES
+(N'Áo thun nam cổ tròn', N'Áo thun cotton 100%, thoáng mát', 199000, 50, N'/images/ao-thun-nam-1.jpg', 1, N'M'),
+(N'Giày thể thao trắng', N'Giày thể thao chạy bộ, đế mềm', 899000, 30, N'/images/giay-the-thao-1.jpg', 1, N'42'),
+(N'Túi xách da cao cấp', N'Túi da thật, màu nâu sang trọng', 1299000, 10, N'/images/tui-xach-da-1.jpg', 1, N'Free'),
+(N'Quần jean nam', N'Quần jean ống suông, màu xanh đậm', 450000, 40, N'/images/quan-jean-1.jpg', 1, N'32'),
+(N'Balo laptop', N'Balo chống sốc, chống nước, đựng laptop 15.6 inch', 599000, 25, N'/images/balo-laptop-1.jpg', 1, N'Free'),
+(N'Giày cao gót nữ', N'Giày cao gót màu đen, da mềm', 699000, 20, N'/images/giay-cao-got-1.jpg', 1, N'38');
 
 
 
-
+select * from Products
+select * from Users
