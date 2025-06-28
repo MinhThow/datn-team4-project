@@ -1,5 +1,10 @@
 package com.java6.datn.Service.Impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.java6.datn.DTO.ProductDTO;
 import com.java6.datn.Entity.Category;
 import com.java6.datn.Entity.Product;
@@ -7,11 +12,6 @@ import com.java6.datn.Mapper.ProductMapper;
 import com.java6.datn.Repository.CategoryRepository;
 import com.java6.datn.Repository.ProductRepository;
 import com.java6.datn.Service.ProductService;
-
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -73,6 +73,73 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(Integer id) {
         productRepository.deleteById(id);
+    }
+
+    // Homepage methods implementation
+    @Override
+    public List<ProductDTO> getBestSellers(int limit) {
+        // Tạm thời return hardcoded best sellers theo database analysis
+        // ProductIDs: 1 (Áo Sơ Mi Nam), 2 (Áo Thun Nữ), 3 (Quần Jean Nam)
+        List<Integer> bestSellerIds = List.of(1, 2, 3, 6, 7, 8, 9, 10);
+        return bestSellerIds.stream()
+                .limit(limit)
+                .map(id -> {
+                    try {
+                        return getProductById(id);
+                    } catch (RuntimeException e) {
+                        return null;
+                    }
+                })
+                .filter(product -> product != null)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDTO> getNewArrivals(int limit) {
+        // Tạm thời return hardcoded new arrivals
+        // ProductIDs: 6 (Áo Khoác Bomber), 7 (Đầm Maxi), 10 (Áo Len Nữ)
+        List<Integer> newArrivalIds = List.of(6, 7, 10, 8, 9, 1, 2, 3);
+        return newArrivalIds.stream()
+                .limit(limit)
+                .map(id -> {
+                    try {
+                        return getProductById(id);
+                    } catch (RuntimeException e) {
+                        return null;
+                    }
+                })
+                .filter(product -> product != null)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDTO> getHotSales(int limit) {
+        // Tạm thời return hardcoded hot sales (giá tốt)
+        // ProductIDs: 4 (Chân Váy 380K), 8 (Quần Short 320K), 2 (Áo Thun 280K)
+        List<Integer> hotSaleIds = List.of(4, 8, 2, 10, 1, 3, 6, 7);
+        return hotSaleIds.stream()
+                .limit(limit)
+                .map(id -> {
+                    try {
+                        return getProductById(id);
+                    } catch (RuntimeException e) {
+                        return null;
+                    }
+                })
+                .filter(product -> product != null)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ProductDTO getFeaturedProduct() {
+        // Tạm thời return sản phẩm cao cấp nhất: Túi Xách Nữ Da Thật (ProductID=5, 1.2M VND)
+        try {
+            return getProductById(5);
+        } catch (RuntimeException e) {
+            // Fallback to first available product
+            List<ProductDTO> allProducts = getAllProducts();
+            return allProducts.isEmpty() ? null : allProducts.get(0);
+        }
     }
 }
 

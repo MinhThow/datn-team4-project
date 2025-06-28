@@ -9,5 +9,11 @@ public interface ProductService {
     ProductDTO createProduct(ProductDTO productDTO);
     ProductDTO updateProduct(Integer id, ProductDTO productDTO);
     void deleteProduct(Integer id);
+    
+    // Homepage methods
+    List<ProductDTO> getBestSellers(int limit);
+    List<ProductDTO> getNewArrivals(int limit);
+    List<ProductDTO> getHotSales(int limit);
+    ProductDTO getFeaturedProduct();
 }
 
