@@ -823,6 +823,27 @@
         .rating-input label:hover ~ label {
             color: #ffc107;
         }
+        
+        /* Breadcrumb spacing fix */
+        .breadcrumb__links a,
+        .breadcrumb__links span {
+            margin: 0 8px;
+            position: relative;
+        }
+        
+        .breadcrumb__links a:not(:last-child):after {
+            content: ">";
+            margin-left: 8px;
+            color: #999;
+        }
+        
+        .breadcrumb__links a:first-child {
+            margin-left: 0;
+        }
+        
+        .breadcrumb__links span {
+            margin-right: 0;
+        }
     </style>
 </body>
 
