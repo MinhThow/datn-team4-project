@@ -1,7 +1,10 @@
 package com.java6.datn.Controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.java6.datn.DTO.ProductDTO;
+import com.java6.datn.DTO.ReviewDTO;
 import com.java6.datn.Service.ProductService;
+import com.java6.datn.Service.ReviewService;
 
 /**
  * ProductController - REST API Controller cho quản lý sản phẩm
@@ -56,12 +61,20 @@ public class ProductController {
     private final ProductService productService;
 
     /**
-     * Constructor injection cho ProductService
+     * Service xử lý logic liên quan đến đánh giá sản phẩm
+     * Được inject thông qua constructor injection
+     */
+    private final ReviewService reviewService;
+
+    /**
+     * Constructor injection cho ProductService và ReviewService
      * 
      * @param productService Service xử lý logic sản phẩm
+     * @param reviewService Service xử lý logic đánh giá sản phẩm
      */
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ReviewService reviewService) {
         this.productService = productService;
+        this.reviewService = reviewService;
     }
 
     /**
@@ -293,6 +306,190 @@ public class ProductController {
         // Delegate search logic đến service layer
         // Service sẽ handle validation, formatting, và database query
         return productService.searchProducts(query);
+    }
+
+    // === PRODUCT DETAIL OPERATIONS ===
+
+    /**
+     * Lấy thông tin chi tiết sản phẩm cho trang product detail
+     * 
+     * <p>Endpoint này trả về thông tin comprehensive cho trang chi tiết sản phẩm bao gồm:</p>
+     * <ul>
+     *   <li>Thông tin cơ bản của sản phẩm</li>
+     *   <li>Danh sách reviews và ratings</li>
+     *   <li>Thống kê rating (average, total reviews)</li>
+     *   <li>Danh sách sản phẩm liên quan (cùng category)</li>
+     * </ul>
+     * 
+     * <p><strong>Use Cases:</strong></p>
+     * <ul>
+     *   <li>Hiển thị trang shop-details.html</li>
+     *   <li>AJAX calls cho dynamic content loading</li>
+     *   <li>Mobile app product detail screen</li>
+     *   <li>SEO-friendly product information</li>
+     * </ul>
+     * 
+     * <p><strong>Response Structure:</strong></p>
+     * <pre>
+     * {
+     *   "product": ProductDTO,
+     *   "reviews": List&lt;ReviewDTO&gt;,
+     *   "averageRating": Double,
+     *   "totalReviews": Integer,
+     *   "relatedProducts": List&lt;ProductDTO&gt;
+     * }
+     * </pre>
+     * 
+     * @param id ID của sản phẩm cần lấy chi tiết
+     * @return Map&lt;String, Object&gt; chứa tất cả thông tin cần thiết cho product detail page
+     * @throws RuntimeException nếu không tìm thấy sản phẩm với ID đã cho
+     * 
+     * @apiNote GET /api/products/{id}/detail
+     * @apiExample
+     * <pre>
+     * GET /api/products/1/detail
+     * Response: {
+     *   "product": {
+     *     "productID": 1,
+     *     "name": "Áo Sơ Mi Nam",
+     *     "price": 299000,
+     *     "categoryID": 1,
+     *     "image": "img/product/product-1.jpg"
+     *   },
+     *   "reviews": [
+     *     {
+     *       "reviewID": 1,
+     *       "rating": 5,
+     *       "comment": "Sản phẩm tuyệt vời!",
+     *       "userName": "Nguyễn Văn A",
+     *       "reviewDate": "15/01/2025"
+     *     }
+     *   ],
+     *   "averageRating": 4.5,
+     *   "totalReviews": 8,
+     *   "relatedProducts": [...]
+     * }
+     * </pre>
+     * 
+     * @see ProductService#getProductById(Integer)
+     * @see ReviewService#getReviewsByProductId(Integer)
+     * @see ReviewService#getAverageRating(Integer)
+     * @see ReviewService#getTotalReviews(Integer)
+     * @see ProductService#getRelatedProducts(Integer)
+     */
+    @GetMapping("/{id}/detail")
+    public Map<String, Object> getProductDetail(@PathVariable Integer id) {
+        // Step 1: Validate input
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Product ID must be positive integer");
+        }
+
+        // Step 2: Lấy thông tin sản phẩm
+        ProductDTO product = productService.getProductById(id);
+
+        // Step 3: Lấy reviews và rating statistics
+        List<ReviewDTO> reviews = reviewService.getReviewsByProductId(id);
+        Double averageRating = reviewService.getAverageRating(id);
+        Integer totalReviews = reviewService.getTotalReviews(id);
+
+        // Step 4: Lấy related products (cùng category)
+        List<ProductDTO> relatedProducts = productService.getRelatedProducts(id);
+
+        // Step 5: Build response object
+        Map<String, Object> response = new HashMap<>();
+        response.put("product", product);
+        response.put("reviews", reviews);
+        response.put("averageRating", averageRating);
+        response.put("totalReviews", totalReviews);
+        response.put("relatedProducts", relatedProducts);
+
+        return response;
+    }
+
+    /**
+     * Lấy reviews của sản phẩm với pagination
+     * 
+     * <p>Endpoint này hỗ trợ load more reviews hoặc pagination cho trang chi tiết sản phẩm.
+     * Được sử dụng khi:</p>
+     * <ul>
+     *   <li>Sản phẩm có quá nhiều reviews</li>
+     *   <li>Implement "Load More" button</li>
+     *   <li>AJAX pagination</li>
+     * </ul>
+     * 
+     * @param id ID của sản phẩm
+     * @param page Số trang (default = 0)
+     * @param size Số reviews per page (default = 10)
+     * @return List&lt;ReviewDTO&gt; danh sách reviews theo pagination
+     * 
+     * @apiNote GET /api/products/{id}/reviews?page=0&size=10
+     * @apiExample
+     * <pre>
+     * GET /api/products/1/reviews?page=0&size=5
+     * Response: [
+     *   {
+     *     "reviewID": 1,
+     *     "rating": 5,
+     *     "comment": "Tuyệt vời!",
+     *     "userName": "User A",
+     *     "reviewDate": "15/01/2025"
+     *   }
+     * ]
+     * </pre>
+     */
+    @GetMapping("/{id}/reviews")
+    public List<ReviewDTO> getProductReviews(
+            @PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        return reviewService.getReviewsByProductIdWithPagination(id, page, size);
+    }
+
+    /**
+     * Thêm review mới cho sản phẩm
+     * 
+     * <p>Endpoint này cho phép user tạo review mới cho sản phẩm.
+     * Business rules:</p>
+     * <ul>
+     *   <li>User chỉ có thể review 1 lần cho mỗi sản phẩm</li>
+     *   <li>Rating phải từ 1-5 sao</li>
+     *   <li>Comment không được để trống</li>
+     *   <li>User phải đã login</li>
+     * </ul>
+     * 
+     * @param id ID của sản phẩm
+     * @param reviewDTO Thông tin review mới
+     * @return ReviewDTO review đã được tạo
+     * @throws RuntimeException nếu user đã review sản phẩm này rồi
+     * 
+     * @apiNote POST /api/products/{id}/reviews
+     * @apiExample
+     * <pre>
+     * POST /api/products/1/reviews
+     * Request Body: {
+     *   "userID": 1,
+     *   "rating": 5,
+     *   "comment": "Sản phẩm tuyệt vời!"
+     * }
+     * Response: {
+     *   "reviewID": 9,
+     *   "productID": 1,
+     *   "userID": 1,
+     *   "rating": 5,
+     *   "comment": "Sản phẩm tuyệt vời!",
+     *   "userName": "Nguyễn Văn A",
+     *   "reviewDate": "16/01/2025"
+     * }
+     * </pre>
+     */
+    @PostMapping("/{id}/reviews")
+    public ReviewDTO addProductReview(@PathVariable Integer id, @RequestBody ReviewDTO reviewDTO) {
+        // Set product ID từ path parameter
+        reviewDTO.setProductID(id);
+        
+        // Delegate to review service
+        return reviewService.createReview(reviewDTO);
     }
 }
 

@@ -10,6 +10,7 @@ public class CartItemDTO {
     private Integer userID;
     private Integer productID;
     private Integer quantity;
+    private String size; // Added for size selection support
     private LocalDateTime addedAt;
 }
 

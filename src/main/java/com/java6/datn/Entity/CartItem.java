@@ -26,6 +26,9 @@ public class CartItem {
     private Product product;
 
     private Integer quantity = 1;
+    
+    @Column(name = "Size")
+    private String size; // Added for size selection support
 
     private LocalDateTime addedAt = LocalDateTime.now();
 }

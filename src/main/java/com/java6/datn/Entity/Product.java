@@ -25,6 +25,8 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    private BigDecimal oldPrice;
+
     private Integer stock;
 
     private String image;
