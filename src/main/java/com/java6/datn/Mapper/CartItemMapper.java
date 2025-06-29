@@ -11,12 +11,14 @@ public class CartItemMapper {
         dto.setUserID(entity.getUser().getUserID());
         dto.setProductID(entity.getProduct().getProductID());
         dto.setQuantity(entity.getQuantity());
+        dto.setSize(entity.getSize()); // Added size mapping
         dto.setAddedAt(entity.getAddedAt());
         return dto;
     }
 
     public static void updateEntityFromDTO(CartItem entity, CartItemDTO dto) {
         entity.setQuantity(dto.getQuantity());
+        entity.setSize(dto.getSize()); // Added size mapping
     }
 }
 

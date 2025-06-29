@@ -22,6 +22,25 @@
     <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    
+    <style>
+        /* Product name link styling */
+        .product__item__text h6 a {
+            color: #111111;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .product__item__text h6 a:hover {
+            color: #ca1515;
+            text-decoration: none;
+        }
+        
+        .product__item__text h6 a:focus {
+            outline: none;
+            color: #ca1515;
+        }
+    </style>
 </head>
 
 <body>
@@ -247,11 +266,11 @@
                             <ul class="product__hover">
                                 <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                 <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                                <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
+                                <li><a th:href="'/product/' + ${product.productID}"><img src="img/icon/search.png" alt=""></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6 th:text="${product.name}">Product Name</h6>
+                            <h6><a th:href="'/product/' + ${product.productID}" th:text="${product.name}">Product Name</a></h6>
                             <a href="#" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
@@ -273,11 +292,11 @@
                             <ul class="product__hover">
                                 <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                 <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                                <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
+                                <li><a th:href="'/product/' + ${product.productID}"><img src="img/icon/search.png" alt=""></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6 th:text="${product.name}">Product Name</h6>
+                            <h6><a th:href="'/product/' + ${product.productID}" th:text="${product.name}">Product Name</a></h6>
                             <a href="#" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>
@@ -299,11 +318,11 @@
                             <ul class="product__hover">
                                 <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                 <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                                <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
+                                <li><a th:href="'/product/' + ${product.productID}"><img src="img/icon/search.png" alt=""></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6 th:text="${product.name}">Product Name</h6>
+                            <h6><a th:href="'/product/' + ${product.productID}" th:text="${product.name}">Product Name</a></h6>
                             <a href="#" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa fa-star-o"></i>

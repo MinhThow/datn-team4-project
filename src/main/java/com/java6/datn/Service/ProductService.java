@@ -143,5 +143,58 @@ public interface ProductService {
      * @return List&lt;ProductDTO&gt; danh sách sản phẩm khớp với từ khóa
      */
     List<ProductDTO> searchProducts(String query);
+
+    // === PRODUCT DETAIL METHODS ===
+    
+    /**
+     * Lấy danh sách sản phẩm liên quan
+     * 
+     * <p>Trả về danh sách sản phẩm liên quan dựa trên sản phẩm hiện tại.
+     * Logic recommendation:</p>
+     * <ul>
+     *   <li><strong>Primary:</strong> Sản phẩm cùng category</li>
+     *   <li><strong>Secondary:</strong> Sản phẩm cùng price range</li>
+     *   <li><strong>Future:</strong> Machine learning recommendations, user behavior, collaborative filtering</li>
+     * </ul>
+     * 
+     * <p><strong>Business Rules:</strong></p>
+     * <ul>
+     *   <li>Không bao gồm chính sản phẩm đang xem</li>
+     *   <li>Ưu tiên sản phẩm cùng category</li>
+     *   <li>Limit kết quả để tránh overwhelm user</li>
+     *   <li>Sắp xếp theo relevance hoặc popularity</li>
+     * </ul>
+     * 
+     * <p><strong>Use Cases:</strong></p>
+     * <ul>
+     *   <li>Product detail page - "Related Products" section</li>
+     *   <li>Cross-selling opportunities</li>
+     *   <li>User engagement và discovery</li>
+     *   <li>Increase average order value</li>
+     * </ul>
+     * 
+     * @param productId ID của sản phẩm hiện tại
+     * @param limit số lượng sản phẩm liên quan tối đa (default: 4-6 sản phẩm)
+     * @return List&lt;ProductDTO&gt; danh sách sản phẩm liên quan
+     * @throws RuntimeException nếu không tìm thấy sản phẩm gốc
+     * 
+     * @apiNote Được sử dụng bởi ProductController.getProductDetail()
+     * @see #getProductById(Integer)
+     */
+    List<ProductDTO> getRelatedProducts(Integer productId, int limit);
+    
+    /**
+     * Lấy danh sách sản phẩm liên quan với limit mặc định
+     * 
+     * <p>Convenience method với limit mặc định = 4 sản phẩm.
+     * Phù hợp cho hầu hết use cases của product detail page.</p>
+     * 
+     * @param productId ID của sản phẩm hiện tại
+     * @return List&lt;ProductDTO&gt; danh sách tối đa 4 sản phẩm liên quan
+     * @see #getRelatedProducts(Integer, int)
+     */
+    default List<ProductDTO> getRelatedProducts(Integer productId) {
+        return getRelatedProducts(productId, 4);
+    }
 }
 

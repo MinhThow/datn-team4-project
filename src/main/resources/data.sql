@@ -21,17 +21,17 @@ INSERT INTO Users (Name, Email, Password, Phone, Address, Role) VALUES
 ('Hoàng Thị Lan', 'lan@gmail.com', '123456', '0945678901', '654 Đường Nguyễn Trãi, Q5, TP.HCM', 'customer');
 
 -- PRODUCTS - Sản phẩm thời trang (mapped với ảnh có sẵn)
-INSERT INTO Products (Name, Description, Price, Stock, Image, CategoryID, Size) VALUES
-('Áo Sơ Mi Nam Trắng Oxford', 'Áo sơ mi nam chất liệu cotton cao cấp, thiết kế thanh lịch, phù hợp đi làm và dự tiệc', 450000, 25, 'img/product/product-1.jpg', 1, 'M, L, XL'),
-('Áo Thun Nữ Oversize Basic', 'Áo thun nữ form rộng, chất liệu cotton mềm mại, phong cách trẻ trung', 280000, 30, 'img/product/product-2.jpg', 2, 'S, M, L'),
-('Quần Jean Nam Slim Fit', 'Quần jean nam ôm vừa phải, chất liệu denim cao cấp, bền đẹp theo thời gian', 650000, 20, 'img/product/product-3.jpg', 3, '29, 30, 31, 32'),
-('Chân Váy Nữ Xòe Midi', 'Chân váy xòe dài qua gối, chất liệu voan mềm mại, phù hợp đi làm và dạo phố', 380000, 15, 'img/product/product-4.jpg', 4, 'S, M, L'),
-('Túi Xách Nữ Da Thật', 'Túi xách tay nữ da thật cao cấp, thiết kế sang trọng, nhiều ngăn tiện dụng', 1200000, 12, 'img/product/product-5.jpg', 5, 'One Size'),
-('Áo Khoác Bomber Nam', 'Áo khoác bomber nam phong cách streetwear, chất liệu polyester chống gió', 750000, 18, 'img/product/product-6.jpg', 1, 'M, L, XL'),
-('Đầm Maxi Nữ Hoa Nhí', 'Đầm maxi dài tay, họa tiết hoa nhí nữ tính, phù hợp dự tiệc và đi chơi', 590000, 22, 'img/product/product-7.jpg', 2, 'S, M, L, XL'),
-('Quần Short Nam Kaki', 'Quần short nam chất liệu kaki, phong cách casual, thoải mái cho mùa hè', 320000, 35, 'img/product/product-8.jpg', 3, '29, 30, 31, 32'),
-('Giày Sneaker Nữ Trắng', 'Giày sneaker nữ màu trắng basic, đế cao su êm ái, phù hợp mọi outfit', 890000, 28, 'img/product/product-9.jpg', 5, '36, 37, 38, 39'),
-('Áo Len Nữ Cổ Lọ', 'Áo len nữ cổ lọ ấm áp, chất liệu wool mềm mại, thích hợp mùa đông', 480000, 20, 'img/product/product-10.jpg', 2, 'S, M, L');
+INSERT INTO Products (Name, Description, Price, OldPrice, Stock, Image, CategoryID, Size) VALUES
+('Áo Sơ Mi Nam Trắng Oxford', 'Áo sơ mi nam chất liệu cotton cao cấp, thiết kế thanh lịch, phù hợp đi làm và dự tiệc', 450000, 550000, 25, 'img/product/product-1.jpg', 1, 'M, L, XL'),
+('Áo Thun Nữ Oversize Basic', 'Áo thun nữ form rộng, chất liệu cotton mềm mại, phong cách trẻ trung', 280000, 350000, 30, 'img/product/product-2.jpg', 2, 'S, M, L'),
+('Quần Jean Nam Slim Fit', 'Quần jean nam ôm vừa phải, chất liệu denim cao cấp, bền đẹp theo thời gian', 650000, 750000, 20, 'img/product/product-3.jpg', 3, '29, 30, 31, 32'),
+('Chân Váy Nữ Xòe Midi', 'Chân váy xòe dài qua gối, chất liệu voan mềm mại, phù hợp đi làm và dạo phố', 380000, 450000, 15, 'img/product/product-4.jpg', 4, 'S, M, L'),
+('Túi Xách Nữ Da Thật', 'Túi xách tay nữ da thật cao cấp, thiết kế sang trọng, nhiều ngăn tiện dụng', 1200000, 1500000, 12, 'img/product/product-5.jpg', 5, 'One Size'),
+('Áo Khoác Bomber Nam', 'Áo khoác bomber nam phong cách streetwear, chất liệu polyester chống gió', 750000, 890000, 18, 'img/product/product-6.jpg', 1, 'M, L, XL'),
+('Đầm Maxi Nữ Hoa Nhí', 'Đầm maxi dài tay, họa tiết hoa nhí nữ tính, phù hợp dự tiệc và đi chơi', 590000, 690000, 22, 'img/product/product-7.jpg', 2, 'S, M, L, XL'),
+('Quần Short Nam Kaki', 'Quần short nam chất liệu kaki, phong cách casual, thoải mái cho mùa hè', 320000, 380000, 35, 'img/product/product-8.jpg', 3, '29, 30, 31, 32'),
+('Giày Sneaker Nữ Trắng', 'Giày sneaker nữ màu trắng basic, đế cao su êm ái, phù hợp mọi outfit', 890000, 990000, 28, 'img/product/product-9.jpg', 5, '36, 37, 38, 39'),
+('Áo Len Nữ Cổ Lọ', 'Áo len nữ cổ lọ ấm áp, chất liệu wool mềm mại, thích hợp mùa đông', 480000, 580000, 20, 'img/product/product-10.jpg', 2, 'S, M, L');
 
 -- ORDERS
 INSERT INTO Orders (UserID, Total, Status, OrderDate, ShippingAddress, PaymentMethodID) VALUES
