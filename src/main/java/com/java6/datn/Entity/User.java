@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -38,4 +39,7 @@ public class User {
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 }

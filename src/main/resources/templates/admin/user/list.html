@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Người dùng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+
+            <!-- Modal Add/Edit User -->
+            <div class="modal fade" id="userModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="userForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="userModalLabel">Thêm người dùng</h5>
+                                <button class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="userId">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên</label>
+                                    <input type="text" id="userName" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="userEmail" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <input type="text" id="userPhone" class="form-control">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Địa chỉ</label>
+                                    <textarea id="userAddress" class="form-control"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Quyền</label>
+                                    <select id="userRole" class="form-select" required>
+                                        <option value="customer">Khách hàng</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="submit">Lưu</button>
+                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add + Search -->
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <button class="btn btn-success" onclick="openAddUser()">Thêm người dùng</button>
+                <input type="text" id="searchInput" class="form-control w-25" placeholder="Tìm theo tên/email..."
+                       oninput="filterUsers()">
+            </div>
+
+            <!-- Table -->
+            <table class="table table-bordered" id="userTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Quyền</th>
+                    <th>Ngày tạo</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </th:block>
+</th:block>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+    <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">Thành công!</div>
+            <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const api = '/api/users';
+    let allUsers = [];
+
+    function showToast(msg = 'Thành công!') {
+        document.getElementById('toastMessage').textContent = msg;
+        new bootstrap.Toast(document.getElementById('toastSuccess')).show();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUsers();
+
+        document.getElementById('userForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = +document.getElementById('userId').value;
+            const payload = {
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                phone: document.getElementById('userPhone').value,
+                address: document.getElementById('userAddress').value,
+                role: document.getElementById('userRole').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${api}/${id}` : api;
+            if (id) payload.userID = id;
+
+            fetch(url, {
+                method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+            })
+                .then(res => res.json())
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+                    showToast(id ? 'Cập nhật thành công!' : 'Thêm thành công!');
+                    loadUsers();
+                });
+        });
+    });
+
+    function loadUsers() {
+        fetch(api)
+            .then(r => r.json())
+            .then(data => {
+                allUsers = data;
+                renderUsers(data);
+            });
+    }
+
+    function renderUsers(list) {
+        const tbody = document.querySelector('#userTable tbody');
+        tbody.innerHTML = list.length ? list.map((u, i) => `
+      <tr>
+        <td>${i + 1}</td><td>${u.name}</td><td>${u.email}</td>
+        <td>${u.phone || ''}</td><td>${u.role}</td><td>${u.createdAt}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" onclick="openEdit(${u.userID})">Sửa</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.userID})">Xóa</button>
+        </td>
+      </tr>`).join('') :
+            '<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>';
+    }
+
+    function filterUsers() {
+        const kw = document.getElementById('searchInput').value.toLowerCase();
+        renderUsers(allUsers.filter(u =>
+            u.name.toLowerCase().includes(kw) ||
+            u.email.toLowerCase().includes(kw)
+        ));
+    }
+
+    function openAddUser() {
+        document.getElementById('userModalLabel').textContent = 'Thêm người dùng';
+        ['userId', 'userName', 'userEmail', 'userPhone', 'userAddress'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('userRole').value = 'customer';
+        new bootstrap.Modal(document.getElementById('userModal')).show();
+    }
+
+    function openEdit(id) {
+        fetch(`${api}/${id}`)
+            .then(r => r.json())
+            .then(u => {
+                document.getElementById('userModalLabel').textContent = 'Cập nhật người dùng';
+                document.getElementById('userId').value = u.userID;
+                document.getElementById('userName').value = u.name;
+                document.getElementById('userEmail').value = u.email;
+                document.getElementById('userPhone').value = u.phone || '';
+                document.getElementById('userAddress').value = u.address || '';
+                document.getElementById('userRole').value = u.role;
+                new bootstrap.Modal(document.getElementById('userModal')).show();
+            });
+    }
+
+    function deleteUser(id) {
+        if (!confirm('Bạn có chắc chắn muốn xóa?')) return;
+        fetch(`${api}/${id}`, {method: 'DELETE'})
+            .then(() => {
+                showToast('Xóa thành công!');
+                loadUsers();
+            });
+    }
+</script>
+</body>
+</html>

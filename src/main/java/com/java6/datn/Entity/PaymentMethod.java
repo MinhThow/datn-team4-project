@@ -4,6 +4,8 @@ package com.java6.datn.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +22,8 @@ public class PaymentMethod {
 
     @Lob
     private String description;
+
+    @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 }
 

@@ -156,6 +156,7 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
+                            <!--/*@thymesVar id="product" type=""*/-->
                             <img th:src="${product != null ? '/' + product.image : '/img/shop-details/product-big.png'}" 
                                  th:alt="${product != null ? product.name : 'Product Image'}"
                                  class="product__details__pic__item--large">
@@ -186,6 +187,7 @@
                             <span th:if="${product != null && product.oldPrice != null}" class="old-price" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}">$270.00</span>
                             <span th:text="${product != null ? #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VND' : '$270.00'}">$270.00</span>
                         </h3>
+                        <!--/*@thymesVar id="product" type=""*/-->
                         <p th:text="${product != null ? product.description : 'Product description will be displayed here.'}">
                             Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable
                             cuff tabs, adjustable asymmetric hem with elastic side tabs and a front zip fastening

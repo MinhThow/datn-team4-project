@@ -19,4 +19,10 @@ public class ShopController {
         model.addAttribute("products", productService.getAllProducts());
         return "shop"; // trả template shop.html
     }
+
+
+
+
 }
+
+

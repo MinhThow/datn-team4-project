@@ -40,8 +40,7 @@ public class UserServiceImpl implements UserService {
         User entity = new User();
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
-//        entity.setPassword(dto.getPassword()); // TODO: mã hóa mật khẩu
-        entity.setPassword(passwordEncoder.encode(dto.getPassword())); // mã hóa mật khẩu
+        entity.setPassword(passwordEncoder.encode("123"));
         entity.setPhone(dto.getPhone());
         entity.setAddress(dto.getAddress());
         entity.setRole(dto.getRole() != null ? dto.getRole() : "customer");
