@@ -89,29 +89,30 @@
         }
         .product__details__option__size label {
             display: inline-block;
-            padding: 6px 12px;
+            padding: 4px 8px;
             border: 1px solid #333;
             border-radius: 2px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             background: #fff;
             color: #333;
-            margin-right: 6px;
+            margin-right: 4px;
             transition: all 0.2s;
-            min-width: 40px;
+            min-width: 32px;
             text-align: center;
+            line-height: 1.2;
         }
         .product__details__option__size label.active {
-            background: #007bff;
-            color: #fff;
-            border-color: #007bff;
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
         }
-        .product__details__option__size input[type="radio"]:checked + span {
-            background: #007bff;
-            color: #fff;
-            border-color: #007bff;
+        .product__details__option__size label:hover {
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
         }
         .product__details__option__color {
             display: flex;
@@ -471,19 +472,21 @@
                                     <input type="radio" id="sp-2" name="productColor" value="blue">
                                 </label>
                                 <label class="c-3" for="sp-3">
-                                    <input type="radio" id="sp-3" name="productColor" value="red">
+                                    <input type="radio" id="sp-3" name="productColor" value="orange">
                                 </label>
                                 <label class="c-4" for="sp-4">
-                                    <input type="radio" id="sp-4" name="productColor" value="orange">
+                                    <input type="radio" id="sp-4" name="productColor" value="red">
                                 </label>
                             </div>
                         </div>
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <span class="qtybtn dec">-</span>
-                                    <input type="text" value="1" min="1" th:max="${product != null ? product.stock : 99}">
-                                    <span class="qtybtn inc">+</span>
+                                   
+                                    <input type="text" name="quantity" value="1" min="1" th:max="${product != null ? product.stock : 99}">
+                                    
+                                    <span class="qtybtn inc quantity-increment">+</span>
+                                    <span class="qtybtn inc quantity-increment">-</span>
                                 </div>
                             </div>
                             <a href="#" class="add-cart-btn" th:data-product-id="${product != null ? product.productID : 0}">Add to Cart</a>
@@ -1094,27 +1097,12 @@
         }
         
         /* Size and Color selection functionality */
-        .product__details__option__size label {
-            position: relative;
-        }
-        
         .product__details__option__size input[type="radio"] {
             display: none;
         }
         
-        .product__details__option__size input[type="radio"]:checked + span {
-            background-color: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
-        }
-        
         .product__details__option__color input[type="radio"] {
             display: none;
-        }
-        
-        .product__details__option__color input[type="radio"]:checked + label {
-            border-color: #333;
-            transform: scale(1.1);
         }
         
         /* Color dots */
@@ -1140,51 +1128,37 @@
             }
             
             .product__details__option__size label {
-                padding: 6px 12px;
-                font-size: 14px;
+                padding: 3px 6px;
+                font-size: 0.65rem;
+                min-width: 28px;
             }
             
             .product__details__option__color label {
-                width: 25px;
-                height: 25px;
+                width: 18px;
+                height: 18px;
+                margin-right: 6px;
+            }
+            
+            .pro-qty {
+                width: 90px;
+                height: 32px;
+            }
+            
+            .pro-qty .qtybtn {
+                width: 24px;
+                line-height: 32px;
+                font-size: 11px;
+            }
+            
+            .pro-qty input {
+                width: 42px;
+                font-size: 12px;
+                line-height: 32px;
             }
         }
     </style>
     
-    <script>
-        // Size and Color selection functionality
-        $(document).ready(function() {
-            // Size selection
-            $('.product__details__option__size label').click(function() {
-                $('.product__details__option__size label').removeClass('active');
-                $(this).addClass('active');
-                $(this).find('input[type="radio"]').prop('checked', true);
-            });
-            
-            // Color selection
-            $('.product__details__option__color label').click(function() {
-                $('.product__details__option__color label').removeClass('active');
-                $(this).addClass('active');
-                $(this).find('input[type="radio"]').prop('checked', true);
-            });
-            
-            // Quantity controls
-            $('.pro-qty .qtybtn').click(function() {
-                var $input = $(this).siblings('input');
-                var currentVal = parseInt($input.val());
-                
-                if ($(this).hasClass('inc')) {
-                    $input.val(currentVal + 1);
-                } else if ($(this).hasClass('dec') && currentVal > 1) {
-                    $input.val(currentVal - 1);
-                }
-            });
-            
-            // Initialize first size and color as active
-            $('.product__details__option__size label:first').addClass('active');
-            $('.product__details__option__color label:first').addClass('active');
-        });
-    </script>
+
         
         .breadcrumb__links a:not(:last-child):after {
             content: ">";

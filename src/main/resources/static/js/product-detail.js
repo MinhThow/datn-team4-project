@@ -79,14 +79,37 @@ $(document).ready(function() {
      * Setup size selection functionality
      */
     function setupSizeSelection() {
-        $('input[name="size"]').on('change', function() {
+        $('input[name="productSize"]').on('change', function() {
             // Remove error styling from size selection
             $('.size-selection-error').removeClass('size-selection-error');
             
-            // Add visual feedback for selected size
-            $('input[name="size"]').parent().removeClass('selected');
-            $(this).parent().addClass('selected');
+            // Remove active class from all size labels
+            $('.product__details__option__size label').removeClass('active');
+            
+            // Add active class to selected size label
+            $(this).parent().addClass('active');
         });
+        
+        // Handle click on size labels (for better UX)
+        $('.product__details__option__size label').on('click', function() {
+            // Remove active class from all size labels
+            $('.product__details__option__size label').removeClass('active');
+            
+            // Add active class to clicked label
+            $(this).addClass('active');
+            
+            // Check the radio button
+            $(this).find('input[type="radio"]').prop('checked', true);
+            
+            // Remove error styling
+            $('.size-selection-error').removeClass('size-selection-error');
+        });
+        
+        // Initialize first size as active if none is selected
+        if (!$('.product__details__option__size label.active').length) {
+            $('.product__details__option__size label:first').addClass('active');
+            $('.product__details__option__size label:first input[type="radio"]').prop('checked', true);
+        }
     }
     
     /**
@@ -105,7 +128,7 @@ $(document).ready(function() {
             const formData = {
                 productId: $('input[name="productId"]').val(),
                 quantity: $('input[name="quantity"]').val(),
-                size: $('input[name="size"]:checked').val()
+                size: $('input[name="productSize"]:checked').val()
             };
             
             // Show loading state
@@ -136,9 +159,9 @@ $(document).ready(function() {
         let isValid = true;
         
         // Check if size is selected
-        const selectedSize = $('input[name="size"]:checked').val();
+        const selectedSize = $('input[name="productSize"]:checked').val();
         if (!selectedSize) {
-            $('.size-options').addClass('size-selection-error');
+            $('.product__details__option__size').addClass('size-selection-error');
             showNotification('Please select a size', 'error');
             isValid = false;
         }
@@ -342,9 +365,31 @@ $(document).ready(function() {
      * Setup color selection
      */
     function setupColorSelection() {
-        $('.product__details__option__color label').on('click', function() {
-            $(this).addClass('active').siblings().removeClass('active');
+        $('input[name="productColor"]').on('change', function() {
+            // Remove active class from all color labels
+            $('.product__details__option__color label').removeClass('active');
+            
+            // Add active class to selected color label
+            $(this).parent().addClass('active');
         });
+        
+        // Handle click on color labels (for better UX)
+        $('.product__details__option__color label').on('click', function() {
+            // Remove active class from all color labels
+            $('.product__details__option__color label').removeClass('active');
+            
+            // Add active class to clicked label
+            $(this).addClass('active');
+            
+            // Check the radio button
+            $(this).find('input[type="radio"]').prop('checked', true);
+        });
+        
+        // Initialize first color as active if none is selected
+        if (!$('.product__details__option__color label.active').length) {
+            $('.product__details__option__color label:first').addClass('active');
+            $('.product__details__option__color label:first input[type="radio"]').prop('checked', true);
+        }
     }
     
     /**
