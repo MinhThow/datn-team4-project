@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Đơn hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <h3>Quản lý đơn hàng</h3>
+
+            <div class="d-flex justify-content-between my-3">
+                <input type="text" id="searchInput" class="form-control w-25" placeholder="Tìm kiếm..."
+                       oninput="searchOrders()">
+            </div>
+
+            <table class="table table-bordered" id="orderTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Người dùng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Phương thức thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="orderDetailModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chi tiết đơn hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="orderDetailsBody">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</th:block>
+
+<script>
+    const orderApi = "/api/orders";
+    let allOrders = [];
+
+    document.addEventListener("DOMContentLoaded", loadOrders);
+
+    function loadOrders() {
+        fetch(orderApi)
+            .then(res => res.json())
+            .then(data => {
+                allOrders = data;
+                renderOrders(data);
+            });
+    }
+
+    function renderOrders(orders) {
+        const tbody = document.querySelector("#orderTable tbody");
+        tbody.innerHTML = orders.length ? orders.map((o, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${o.name}</td>
+                <td>${new Date(o.orderDate).toLocaleString()}</td>
+                <td>${o.total.toLocaleString()} đ</td>
+                <td>${o.paymentMethodName}</td>
+                <td>
+    <select onchange="updateStatus(${o.orderID}, this.value)">
+        ${[
+            "Cho xac nhan",
+            "Dang xy ly",
+            "Dang giao",
+            "Da giao",
+            "Da huy",
+            "Tra Hang"
+        ].map(stt => `
+            <option value="${stt}" ${stt === o.status ? 'selected' : ''}>
+                ${getStatusLabel(stt)}
+            </option>
+        `).join('')}
+    </select>
+</td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="viewOrderDetails(${o.orderID})">Chi tiết</button>
+                </td>
+            </tr>
+        `).join('') : `<tr><td colspan="6" class="text-center">Không có đơn hàng</td></tr>`;
+    }
+
+    function updateStatus(orderID, status) {
+        const order = allOrders.find(o => o.orderID === orderID);
+        if (!order) return;
+
+        fetch(`${orderApi}/${orderID}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({...order, status})
+        })
+            .then(res => res.json())
+            .then(() => {
+                alert("Cập nhật trạng thái thành công!");
+                loadOrders();
+            });
+    }
+
+    function getStatusLabel(status) {
+        switch (status) {
+            case 'Cho xac nhan':
+                return 'Chờ xác nhận';
+            case 'Dang xy ly':
+                return 'Đang xử lý';
+            case 'Dang giao':
+                return 'Đang giao hàng';
+            case 'Da giao':
+                return 'Đã giao';
+            case 'Da huy':
+                return 'Đã huỷ';
+            case 'Tra Hang':
+                return 'Trả hàng';
+            default:
+                return status;
+        }
+    }
+
+    function viewOrderDetails(orderID) {
+        fetch(`${orderApi}/${orderID}`)
+            .then(res => res.json())
+            .then(order => {
+                const productRows = order.orderItemsDTO?.map((item, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price.toLocaleString()} đ</td>
+                    <td>${(item.price * item.quantity).toLocaleString()} đ</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" class="text-center">Không có sản phẩm</td></tr>';
+
+                const html = `
+                <p><strong>Người dùng:</strong> ${order.name}</p>
+                <p><strong>Ngày đặt:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
+                <p><strong>Địa chỉ:</strong> ${order.shippingAddress}</p>
+                <p><strong>Phương thức thanh toán:</strong> ${order.paymentMethodName}</p>
+                <p><strong>Tổng tiền:</strong> ${order.total.toLocaleString()} đ</p>
+                <p><strong>Trạng thái:</strong> ${getStatusLabel(order.status)}</p>
+                <hr>
+                <h5>Sản phẩm trong đơn hàng:</h5>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productRows}
+                    </tbody>
+                </table>
+            `;
+
+                document.getElementById("orderDetailsBody").innerHTML = html;
+                new bootstrap.Modal(document.getElementById("orderDetailModal")).show();
+            });
+    }
+
+
+    function searchOrders() {
+        const keyword = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = allOrders.filter(o =>
+            o.status.toLowerCase().includes(keyword) ||
+            o.shippingAddress?.toLowerCase().includes(keyword) ||
+            o.userID.toString().includes(keyword)
+        );
+        renderOrders(filtered);
+    }
+</script>
+</body>
+</html>

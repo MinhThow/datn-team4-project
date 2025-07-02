@@ -4,12 +4,15 @@ import com.java6.datn.DTO.UserRegisterDTO;
 import com.java6.datn.Entity.User;
 import com.java6.datn.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Collection;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,6 +67,8 @@ public class AuthController {
         model.addAttribute("user", new UserRegisterDTO());
         return "Login_Register";
     }
+
+
 
 
 }

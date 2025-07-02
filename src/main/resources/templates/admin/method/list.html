@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Phương thức thanh toán</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<th:block th:replace="layout/admin-layout :: layout">
+    <th:block th:fragment="pageContent">
+        <div class="container mt-4">
+            <div class="modal fade" id="paymentMethodModal" tabindex="-1" aria-labelledby="paymentMethodModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="paymentMethodForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="paymentMethodModalLabel">Thêm Phương thức thanh toán</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="paymentMethodId" />
+                                <div class="mb-3">
+                                    <label for="paymentMethodName" class="form-label">Tên Phương thức thanh toán</label>
+                                    <input type="text" class="form-control" id="paymentMethodName" required />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="paymentMethodDescription" class="form-label">Mô tả</label>
+                                    <textarea class="form-control" id="paymentMethodDescription"></textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end my-3">
+                <button class="btn btn-success" onclick="openAddModal()">Thêm Phương thức thanh toán</button>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên Phương thức thanh toán..." oninput="searchCategories()" />
+                </div>
+            </div>
+
+            <table class="table table-bordered" id="paymentMethodTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên Phương thức thanh toán</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </th:block>
+</th:block>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+                Thành công!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    function showToast(message = "Thành công!") {
+        const toastMessage = document.getElementById("toastMessage");
+        toastMessage.textContent = message;
+
+        const toastElement = new bootstrap.Toast(document.getElementById("toastSuccess"));
+        toastElement.show();
+    }
+
+    const apiUrl = "/api/payment-methods";
+
+    document.addEventListener("DOMContentLoaded", loadCategories);
+
+    document.getElementById("paymentMethodForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const id = document.getElementById("paymentMethodId").value;
+        const name = document.getElementById("paymentMethodName").value;
+        const description = document.getElementById("paymentMethodDescription").value;
+
+        const method = id ? "PUT" : "POST";
+        const url = id ? `${apiUrl}/${id}` : apiUrl;
+
+        fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentMethodID: id, name, description })
+        })
+            .then(res => res.json())
+            .then(() => {
+                bootstrap.Modal.getInstance(document.getElementById('paymentMethodModal')).hide();
+                loadCategories();
+                showToast(id ? "Cập nhật Phương thức thanh toán thành công!" : "Thêm Phương thức thanh toán thành công!");
+            });
+    });
+
+    let allCategories = [];
+
+    function loadCategories() {
+        fetch(apiUrl)
+            .then(res => res.json())
+            .then(data => {
+                allCategories = data;
+                renderCategories(data);
+            });
+    }
+
+    function renderCategories(categories) {
+        const tbody = document.querySelector("#paymentMethodTable tbody");
+        tbody.innerHTML = "";
+
+        if (categories.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center">Không có Phương thức thanh toán nào.</td></tr>`;
+            return;
+        }
+
+        categories.forEach((cat, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${cat.name}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="openEditModal(${cat.paymentMethodID})">Sửa</button>
+                <button class="btn btn-danger btn-sm" onclick="deletepaymentMethod(${cat.paymentMethodID})">Xóa</button>
+            </td>
+        `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function searchCategories() {
+        const keyword = document.getElementById("searchInput").value.toLowerCase();
+        const filtered = allCategories.filter(cat => cat.name.toLowerCase().includes(keyword));
+        renderCategories(filtered);
+    }
+
+
+    function openAddModal() {
+        document.getElementById("paymentMethodModalLabel").innerText = "Thêm Phương thức thanh toán";
+        document.getElementById("paymentMethodId").value = "";
+        document.getElementById("paymentMethodName").value = "";
+        document.getElementById("paymentMethodDescription").value = "";
+        new bootstrap.Modal(document.getElementById("paymentMethodModal")).show();
+    }
+
+    function openEditModal(id) {
+        fetch(`${apiUrl}/${id}`)
+            .then(res => res.json())
+            .then(cat => {
+                document.getElementById("paymentMethodModalLabel").innerText = "Cập nhật Phương thức thanh toán";
+                document.getElementById("paymentMethodId").value = cat.paymentMethodID;
+                document.getElementById("paymentMethodName").value = cat.name;
+                document.getElementById("paymentMethodDescription").value = cat.description || "";
+                new bootstrap.Modal(document.getElementById("paymentMethodModal")).show();
+            });
+    }
+
+    function deletepaymentMethod(id) {
+        if (!confirm("Bạn có chắc chắn muốn xóa?")) return;
+
+        fetch(`${apiUrl}/${id}`, { method: "DELETE" })
+            .then(() => {
+                loadCategories();
+                showToast("Xóa Phương thức thanh toán thành công!");
+            });
+    }
+</script>
+
+</html>

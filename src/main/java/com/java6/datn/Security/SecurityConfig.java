@@ -40,8 +40,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/home", true)
-                        .failureUrl("/login-register?error") // Trang khi login thất bại
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable());
