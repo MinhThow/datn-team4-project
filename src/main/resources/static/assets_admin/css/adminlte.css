@@ -12969,9 +12969,9 @@ textarea.form-control-lg {
 }
 
 .app-sidebar {
-  --lte-sidebar-hover-bg: rgba(0, 0, 0, 0.1);
+  --lte-sidebar-hover-bg: rgb(253, 95, 0);
   --lte-sidebar-color: #343a40;
-  --lte-sidebar-hover-color: #212529;
+  --lte-sidebar-hover-color: #ffffff;
   --lte-sidebar-active-color: #000;
   --lte-sidebar-menu-active-bg: rgba(0, 0, 0, 0.1);
   --lte-sidebar-menu-active-color: #000;
@@ -13820,7 +13820,7 @@ body:not(.app-loaded) .app-footer {
 
 [data-bs-theme=dark].app-sidebar,
 [data-bs-theme=dark] .app-sidebar {
-  --lte-sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+  --lte-sidebar-hover-bg: rgb(253, 95, 0);
   --lte-sidebar-color: #c2c7d0;
   --lte-sidebar-hover-color: #fff;
   --lte-sidebar-active-color: #fff;

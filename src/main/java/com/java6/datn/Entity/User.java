@@ -35,7 +35,7 @@ public class User {
     private String address;
 
     @Column(length = 20)
-    private String role; // 'customer' or 'admin'
+    private String role ; // 'customer' or 'admin'
 
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt = LocalDateTime.now();

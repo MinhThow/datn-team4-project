@@ -208,14 +208,16 @@
 <div class="container">
   <div class="forms-container">
     <div class="form-control signup-form">
-      <form action="#">
+      <form th:action="@{/register}" method="post" th:object="${user}">
         <h2>Signup</h2>
-        <input type="text" placeholder="Username" required />
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Password" required />
-        <input type="password" placeholder="Confirm password" required />
-        <button>Signup</button>
+        <input type="text" th:field="*{username}" placeholder="Username" required />
+        <input type="email" th:field="*{email}" placeholder="Email" required />
+        <input type="password" th:field="*{password}" placeholder="Password" required />
+        <input type="password" th:field="*{confirmPassword}" placeholder="Confirm password" required />
+        <button type="submit">Signup</button>
       </form>
+
+
       <span>or signup with</span>
       <div class="socials">
         <i class="fab fa-facebook-f"></i>
@@ -227,12 +229,17 @@
     <div class="form-control signin-form">
       <form action="/login" method="post">
         <h2>Signin</h2>
+
+        <div th:if="${param.success}" style="color: green; font-weight: bold; margin-bottom: 10px;">
+          🎉 Đăng ký thành công! Vui lòng đăng nhập.
+        </div>
+
         <div th:if="${param.error}" style="color:red;">Sai thông tin đăng nhập!</div>
+
         <input type="text" name="username" placeholder="Email" required />
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Signin</button>
       </form>
-
       <span>or signin with</span>
       <div class="socials">
         <i class="fab fa-facebook-f"></i>

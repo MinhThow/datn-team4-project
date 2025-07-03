@@ -2,19 +2,102 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Dashboard - Biểu đồ</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/dist/ag-grid-community.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@29.3.3/dist/styles/ag-theme-alpine.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .chart-box {
+            flex: 1 1 40%;
+            max-width: 600px;
+        }
+    </style>
 </head>
 <body>
 
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
-        <div class="container mt-4">
-            <h2 class="mb-4">Thống Kê Hệ Thống</h2>
+        <h2>BIỂU ĐỒ THỐNG KÊ HỆ THỐNG</h2>
+
+        <div class="chart-container">
+            <div class="chart-box">
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="pieChart"></canvas>
+            </div>
         </div>
+
     </th:block>
 </th:block>
+
+<script>
+    fetch("/admin/api/dashboard/stats")
+        .then(response => response.json())
+        .then(data => {
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+            drawBarChart(labels, values);
+            drawPieChart(labels, values);
+        });
+
+    function drawBarChart(labels, values) {
+        new Chart(document.getElementById("barChart"), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Số lượng",
+                    data: values,
+                    backgroundColor: ["#4e73df", "#1cc88a", "#36b9cc"],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function drawPieChart(labels, values) {
+        new Chart(document.getElementById("pieChart"), {
+            type: "pie",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ["#4e73df", "#1cc88a", "#36b9cc"]
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    }
+</script>
 </body>
 </html>
