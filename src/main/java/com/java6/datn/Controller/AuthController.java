@@ -38,9 +38,10 @@ public class AuthController {
         }
 
         // Kiểm tra mật khẩu và xác nhận
-        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-            return "redirect:/register?error=confirm";
+        if (dto.getPassword() == null || !dto.getPassword().equals(dto.getConfirmPassword())) {
+            return "redirect:/register";
         }
+
 
         // Tạo user mới
         User user = new User();
@@ -52,7 +53,7 @@ public class AuthController {
         userRepository.save(user);
 
         // Chuyển về login sau khi đăng ký thành công
-        return "/Login_Register" ;
+        return "redirect:/login?success=true";
     }
 
     @GetMapping("/login-register")

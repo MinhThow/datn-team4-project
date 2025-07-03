@@ -1,9 +1,11 @@
 package com.java6.datn.Controller;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -124,6 +126,15 @@ public class HomeController {
      */
     @GetMapping({"/", "/home"})
     public String getHomePage(Model model) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+
+        if (authorities.stream().anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()))) {
+            model.addAttribute("email", username);
+            return "redirect:/admin/dashboard";
+        }
+
         try {
             // === STEP 1: AUTHENTICATION CHECK ===
             // Lấy thông tin user hiện tại (null nếu chưa đăng nhập)
