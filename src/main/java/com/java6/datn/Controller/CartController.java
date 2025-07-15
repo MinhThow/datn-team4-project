@@ -48,7 +48,7 @@ public class CartController {
 
         // ⚠ Tạm gán userId để test
         if (userId == null) {
-            userId = 2; // UserID bạn đã dùng trong DB
+            userId = 2;
             session.setAttribute("userId", userId); // tạm gán session
         }
 
