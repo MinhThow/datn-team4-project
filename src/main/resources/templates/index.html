@@ -89,22 +89,13 @@
                 <div class="row">
                     <div class="col-lg-6 col-md-7">
                         <div class="header__top__left">
-                            <p>Free shipping, 30-day return or refund guarantee.</p>
+                            <p>GIAO HÀNG MIỄN PHÍ, HOÀN TIỀN HOẶC HOẶC ĐỔI TRẢ TRONG 15 NGÀY</p>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-5">
                         <div class="header__top__right">
                             <div class="header__top__links">
-                                <a href="#">Sign in</a>
-                                <a href="#">FAQs</a>
-                            </div>
-                            <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
-                                <ul>
-                                    <li>USD</li>
-                                    <li>EUR</li>
-                                    <li>USD</li>
-                                </ul>
+                                <a href="/login">lOGIN</a>
                             </div>
                         </div>
                     </div>
@@ -143,8 +134,8 @@
                             <input type="text" id="header-search-input" placeholder="Tìm kiếm sản phẩm...">
                             <div id="header-search-results" class="header-search-results"></div>
                         </div>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="#"><img src="img/icon/cart.png" alt=""> <span th:text="${cartItemCount}">0</span></a>
+                        <a href="/cart" style="color: black;">Cart</a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span th:text="${cartItemCount}">0</span></a>
                         <div class="price" th:text="'$' + ${cartTotalPrice}">$0.00</div>
                     </div>
                 </div>

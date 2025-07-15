@@ -20,6 +20,12 @@ public class ShopController {
         return "shop"; // trả template shop.html
     }
 
+    @GetMapping("/cart")
+    public String shopDetailPage(Model model) {
+        model.addAttribute("products", productService.getAllProducts());
+        return "shopping-cart"; //
+    }
+
 
 
 

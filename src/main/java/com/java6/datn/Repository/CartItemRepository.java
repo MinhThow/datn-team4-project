@@ -2,12 +2,12 @@ package com.java6.datn.Repository;
 
 import com.java6.datn.Entity.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public interface CartItemRepository extends JpaRepository<CartItem,Integer> {
-    List<CartItem> findByUserUserID(Integer userID);
+public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
+    List<CartItem> findByUserID(Integer userId);
+    Optional<CartItem> findByUserIDAndProductIDAndProductSizeID(Integer userId, Integer productId, Integer productSizeId);
 }
 
