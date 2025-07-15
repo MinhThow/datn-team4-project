@@ -56,11 +56,7 @@ public class AuthController {
         return "redirect:/login?success=true";
     }
 
-    @GetMapping("/login-register")
-    public String loginRegisterPage(Model model) {
-        model.addAttribute("user", new UserRegisterDTO());
-        return "Login_Register";
-    }
+
 
 
     @GetMapping("/login")

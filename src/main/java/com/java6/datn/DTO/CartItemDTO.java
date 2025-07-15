@@ -1,16 +1,18 @@
 package com.java6.datn.DTO;
 
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Data
 public class CartItemDTO {
     private Integer cartItemID;
-    private Integer userID;
-    private Integer productID;
+    private Integer productID;         // 👈 thêm
+    private Integer productSizeID;     // 👈 thêm
+    private String productName;
+    private String size;
+    private String imageUrl;
+    private BigDecimal price;
     private Integer quantity;
-    private String size; // Added for size selection support
-    private LocalDateTime addedAt;
+    private BigDecimal total;
 }
 
