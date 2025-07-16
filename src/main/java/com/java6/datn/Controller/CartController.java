@@ -7,7 +7,10 @@ import com.java6.datn.Repository.CartItemRepository;
 import com.java6.datn.Repository.ProductRepository;
 import com.java6.datn.Service.CartItemService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.java6.datn.Security.CustomUserDetails;
 
 
 import com.java6.datn.Entity.CartItem;
@@ -33,24 +36,27 @@ public class CartController {
     @Autowired
     private ProductRepository productRepository;
 
+
     @GetMapping
-//    public ResponseEntity<?> getCart(HttpSession session) {
-//        Integer userId = (Integer) session.getAttribute("userId");
-//        if (userId == null)
-//            return ResponseEntity.status(401).body("Chưa đăng nhập");
-//
-//        List<CartItemDTO> cart = cartItemService.getCartDTOByUser(userId);
-//        return ResponseEntity.ok(cart);
-//    }
+    public ResponseEntity<?> getCart() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+    Integer userId = userDetails.getUserId();
+        List<CartItemDTO> cart = cartItemService.getCartDTOByUser(userId);
+        return ResponseEntity.ok(cart);
+    }
+
+    private Integer getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+        return userDetails.getUserId();
+    }
 
     public ResponseEntity<?> getCart(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
 
-        // ⚠ Tạm gán userId để test
-        if (userId == null) {
-            userId = 2;
-            session.setAttribute("userId", userId); // tạm gán session
-        }
+        Integer userId = getCurrentUserId(); // laays id user
+
+        if (userId == null) return ResponseEntity.status(401).body("Người dùng chưa đăng nhập");
 
         List<CartItemDTO> cart = cartItemService.getCartDTOByUser(userId);
         return ResponseEntity.ok(cart);
@@ -61,7 +67,9 @@ public class CartController {
                                        @RequestParam Integer productId,
                                        @RequestParam Integer productSizeId,
                                        @RequestParam Integer quantity) {
-        Integer userId = (Integer) session.getAttribute("userId");
+//        Integer userId = (Integer) session.getAttribute("userId");
+        Integer userId = getCurrentUserId();
+
         if (userId == null)
             return ResponseEntity.status(401).body("Chưa đăng nhập");
 

@@ -26,6 +26,13 @@ public class ShopController {
         return "shopping-cart"; //
     }
 
+    @GetMapping("/checkout")
+    public String chitiet(Model model) {
+        model.addAttribute("products", productService.getAllProducts());
+        return "checkout"; //
+    }
+
+
 
 
 

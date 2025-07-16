@@ -63,6 +63,7 @@ public class HomeController {
         }
     }
 
+    // lấy id hiện tại
     private Integer getCurrentUserID() {
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
