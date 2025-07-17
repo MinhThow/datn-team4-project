@@ -308,7 +308,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            fetch("/api/user/info")
+            fetch("/api/users/info")
                 .then(res => res.json())
                 .then(user => {
                     document.getElementById("fullname").value = user.fullname || "";
