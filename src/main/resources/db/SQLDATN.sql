@@ -125,9 +125,6 @@ VALUES
 (N'Balo laptop chống sốc', N'Chứa được laptop 15.6 inch, chống nước.', 459000, 3), -- Balo
 (N'Nước hoa', N'Lưu hương , quyến rũ', 299000, 4);         -- Phụ kiện
 
-
-INSERT INTO ProductSizes (ProductID, Size, Stock)
-VALUES
 (1, 'S', 10),
 (1, 'M', 12),
 (1, 'L', 15),
@@ -177,8 +174,8 @@ VALUES
 (4, 'img/product/product-4.jpg', 0),
 (4, 'img/product/product-4.jpg', 0);
 
-
-INSERT INTO PaymentMethods (Name, Description)
+-- Áo sơ mi caro (ProductID = 5)
+INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
 VALUES
 (N'Thanh toán khi nhận hàng', N'Thanh toán trực tiếp khi giao hàng'),
 (N'Chuyển khoản ngân hàng', N'Qua tài khoản ngân hàng'),

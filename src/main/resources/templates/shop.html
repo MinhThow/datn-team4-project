@@ -337,9 +337,10 @@
 
 
                     <div class="row">
-                        <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products}">
+                        <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products.content}">
+                            <!-- sản phẩm -->
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" th:data-setbg="@{${product.image}}">
+                                <div class="product__item__pic set-bg" th:data-setbg="@{${product.imageUrl}}" style="position:relative;">
                                     <a th:href="@{'/product/' + ${product.productID}}">
                                         <ul class="product__hover">
                                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
@@ -347,18 +348,19 @@
                                             <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
                                         </ul>
                                     </a>
+                                    <a href="#" class="add-cart" style="position:absolute;top:10px;left:10px;z-index:2;display:inline-block;padding:6px 14px;border:2px solid #e53637;border-radius:6px;text-align:center;font-weight:600;color:#e53637;background:#fff;transition:background 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-size:14px;">+ Add To Cart</a>
                                 </div>
+                                <h6><a th:href="@{'/product/' + ${product.productID}}" th:text="${product.name}" style="color:#e53637;font-weight:bold;text-decoration:none;">Product Name</a></h6>
+
                                 <div class="product__item__text">
-                                    <h6><a th:href="@{'/product/' + ${product.productID}}" th:text="${product.name}">Product Name</a></h6>
-                                    <a href="#" class="add-cart">+ Add To Cart</a>
-                                    <div class="rating">
+                                    <div class="rating" style="margin-top:8px;">
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
                                         <i class="fa fa-star-o"></i>
                                     </div>
-                                    <h5 th:text="${'$' + product.price}">$0.00</h5>
+                                    <h5 th:text="${'$' + product.price}">$</h5>
                                     <div class="product__color__select">
                                         <label for="pc-1">
                                             <input type="radio" id="pc-1">
@@ -370,22 +372,22 @@
                                             <input type="radio" id="pc-3">
                                         </label>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="product__pagination">
-                                <a class="active" href="#">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <span>...</span>
-                                <a href="#">21</a>
+
                             </div>
                         </div>
                     </div>
                 </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product__pagination">
+                                <a th:each="i : ${#numbers.sequence(1, products.totalPages)}"
+                                   th:href="@{'/shop?page=' + ${i - 1}}"
+                                   th:text="${i}"
+                                   th:classappend="${i - 1 == products.number} ? 'active'">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
     </section>
@@ -480,6 +482,17 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Đảm bảo hình ảnh hiển thị cho class set-bg
+        $(document).ready(function() {
+            $(".set-bg").each(function() {
+                var bg = $(this).attr("data-setbg");
+                if(bg) {
+                    $(this).css("background-image", "url('" + bg + "')");
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

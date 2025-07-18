@@ -15,6 +15,16 @@ public class ProductMapper {
         dto.setStock(product.getStock());
         dto.setImage(product.getImage());
         dto.setSize(product.getSize());
+        // Lấy ảnh chính từ danh sách productImages
+        if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
+            dto.setImageUrl(
+                product.getProductImages().stream()
+                    .filter(img -> img.isMain())
+                    .map(img -> img.getImageUrl())
+                    .findFirst()
+                    .orElse(null)
+            );
+        }
         if (product.getCategory() != null) {
             dto.setCategoryID(product.getCategory().getCategoryID());
             dto.setCategoryName(product.getCategory().getName());
@@ -36,4 +46,3 @@ public class ProductMapper {
         return product;
     }
 }
-

@@ -3,6 +3,9 @@ package com.java6.datn.Service.Impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.java6.datn.DTO.ProductDTO;
@@ -212,5 +215,11 @@ public class ProductServiceImpl implements ProductService {
                 .map(ProductMapper::toDTO)
                 .collect(Collectors.toList());
     }
-}
 
+    @Override
+    public Page<ProductDTO> getProductsPage(int page, int size) {
+        Page<Product> productPage = productRepository.findAll(PageRequest.of(page, size));
+        List<ProductDTO> dtos = productPage.getContent().stream().map(ProductMapper::toDTO).collect(Collectors.toList());
+        return new PageImpl<>(dtos, PageRequest.of(page, size), productPage.getTotalElements());
+    }
+}

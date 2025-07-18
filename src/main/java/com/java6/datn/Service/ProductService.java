@@ -2,6 +2,8 @@ package com.java6.datn.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.java6.datn.DTO.ProductDTO;
 
 /**
@@ -196,5 +198,12 @@ public interface ProductService {
     default List<ProductDTO> getRelatedProducts(Integer productId) {
         return getRelatedProducts(productId, 4);
     }
-}
 
+    /**
+     * Phân trang sản phẩm
+     * @param page trang hiện tại
+     * @param size số sản phẩm/trang
+     * @return Page<ProductDTO>
+     */
+    Page<ProductDTO> getProductsPage(int page, int size);
+}

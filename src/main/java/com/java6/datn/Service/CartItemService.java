@@ -33,7 +33,7 @@ public class CartItemService {
         for (CartItem item : items) {
             Product product = productRepo.findById(item.getProductID()).orElse(null);
             ProductSize size = productSizeRepo.findById(item.getProductSizeID()).orElse(null);
-            ProductImage img = productImageRepo.findFirstByProductIDAndIsMain(item.getProductID(), true);
+            ProductImage img = (product != null) ? productImageRepo.findFirstByProductAndIsMain(product, true) : null;
 
             if (product == null || size == null) continue;
 
