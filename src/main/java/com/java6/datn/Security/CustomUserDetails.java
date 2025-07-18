@@ -14,21 +14,29 @@ public class CustomUserDetails implements UserDetails {
     private final String email;
     private final String password;
     private final String role;
+    private final String fullname;
+    private final String phone;
+    private final String address;
 
     public CustomUserDetails(User user) {
         this.userId = user.getUserID();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getRole();
+        this.fullname = user.getName();   // 👈 thêm dòng này
+        this.phone = user.getPhone();         // 👈 thêm dòng này
+        this.address = user.getAddress();     // 👈 thêm dòng này
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
+    public Integer getUserId() { return userId; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
+
+    public String getFullname() { return fullname; }   // 👈 thêm getter
+
+    public String getPhone() { return phone; }         // 👈 thêm getter
+
+    public String getAddress() { return address; }     // 👈 thêm getter
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -36,14 +44,10 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
 
     @Override
-    public String getUsername() {
-        return email;
-    }
+    public String getUsername() { return email; }
 
     @Override
     public boolean isAccountNonExpired() { return true; }
@@ -57,4 +61,3 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 }
-
