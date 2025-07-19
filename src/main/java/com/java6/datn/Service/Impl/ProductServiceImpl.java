@@ -15,23 +15,29 @@ import com.java6.datn.Mapper.ProductMapper;
 import com.java6.datn.Repository.CategoryRepository;
 import com.java6.datn.Repository.ProductRepository;
 import com.java6.datn.Service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository,
+                              CategoryRepository categoryRepository,
+                              ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.productMapper = productMapper;
     }
 
     @Override
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll()
                 .stream()
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -39,12 +45,12 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO getProductById(Integer id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        return ProductMapper.toDTO(product);
+        return productMapper.toDTO(product);
     }
 
     @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
-        Product product = ProductMapper.toEntity(productDTO);
+        Product product = productMapper.toEntity(productDTO);
         if (productDTO.getOldPrice() == null) {
             product.setOldPrice(productDTO.getPrice()); // Set old price same as current price for new products
         }
@@ -53,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             product.setCategory(category);
         }
-        return ProductMapper.toDTO(productRepository.save(product));
+        return productMapper.toDTO(productRepository.save(product));
     }
 
     @Override
@@ -66,15 +72,13 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setOldPrice(existingProduct.getPrice());
         existingProduct.setPrice(productDTO.getPrice());
         existingProduct.setStock(productDTO.getStock());
-        existingProduct.setImage(productDTO.getImage());
-        existingProduct.setSize(productDTO.getSize());
         if (productDTO.getCategoryID() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryID())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             existingProduct.setCategory(category);
         }
 
-        return ProductMapper.toDTO(productRepository.save(existingProduct));
+        return productMapper.toDTO(productRepository.save(existingProduct));
     }
 
     @Override
@@ -89,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .sorted((p1, p2) -> p2.getPrice().compareTo(p1.getPrice()))
                 .limit(limit)
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -99,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .sorted((p1, p2) -> p2.getProductID().compareTo(p1.getProductID()))
                 .limit(limit)
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +113,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .filter(p -> p.getOldPrice() != null && p.getOldPrice().compareTo(p.getPrice()) > 0)
                 .limit(limit)
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -118,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
         // Lấy sản phẩm có giá cao nhất làm featured product
         return productRepository.findAll().stream()
                 .max((p1, p2) -> p1.getPrice().compareTo(p2.getPrice()))
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .orElse(null);
     }
 
@@ -148,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
                     
                     return nameMatch || descriptionMatch || categoryMatch;
                 })
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -212,14 +216,14 @@ public class ProductServiceImpl implements ProductService {
 
         // Step 5: Convert to DTOs và return
         return relatedProducts.stream()
-                .map(ProductMapper::toDTO)
+                .map(productMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Page<ProductDTO> getProductsPage(int page, int size) {
         Page<Product> productPage = productRepository.findAll(PageRequest.of(page, size));
-        List<ProductDTO> dtos = productPage.getContent().stream().map(ProductMapper::toDTO).collect(Collectors.toList());
+        List<ProductDTO> dtos = productPage.getContent().stream().map(productMapper::toDTO).collect(Collectors.toList());
         return new PageImpl<>(dtos, PageRequest.of(page, size), productPage.getTotalElements());
     }
 }

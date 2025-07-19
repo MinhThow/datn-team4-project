@@ -2,7 +2,9 @@ package com.java6.datn.Controller;
 
 import com.java6.datn.DTO.ProductDTO;
 import com.java6.datn.DTO.ReviewDTO;
+import com.java6.datn.Service.ProductImageService;
 import com.java6.datn.Service.ProductService;
+import com.java6.datn.Service.ProductSizeService;
 import com.java6.datn.Service.ReviewService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import com.java6.datn.DTO.ProductImageDTO;
+import com.java6.datn.DTO.ProductSizeDTO;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,11 @@ public class WebController {
 
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private ProductImageService productImageService;
+    @Autowired
+    private ProductSizeService productSizeService;
+
 
     static String getString(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -51,13 +59,18 @@ public class WebController {
             Double averageRating = reviewService.getAverageRating(id);
             Integer totalReviews = reviewService.getTotalReviews(id);
             List<ProductDTO> relatedProducts = productService.getRelatedProducts(id);
-            log.info("relatedProducts:: {}", relatedProducts);
+            List<ProductImageDTO> productImages =productImageService.getProductImages(id);
+            log.info("productImages :: {}",productImages);
+            List<ProductSizeDTO> productSizes = productSizeService.getProductSizes(id);
+            log.info("productSizes:: {}", productSizes);
 
             model.addAttribute("product", product);
             model.addAttribute("reviews", reviews);
             model.addAttribute("averageRating", averageRating);
             model.addAttribute("totalReviews", totalReviews);
             model.addAttribute("relatedProducts", relatedProducts);
+            model.addAttribute("productImages", productImages);
+            model.addAttribute("productSizes", productSizes);
 
             model.addAttribute("fullStars", (int) Math.floor(averageRating));
             model.addAttribute("hasHalfStar", (averageRating % 1) >= 0.5);

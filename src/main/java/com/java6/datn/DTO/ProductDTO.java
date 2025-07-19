@@ -19,4 +19,5 @@ public class ProductDTO {
     private Integer categoryID;
     private String categoryName;
     private String imageUrl;
+    private java.util.List<ProductImageDTO> productImages;
 }

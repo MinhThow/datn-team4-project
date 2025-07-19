@@ -407,17 +407,35 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
-                            <!--/*@thymesVar id="product" type=""*/-->
-                            <img th:src="${product != null ? '/' + product.image : '/img/shop-details/product-big.png'}" 
-                                 th:alt="${product != null ? product.name : 'Product Image'}"
+                            <!-- Main product image -->
+                            <img th:if="${product != null and product.imageUrl != null}"
+                                 th:src="${'/' + product.imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="product__details__pic__item--large">
+                            <img th:unless="${product != null and product.imageUrl != null}"
+                                 th:if="${productImages != null and !productImages.isEmpty()}"
+                                 th:src="${'/' + productImages[0].imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="product__details__pic__item--large">
+                            <img th:unless="${product != null and product.imageUrl != null or (productImages != null and !productImages.isEmpty())}"
+                                 src="/img/shop-details/product-big.png"
+                                 alt="Default Product Image"
                                  class="product__details__pic__item--large">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
-                            <img th:data-imgbigurl="${product != null ? '/' + product.image : '/img/shop-details/product-big.png'}"
-                                 th:src="${product != null ? '/' + product.image : '/img/shop-details/thumb-1.png'}" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-2.png" src="/img/shop-details/thumb-2.png" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-3.png" src="/img/shop-details/thumb-3.png" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-4.png" src="/img/shop-details/thumb-4.png" alt="">
+                            <!-- Dynamic product images -->
+                            <th:block th:if="${productImages != null and !productImages.isEmpty()}">
+                                <img th:each="image : ${productImages}"
+                                     th:data-imgbigurl="${'/' + image.imageUrl}"
+                                     th:src="${'/' + image.imageUrl}" alt="">
+                            </th:block>
+                            <!-- Fallback static images if no dynamic images -->
+                            <th:block th:unless="${productImages != null and !productImages.isEmpty()}">
+                                <img data-imgbigurl="/img/shop-details/product-big.png" src="/img/shop-details/thumb-1.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-2.png" src="/img/shop-details/thumb-2.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-3.png" src="/img/shop-details/thumb-3.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-4.png" src="/img/shop-details/thumb-4.png" alt="">
+                            </th:block>
                         </div>
                     </div>
                 </div>
@@ -447,23 +465,35 @@
                         <div class="product__details__option">
                             <div class="product__details__option__size">
                                 <span>Size:</span>
-                                <!-- Always show standard sizes: XXL, XL, L, S -->
-                                <label for="size-xxl">
-                                    <input type="radio" id="size-xxl" name="productSize" value="XXL">
-                                    <span>XXL</span>
-                                </label>
-                                <label for="size-xl">
-                                    <input type="radio" id="size-xl" name="productSize" value="XL">
-                                    <span>XL</span>
-                                </label>
-                                <label for="size-l" class="active">
-                                    <input type="radio" id="size-l" name="productSize" value="L" checked>
-                                    <span>L</span>
-                                </label>
-                                <label for="size-s">
-                                    <input type="radio" id="size-s" name="productSize" value="S">
-                                    <span>S</span>
-                                </label>
+                                <th:block th:if="${productSizes != null and !productSizes.isEmpty()}">
+                                    <label th:each="size : ${productSizes}"
+                                           th:for="${'size-' + size.size.toLowerCase()}"
+                                           th:classappend="${size.size == 'L' ? 'active' : ''}">
+                                        <input type="radio" th:id="${'size-' + size.size.toLowerCase()}"
+                                               name="productSize" th:value="${size.size}"
+                                               th:checked="${size.size == 'L'}">
+                                        <span th:text="${size.size}"></span>
+                                    </label>
+                                </th:block>
+                                <!-- Fallback static sizes if no dynamic sizes -->
+                                <th:block th:unless="${productSizes != null and !productSizes.isEmpty()}">
+                                    <label for="size-xxl">
+                                        <input type="radio" id="size-xxl" name="productSize" value="XXL">
+                                        <span>XXL</span>
+                                    </label>
+                                    <label for="size-xl">
+                                        <input type="radio" id="size-xl" name="productSize" value="XL">
+                                        <span>XL</span>
+                                    </label>
+                                    <label for="size-l" class="active">
+                                        <input type="radio" id="size-l" name="productSize" value="L" checked>
+                                        <span>L</span>
+                                    </label>
+                                    <label for="size-s">
+                                        <input type="radio" id="size-s" name="productSize" value="S">
+                                        <span>S</span>
+                                    </label>
+                                </th:block>
                             </div>
                             <div class="product__details__option__color">
                                 <span>Color:</span>
@@ -571,7 +601,7 @@
                                             <div class="rating-overview">
                                                 <div class="rating" style="margin-bottom: 10px;">
                                                     <th:block th:each="i : ${#numbers.sequence(1, fullStars)}">
-                                                        <i class="fa fa-star"></i>
+                                                         <i class="fa fa-star"></i>
                                                     </th:block>
                                                     <i th:if="${hasHalfStar}" class="fa fa-star-half-o"></i>
                                                     <th:block th:each="i : ${#numbers.sequence(1, emptyStars)}">
@@ -686,13 +716,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- Shop Details Section End -->
-
-    <!-- Related Section Begin -->
-    <section class="related spad">
-        <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <h3 class="related-title">Related Products</h3>
@@ -702,7 +725,7 @@
                 <!-- Dynamic Related Products -->
                 <div th:if="${relatedProducts != null and !relatedProducts.isEmpty()}" th:each="relatedProduct : ${relatedProducts}" class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" th:data-setbg="${'/' + relatedProduct.image}">
+                        <div class="product__item__pic set-bg" th:data-setbg="${relatedProduct.imageUrl != null ? '/' + relatedProduct.imageUrl : (relatedProduct.productImages != null and !relatedProduct.productImages.isEmpty() ? '/' + relatedProduct.productImages[0].imageUrl : '/img/product/product-1.jpg')}">
                             <!-- Add labels based on product characteristics -->
                             <span class="label" th:if="${relatedProduct.stock > 50}">New</span>
                             <span class="label sale" th:if="${relatedProduct.price < 300000}">Sale</span>
@@ -837,24 +860,6 @@
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star-o"></i>
-                                </div>
-                                <h5>$43.48</h5>
-                                <div class="product__color__select">
-                                    <label for="pc-7">
-                                        <input type="radio" id="pc-7">
-                                    </label>
-                                    <label class="active black" for="pc-8">
-                                        <input type="radio" id="pc-8">
-                                    </label>
-                                    <label class="grey" for="pc-9">
-                                        <input type="radio" id="pc-9">
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                        <div class="product__item">
                             <div class="product__item__pic set-bg" data-setbg="/img/product/product-4.jpg">
                                 <ul class="product__hover">
                                     <li><a href="#"><img src="/img/icon/heart.png" alt=""></a></li>

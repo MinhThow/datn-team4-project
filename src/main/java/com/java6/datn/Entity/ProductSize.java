@@ -12,7 +12,9 @@ public class ProductSize {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productSizeID;
 
-    private Integer productID;
+    @ManyToOne
+    @JoinColumn(name = "productID")
+    private Product product;
     private String size;
     private Integer stock;
 }

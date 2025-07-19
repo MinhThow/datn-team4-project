@@ -2,10 +2,16 @@ package com.java6.datn.Mapper;
 
 import com.java6.datn.DTO.ProductDTO;
 import com.java6.datn.Entity.Product;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductMapper {
 
-    public static ProductDTO toDTO(Product product) {
+
+    public ProductDTO toDTO(Product product) {
+        if (product == null) {
+            return null;
+        }
         ProductDTO dto = new ProductDTO();
         dto.setProductID(product.getProductID());
         dto.setName(product.getName());
@@ -13,18 +19,6 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setOldPrice(product.getOldPrice());
         dto.setStock(product.getStock());
-        dto.setImage(product.getImage());
-        dto.setSize(product.getSize());
-        // Lấy ảnh chính từ danh sách productImages
-        if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
-            dto.setImageUrl(
-                product.getProductImages().stream()
-                    .filter(img -> img.isMain())
-                    .map(img -> img.getImageUrl())
-                    .findFirst()
-                    .orElse(null)
-            );
-        }
         if (product.getCategory() != null) {
             dto.setCategoryID(product.getCategory().getCategoryID());
             dto.setCategoryName(product.getCategory().getName());
@@ -32,7 +26,10 @@ public class ProductMapper {
         return dto;
     }
 
-    public static Product toEntity(ProductDTO dto) {
+    public Product toEntity(ProductDTO dto) {
+        if (dto == null) {
+            return null;
+        }
         Product product = new Product();
         product.setProductID(dto.getProductID());
         product.setName(dto.getName());
@@ -40,9 +37,8 @@ public class ProductMapper {
         product.setPrice(dto.getPrice());
         product.setOldPrice(dto.getOldPrice());
         product.setStock(dto.getStock());
-        product.setImage(dto.getImage());
-        product.setSize(dto.getSize());
-        // Category sẽ set bên ngoài Service vì cần truy vấn CategoryRepository
+        // Category will be set outside Service as it needs CategoryRepository
+        // productImages and productSizes are not mapped from DTO to Entity here
         return product;
     }
 }
