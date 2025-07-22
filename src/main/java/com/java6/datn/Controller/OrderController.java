@@ -1,50 +1,34 @@
-package com.java6.datn.Controller;
+package com.java6.datn.controller;
 
-import com.java6.datn.DTO.OrderDTO;
+import com.java6.datn.DTO.OrderRequestDTO;
+import com.java6.datn.DTO.OrderResponseDTO;
 import com.java6.datn.Service.OrderService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = "*")
 public class OrderController {
 
     private final OrderService orderService;
 
+    @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
-    @GetMapping
-    public List<OrderDTO> getAll() {
-        return orderService.getAllOrders();
-    }
-
-    @GetMapping("/user/{userID}")
-    public List<OrderDTO> getByUser(@PathVariable Integer userID) {
-        return orderService.getOrdersByUser(userID);
-    }
-
-    @GetMapping("/{id}")
-    public OrderDTO getById(@PathVariable Integer id) {
-        return orderService.getOrderById(id);
-    }
-
     @PostMapping
-    public OrderDTO create(@RequestBody OrderDTO orderDTO) {
-        return orderService.createOrder(orderDTO);
-    }
-
-    @PutMapping("/{id}")
-    public OrderDTO update(@PathVariable Integer id, @RequestBody OrderDTO orderDTO) {
-        return orderService.updateOrder(id, orderDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
-        orderService.deleteOrder(id);
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+        try {
+            OrderResponseDTO createdOrder = orderService.createOrder(orderRequestDTO);
+            return ResponseEntity.ok(createdOrder);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }
 

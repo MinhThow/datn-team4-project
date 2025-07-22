@@ -1,16 +1,17 @@
 package com.java6.datn.Service.Impl;
 
-import com.java6.datn.DTO.OrderDTO;
-import com.java6.datn.Entity.Order;
-import com.java6.datn.Entity.PaymentMethod;
-import com.java6.datn.Entity.User;
-import com.java6.datn.Mapper.OrderMapper;
-import com.java6.datn.Repository.OrderRepository;
-import com.java6.datn.Repository.PaymentMethodRepository;
-import com.java6.datn.Repository.UserRepository;
+import com.java6.datn.DTO.OrderItemDTO;
+import com.java6.datn.DTO.OrderRequestDTO;
+import com.java6.datn.DTO.OrderResponseDTO;
+import com.java6.datn.Entity.*;
+import com.java6.datn.Repository.*;
 import com.java6.datn.Service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,68 +19,109 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final ProductSizeRepository productSizeRepository;
     private final PaymentMethodRepository paymentMethodRepository;
 
+    @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
+                            OrderItemRepository orderItemRepository,
                             UserRepository userRepository,
+                            ProductRepository productRepository,
+                            ProductSizeRepository productSizeRepository,
                             PaymentMethodRepository paymentMethodRepository) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
+        this.productSizeRepository = productSizeRepository;
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
     @Override
-    public List<OrderDTO> getAllOrders() {
-        return orderRepository.findAll().stream().map(OrderMapper::toDTO).collect(Collectors.toList());
-    }
+    @Transactional // Đảm bảo toàn bộ phương thức được thực thi như một giao dịch duy nhất
+    public OrderResponseDTO createOrder(OrderRequestDTO requestDTO) {
+        // 1. Tìm User và PaymentMethod từ ID
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với ID: " + requestDTO.getUserId()));
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(requestDTO.getPaymentMethodId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phương thức thanh toán với ID: " + requestDTO.getPaymentMethodId()));
 
-    @Override
-    public List<OrderDTO> getOrdersByUser(Integer userID) {
-        return orderRepository.findByUserUserID(userID).stream().map(OrderMapper::toDTO).collect(Collectors.toList());
-    }
+        // 2. Tính toán lại tổng tiền ở backend để đảm bảo an toàn
+        BigDecimal total = requestDTO.getOrderItems().stream()
+                .map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    @Override
-    public OrderDTO getOrderById(Integer id) {
-        return OrderMapper.toDTO(orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found")));
-    }
+        // 3. Tạo đối tượng Order và lưu để lấy OrderID
+        Order order = Order.builder()
+                .user(user)
+                .recipientName(requestDTO.getRecipientName())
+                .phone(requestDTO.getPhone())
+                .shippingAddress(requestDTO.getShippingAddress())
+                .note(requestDTO.getNote())
+                .total(total)
+                .paymentMethod(paymentMethod)
+                .paymentMethodName(paymentMethod.getName())
+                // status và orderDate sẽ được tự động thiết lập bởi @PrePersist trong Entity
+                .build();
 
-    @Override
-    public OrderDTO createOrder(OrderDTO orderDTO) {
-        User user = userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new RuntimeException("User not found"));
-        PaymentMethod paymentMethod = null;
-        if (orderDTO.getPaymentMethodID() != null) {
-            paymentMethod = paymentMethodRepository.findById(orderDTO.getPaymentMethodID()).orElseThrow(() -> new RuntimeException("Payment method not found"));
+        Order savedOrder = orderRepository.save(order);
+
+        // 4. Tạo danh sách các OrderItem từ DTO
+        List<OrderItem> orderItems = new ArrayList<>();
+        for (OrderItemDTO itemDTO : requestDTO.getOrderItems()) {
+            Product product = productRepository.findById(itemDTO.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + itemDTO.getProductId()));
+            ProductSize productSize = productSizeRepository.findById(itemDTO.getProductSizeId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy size sản phẩm với ID: " + itemDTO.getProductSizeId()));
+
+            // TODO: Thêm logic kiểm tra và trừ số lượng tồn kho (Stock) của ProductSize tại đây
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(savedOrder) // Quan trọng: Gán order vừa được lưu
+                    .product(product)
+                    .productSize(productSize)
+                    .productName(itemDTO.getProductName()) // Lưu lại tên sản phẩm tại thời điểm mua
+                    .size(itemDTO.getSize())               // Lưu lại size tại thời điểm mua
+                    .quantity(itemDTO.getQuantity())
+                    .price(itemDTO.getPrice())             // Lưu lại giá tại thời điểm mua
+                    .build();
+            orderItems.add(orderItem);
         }
-        Order order = new Order();
-        order.setUser(user);
-        order.setTotal(orderDTO.getTotal());
-        order.setStatus(orderDTO.getStatus());
-        order.setShippingAddress(orderDTO.getShippingAddress());
-        order.setPaymentMethod(paymentMethod);
-        return OrderMapper.toDTO(orderRepository.save(order));
+
+        // 5. Lưu tất cả OrderItem vào database
+        orderItemRepository.saveAll(orderItems);
+        savedOrder.setOrderItems(orderItems); // Cập nhật lại list item cho đối tượng order
+
+        // 6. Chuyển đổi sang DTO để trả về cho client
+        return mapToOrderResponseDTO(savedOrder);
     }
 
-    @Override
-    public OrderDTO updateOrder(Integer id, OrderDTO orderDTO) {
-        Order existing = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
-        if (orderDTO.getUserID() != null) {
-            existing.setUser(userRepository.findById(orderDTO.getUserID()).orElseThrow(() -> new RuntimeException("User not found")));
-        }
-        existing.setTotal(orderDTO.getTotal());
-        existing.setStatus(orderDTO.getStatus());
-        existing.setShippingAddress(orderDTO.getShippingAddress());
-        if (orderDTO.getPaymentMethodID() != null) {
-            existing.setPaymentMethod(
-                    paymentMethodRepository.findById(orderDTO.getPaymentMethodID()).orElseThrow(() -> new RuntimeException("Payment method not found"))
-            );
-        }
-        return OrderMapper.toDTO(orderRepository.save(existing));
-    }
+    private OrderResponseDTO mapToOrderResponseDTO(Order order) {
+        List<OrderItemDTO> orderItemDTOs = order.getOrderItems().stream()
+                .map(item -> OrderItemDTO.builder()
+                        .productId(item.getProduct().getProductID())
+                        .productSizeId(item.getProductSize().getProductSizeID())
+                        .productName(item.getProductName())
+                        .size(item.getSize())
+                        .quantity(item.getQuantity())
+                        .price(item.getPrice())
+                        .build())
+                .collect(Collectors.toList());
 
-    @Override
-    public void deleteOrder(Integer id) {
-        orderRepository.deleteById(id);
+        return OrderResponseDTO.builder()
+                .orderId(order.getOrderId())
+                .recipientName(order.getRecipientName())
+                .phone(order.getPhone())
+                .shippingAddress(order.getShippingAddress())
+                .note(order.getNote())
+                .total(order.getTotal())
+                .status(order.getStatus())
+                .orderDate(order.getOrderDate())
+                .paymentMethodName(order.getPaymentMethodName())
+                .orderItems(orderItemDTOs)
+                .build();
     }
 }
-
