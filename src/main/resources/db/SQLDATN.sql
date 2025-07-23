@@ -4,7 +4,7 @@ GO
 USE DATN3;
 GO
 
-
+select * from Users
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
@@ -139,11 +139,14 @@ VALUES
 (N'Balo laptop chống sốc', N'Chứa được laptop 15.6 inch, chống nước.', 459000, 3), -- Balo
 (N'Nước hoa', N'Lưu hương , quyến rũ', 299000, 4);         -- Phụ kiện
 
-(1, 'S', 10),
-(1, 'M', 12),
-(1, 'L', 15),
-(1, 'XL', 10),
-(1, 'XXL', 8);
+
+INSERT INTO ProductSizes (ProductID, Size, Stock)
+VALUES
+(1, 'S', 99),
+(1, 'M', 99),
+(1, 'L', 99),
+(1, 'XL', 99),
+(1, 'XXL', 99);
 
 
 INSERT INTO ProductSizes (ProductID, Size, Stock)
@@ -183,10 +186,9 @@ VALUES
 -- Kính mát thời trang (ProductID = 4)
 INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
 VALUES
-(4, 'img/product/product-4.jpg', 1),
-(4, 'img/product/product-4.jpg', 0),
-(4, 'img/product/product-4.jpg', 0),
-(4, 'img/product/product-4.jpg', 0);
+select * from ProductImages
+
+(4, 'img/product/polo.jpg', 0);
 
 -- Áo sơ mi caro (ProductID = 5)
 INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
@@ -212,3 +214,13 @@ insert into Users(UserID,Name,Email,Password,Role)
 values
 ('admin','admin@mail.com',$2a$10$J0AT51XX/N00bUNw3K6BqekEWxn8xWCy5SlEaZI3bkfk4WGz7WZg,'admin');
 
+
+
+-- Tắt tất cả khóa ngoại
+EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
+
+-- Xoá dữ liệu
+EXEC sp_msforeachtable "DELETE FROM ?"
+
+-- Bật lại tất cả khóa ngoại
+EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL"
