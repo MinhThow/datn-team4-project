@@ -39,7 +39,7 @@ public class HomeController {
             log.debug("Current user ID: {}", currentUserID);
 
             List<ProductDTO> bestSellers = productService.getBestSellers(8);
-            log.info("Loaded {} best sellers", bestSellers.size());
+            log.info("Loadedsss {} best sellers", bestSellers);
             List<ProductDTO> newArrivals = productService.getNewArrivals(8);
             log.info("Loaded {} new arrivals", newArrivals.size());
             List<ProductDTO> hotSales = productService.getHotSales(8);

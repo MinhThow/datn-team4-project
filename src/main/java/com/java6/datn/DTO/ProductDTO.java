@@ -3,10 +3,12 @@ package com.java6.datn.DTO;
 import java.math.BigDecimal;
 
 import lombok.Data;
+import lombok.ToString;
 
 
 // trao đổi data giữa client và server
 @Data
+@ToString
 public class ProductDTO {
     private Integer productID;
     private String name;

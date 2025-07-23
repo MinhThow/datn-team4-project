@@ -2,8 +2,10 @@ package com.java6.datn.Mapper;
 
 import com.java6.datn.DTO.ProductDTO;
 import com.java6.datn.Entity.Product;
+import com.java6.datn.Entity.ProductImage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
+@Slf4j
 @Component
 public class ProductMapper {
 
@@ -23,6 +25,15 @@ public class ProductMapper {
             dto.setCategoryID(product.getCategory().getCategoryID());
             dto.setCategoryName(product.getCategory().getName());
         }
+        if (product.getProductImages() != null) {
+
+            ProductImage img = product.getProductImages().getFirst();
+            log.info("imgsssss :: {}",img.getImageUrl());
+            dto.setImageUrl(img.getImageUrl());
+        }else {
+            dto.setImage("img/product/product-1.jpg");
+        }
+
         return dto;
     }
 

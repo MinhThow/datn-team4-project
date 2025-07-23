@@ -3,6 +3,7 @@ package com.java6.datn.Service.Impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,7 @@ import com.java6.datn.Repository.CategoryRepository;
 import com.java6.datn.Repository.ProductRepository;
 import com.java6.datn.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-
+@Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -93,7 +94,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .sorted((p1, p2) -> p2.getPrice().compareTo(p1.getPrice()))
                 .limit(limit)
-                .map(productMapper::toDTO)
+                .map(x ->{
+                    log.info("product ::{}",x);
+                    return productMapper.toDTO(x);
+        })
                 .collect(Collectors.toList());
     }
 
