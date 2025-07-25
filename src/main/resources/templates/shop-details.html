@@ -33,6 +33,17 @@
             text-align: left;
             padding: 0 20px;
         }
+
+        .product__details__pic__item--large {
+            max-height: 400px; /* hoặc 350px tuỳ thiết kế */
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+
         .product__details__text h4 {
             font-size: 2rem;
             font-weight: 700;
@@ -87,6 +98,10 @@
             font-size: 1rem;
             color: #333;
         }
+
+
+
+
         .product__details__option__size label {
             display: inline-block;
             padding: 4px 8px;
@@ -453,9 +468,11 @@
                             <span th:text="' - ' + ${totalReviews} + ' Reviews'"> - 5 Reviews</span>
                         </div>
                         <h3>
-                            <span class="current-price" th:text="${product != null ? '$' + #numbers.formatDecimal(product.price, 2, 'POINT', 2, 'POINT') : '$270.00'}">$270.00</span>
-                            <span th:if="${product != null && product.oldPrice != null}" class="old-price" th:text="${'$' + #numbers.formatDecimal(product.oldPrice, 2, 'POINT', 2, 'POINT')}">$70.00</span>
+                            <span class="current-price" th:text="${product != null ? #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '270.000 VNĐ'}">270.000 VNĐ</span>
+                            <span th:if="${product != null && product.oldPrice != null}" class="old-price"
+                                  th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">300.000 VNĐ</span>
                         </h3>
+
                         <!--/*@thymesVar id="product" type=""*/-->
                         <p th:text="${product != null ? product.description : 'Product description will be displayed here.'}">
                             Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable
@@ -466,14 +483,14 @@
                             <div class="product__details__option__size">
                                 <span>Size:</span>
                                 <th:block th:if="${productSizes != null and !productSizes.isEmpty()}">
-                                    <label th:each="size : ${productSizes}"
-                                           th:for="${'size-' + size.size.toLowerCase()}"
-                                           th:classappend="${size.size == 'L' ? 'active' : ''}">
-                                        <input type="radio" th:id="${'size-' + size.size.toLowerCase()}"
-                                               name="productSize" th:value="${size.size}"
-                                               th:checked="${size.size == 'L'}">
+                                    <label th:each="size : ${productSizes}">
+                                        <input type="radio"
+                                               name="productSize"
+                                               th:value="${size.size}"
+                                               th:attr="data-product-size-id=${size.productSizeID}">
                                         <span th:text="${size.size}"></span>
                                     </label>
+
                                 </th:block>
                                 <!-- Fallback static sizes if no dynamic sizes -->
                                 <th:block th:unless="${productSizes != null and !productSizes.isEmpty()}">
@@ -495,47 +512,23 @@
                                     </label>
                                 </th:block>
                             </div>
-                            <div class="product__details__option__color">
-                                <span>Color:</span>
-                                <label class="c-1 active" for="sp-1">
-                                    <input type="radio" id="sp-1" name="productColor" value="black" checked>
-                                </label>
-                                <label class="c-2" for="sp-2">
-                                    <input type="radio" id="sp-2" name="productColor" value="blue">
-                                </label>
-                                <label class="c-3" for="sp-3">
-                                    <input type="radio" id="sp-3" name="productColor" value="orange">
-                                </label>
-                                <label class="c-4" for="sp-4">
-                                    <input type="radio" id="sp-4" name="productColor" value="red">
-                                </label>
                             </div>
                         </div>
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                   
                                     <input type="text" name="quantity" value="1" min="1" th:max="${product != null ? product.stock : 99}">
-                                    
                                     <span class="qtybtn inc quantity-increment">+</span>
                                     <span class="qtybtn inc quantity-increment">-</span>
                                 </div>
                             </div>
                             <a href="#" class="add-cart-btn" th:data-product-id="${product != null ? product.productID : 0}">Add to Cart</a>
                         </div>
-                        <div class="product__details__btns__option">
-                            <a href="#" th:onclick="'addToWishlist(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-heart"></i> add to wishlist</a>
-                            <a href="#" th:onclick="'addToCompare(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-exchange"></i> Add To Compare</a>
-                        </div>
-                        <div class="product__details__last__option">
-                            <h5><span>Guaranteed Safe Checkout</span></h5>
-                            <img src="/img/shop-details/details-payment.png" alt="">
-                            <ul>
-                                <li><span>SKU:</span> <span th:text="${product != null ? product.productID : 'N/A'}">3812912</span></li>
-                                <li><span>Categories:</span> <span th:text="${product != null and product.categoryID != null ? 'Category ' + product.categoryID : 'Clothes'}">Clothes</span></li>
-                                <li><span>Tag:</span> <span>Clothes, Skin, Body</span></li>
-                            </ul>
-                        </div>
+<!--                        <div class="product__details__btns__option">-->
+<!--                            <a href="#" th:onclick="'addToWishlist(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-heart"></i> add to wishlist</a>-->
+<!--                            <a href="#" th:onclick="'addToCompare(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-exchange"></i> Add To Compare</a>-->
+<!--                        </div>-->
+
                     </div>
                 </div>
             </div>
@@ -543,19 +536,13 @@
                 <div class="col-lg-12">
                     <div class="product__details__tab">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-5"
-                                role="tab">Description</a>
-                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">
                                     Customer Reviews(<span th:text="${totalReviews}">5</span>)
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Additional
-                                information</a>
-                            </li>
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="tabs-5" role="tabpanel">
@@ -647,7 +634,7 @@
                                             <form id="reviewForm" style="margin-top: 15px;">
                                                 <input type="hidden" id="productId" th:value="${product != null ? product.productID : 0}">
                                                 <input type="hidden" id="userId" value="1">
-                                                
+
                                                 <div class="form-group" style="margin-bottom: 15px;">
                                                     <label>Rating:</label>
                                                     <div class="rating-input" style="margin-top: 5px;">
@@ -663,12 +650,12 @@
                                                         <label for="star1">1 star</label>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="form-group" style="margin-bottom: 15px;">
                                                     <label for="reviewComment">Your Review:</label>
                                                     <textarea id="reviewComment" name="comment" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 3px;" placeholder="Share your experience with this product..."></textarea>
                                                 </div>
-                                                
+
                                                 <button type="button" onclick="submitReview()" class="primary-btn">Submit Review</button>
                                             </form>
                                         </div>
@@ -729,7 +716,7 @@
                             <!-- Add labels based on product characteristics -->
                             <span class="label" th:if="${relatedProduct.stock > 50}">New</span>
                             <span class="label sale" th:if="${relatedProduct.price < 300000}">Sale</span>
-                            
+
                             <ul class="product__hover">
                                 <li><a href="#" th:onclick="'addToWishlist(' + ${relatedProduct.productID} + ')'"><img src="/img/icon/heart.png" alt=""></a></li>
                                 <li><a href="#" th:onclick="'addToCompare(' + ${relatedProduct.productID} + ')'"><img src="/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
@@ -741,7 +728,7 @@
                                 <a th:href="'/product/' + ${relatedProduct.productID}" th:text="${relatedProduct.name}">Product Name</a>
                             </h6>
                             <a href="#" class="add-cart" th:onclick="'addToCart(' + ${relatedProduct.productID} + ')'">+ Add To Cart</a>
-                            
+
                             <!-- Rating placeholder (can be enhanced with actual ratings later) -->
                             <div class="rating">
                                 <i class="fa fa-star"></i>
@@ -750,10 +737,10 @@
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star-o"></i>
                             </div>
-                            
+
                             <!-- Dynamic Price -->
                             <h5 th:text="${#numbers.formatDecimal(relatedProduct.price, 0, 'COMMA', 0, 'POINT') + ' VND'}">$67.24</h5>
-                            
+
                             <!-- Color options (static for now) -->
                             <div class="product__color__select">
                                 <label th:for="'rp-' + ${relatedProduct.productID} + '-1'">
@@ -769,7 +756,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Static Related Products (fallback when no dynamic products) -->
                 <div th:if="${relatedProducts == null or relatedProducts.isEmpty()}">
                     <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
@@ -1066,6 +1053,62 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addToCartBtn = document.querySelector('.add-cart-btn');
+
+            addToCartBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const productId = this.getAttribute('data-product-id');
+                const selectedSizeInput = document.querySelector('input[name="productSize"]:checked');
+                const quantityInput = document.querySelector('input[name="quantity"]');
+                const userId = localStorage.getItem('userId') || 1; // bạn có thể thay đổi nếu lấy từ session
+
+                if (!selectedSizeInput) {
+                    alert("Vui lòng chọn size sản phẩm!");
+                    return;
+                }
+
+                const sizeValue = selectedSizeInput.value;
+                const productSizeId = selectedSizeInput.getAttribute('data-product-size-id');
+                const quantity = parseInt(quantityInput.value) || 1;
+
+                if (!productSizeId) {
+                    alert("Không tìm thấy productSizeId cho size đã chọn!");
+                    return;
+                }
+
+                // Gửi request với x-www-form-urlencoded
+                const params = new URLSearchParams();
+                params.append("productId", productId);
+                params.append("productSizeId", productSizeId);
+                params.append("quantity", quantity);
+
+                fetch("/api/cart/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params.toString()
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Lỗi khi thêm vào giỏ hàng");
+                        return response.text(); // hoặc .json() nếu backend trả về JSON
+                    })
+                    .then(data => {
+                        alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("❌ Thêm vào giỏ hàng thất bại.");
+                    });
+            });
+        });
+    </script>
+
+
 
     <!-- Additional CSS for styling -->
     <style>

@@ -4,7 +4,7 @@ GO
 USE DATN3;
 GO
 
-
+select * from Users
 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1),
@@ -60,14 +60,24 @@ CREATE TABLE PaymentMethods (
 );
 
 
+
+ALTER TABLE Orders
+DROP COLUMN RecipientName;
+
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
     UserID INT,
-    Total DECIMAL(10,2),
-    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy', 'Trả hàng')),
-    OrderDate DATETIME DEFAULT GETDATE(),
-    ShippingAddress NVARCHAR(MAX),
-    PaymentMethodID INT,
+    RecipientName NVARCHAR(100),     -- Tên người nhận
+    Phone NVARCHAR(20),              -- Số điện thoại
+    ShippingAddress NVARCHAR(MAX),   -- Địa chỉ giao hàng
+    Note NVARCHAR(MAX),              -- Ghi chú
+    Total DECIMAL(10,2),             -- Tổng tiền
+    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (
+        Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy', 'Trả hàng')
+    ),
+    OrderDate DATETIME DEFAULT GETDATE(),         -- Ngày đặt
+    PaymentMethodID INT,                          -- Khoá ngoại đến phương thức
+    PaymentMethodName NVARCHAR(100),              -- Lưu tên phương thức tại thời điểm tạo đơn (optional)
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
 );
@@ -78,12 +88,16 @@ CREATE TABLE OrderItems (
     OrderID INT,
     ProductID INT,
     ProductSizeID INT,
+    -- Trường mô tả snapshot
+    ProductName NVARCHAR(150),        -- Lưu tên sản phẩm tại thời điểm mua
+    Size NVARCHAR(50),                -- Lưu size tại thời điểm mua
     Quantity INT,
-    Price DECIMAL(10,2),
+    Price DECIMAL(10,2),              -- Giá tại thời điểm mua
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (ProductSizeID) REFERENCES ProductSizes(ProductSizeID)
 );
+
 
 
 CREATE TABLE CartItems (
@@ -125,11 +139,14 @@ VALUES
 (N'Balo laptop chống sốc', N'Chứa được laptop 15.6 inch, chống nước.', 459000, 3), -- Balo
 (N'Nước hoa', N'Lưu hương , quyến rũ', 299000, 4);         -- Phụ kiện
 
-(1, 'S', 10),
-(1, 'M', 12),
-(1, 'L', 15),
-(1, 'XL', 10),
-(1, 'XXL', 8);
+
+INSERT INTO ProductSizes (ProductID, Size, Stock)
+VALUES
+(1, 'S', 99),
+(1, 'M', 99),
+(1, 'L', 99),
+(1, 'XL', 99),
+(1, 'XXL', 99);
 
 
 INSERT INTO ProductSizes (ProductID, Size, Stock)
@@ -169,10 +186,9 @@ VALUES
 -- Kính mát thời trang (ProductID = 4)
 INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
 VALUES
-(4, 'img/product/product-4.jpg', 1),
-(4, 'img/product/product-4.jpg', 0),
-(4, 'img/product/product-4.jpg', 0),
-(4, 'img/product/product-4.jpg', 0);
+select * from ProductImages
+
+(4, 'img/product/polo.jpg', 0);
 
 -- Áo sơ mi caro (ProductID = 5)
 INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
@@ -182,8 +198,29 @@ VALUES
 (N'Momo', N'Thanh toán ví Momo');
 
 select * from CartItems
+select * from Users
+
+
+UPDATE Users
+SET Role = 'admin'
+WHERE UserID = 1;
 
 
 select * from ProductImages
 select * from Products
 select * from ProductSizes
+
+insert into Users(UserID,Name,Email,Password,Role)
+values
+('admin','admin@mail.com',$2a$10$J0AT51XX/N00bUNw3K6BqekEWxn8xWCy5SlEaZI3bkfk4WGz7WZg,'admin');
+
+
+
+-- Tắt tất cả khóa ngoại
+EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
+
+-- Xoá dữ liệu
+EXEC sp_msforeachtable "DELETE FROM ?"
+
+-- Bật lại tất cả khóa ngoại
+EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL"

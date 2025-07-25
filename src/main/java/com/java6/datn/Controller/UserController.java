@@ -54,13 +54,12 @@ public class UserController {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
         }
-
         Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("userID", userDetails.getUserId());
         userInfo.put("fullname", userDetails.getFullname());
         userInfo.put("email", userDetails.getEmail());
         userInfo.put("phone", userDetails.getPhone());
         userInfo.put("address", userDetails.getAddress());
-
         return ResponseEntity.ok(userInfo);
     }
     }
