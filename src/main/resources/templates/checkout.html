@@ -306,28 +306,32 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
 
+    <!-- Cuối file, đoạn <script> -->
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Biến toàn cục để lưu thông tin cần thiết
             let currentUser = null;
             let cartItems = [];
 
-            // 1. Lấy thông tin người dùng (giả sử API trả về user có 'userID')
-            fetch("/api/users/info") // API này cần trả về đầy đủ thông tin user, bao gồm cả ID
+            // 1. Lấy thông tin người dùng
+            fetch("/api/users/info")
                 .then(res => res.json())
                 .then(user => {
-                    currentUser = user; // Lưu thông tin người dùng
-                    document.getElementById("fullname").value = user.name || ""; // Sửa 'fullname' thành 'name' để khớp với User Entity
+                    console.log("✅ USER từ API:", user);
+                    currentUser = user;
+                    document.getElementById("fullname").value = user.name || "";
                     document.getElementById("email").value = user.email || "";
                     document.getElementById("phone").value = user.phone || "";
                     document.getElementById("address").value = user.address || "";
                 });
 
             // 2. Lấy thông tin giỏ hàng
-            fetch("/api/cart") // API này cần trả về list sản phẩm có cấu trúc giống OrderItemDTO
+            fetch("/api/cart")
                 .then(res => res.json())
                 .then(cart => {
-                    cartItems = cart; // Lưu thông tin giỏ hàng
+                    console.log("✅ CART từ API:", cart);    // ✅ THÊM DÒNG NÀY Ở ĐÂY
+                    console.log("➡️ Cart Items:", cartItems);
+                    cartItems = cart;
                     let html = "";
                     let total = 0;
 
@@ -345,32 +349,28 @@ ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
                     document.getElementById("checkout-total").innerText = total.toLocaleString("vi-VN") + "đ";
                 });
 
-            // 3. Xử lý sự kiện submit form
+            // 3. Xử lý đặt hàng
             document.getElementById("checkout-form").addEventListener("submit", e => {
                 e.preventDefault();
 
-                // --- BỔ SUNG LOGIC LẤY DỮ LIỆU ---
                 if (!currentUser || !currentUser.userID) {
-                    alert("Không thể xác định người dùng. Vui lòng đăng nhập lại.");
+                    alert("Không thể xác định người dùng.");
                     return;
                 }
 
-                // Lấy giá trị payment method đã chọn
                 const paymentValue = document.querySelector('input[name="paymentMethod"]:checked').value;
-                // Ánh xạ giá trị sang ID (Giả sử COD=1, BANK=2 trong DB của bạn)
                 const paymentMethodId = paymentValue === 'COD' ? 1 : 2;
 
-                // Xây dựng body cho request khớp với OrderRequestDTO
                 const body = {
-                    userId: currentUser.userID, // <-- THIẾU
-                    recipientName: document.getElementById("fullname").value, // <-- THIẾU
+                    userId: currentUser.userID,
+                    recipientName: document.getElementById("fullname").value,
                     phone: document.getElementById("phone").value,
-                    shippingAddress: document.getElementById("address").value, // Sửa 'address' thành 'shippingAddress'
+                    shippingAddress: document.getElementById("address").value,
                     note: document.getElementById("note").value,
-                    paymentMethodId: paymentMethodId, // <-- THIẾU
-                    orderItems: cartItems.map(item => ({ // <-- THIẾU
-                        productId: item.productId,
-                        productSizeId: item.productSizeId,
+                    paymentMethodId: paymentMethodId,
+                    orderItems: cartItems.map(item => ({
+                        productID: item.productID,
+                        productSizeID: item.productSizeID,
                         productName: item.productName,
                         size: item.size,
                         quantity: item.quantity,
@@ -378,25 +378,32 @@ ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
                     }))
                 };
 
-                // --- CẬP NHẬT FETCH API ---
-                fetch("/api/orders", { // Sửa endpoint từ "/api/orders/checkout" thành "/api/orders"
+                console.log("🚀 BODY gửi lên:", body);
+
+                fetch("/api/orders", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(body)
-                }).then(res => {
-                    if (res.ok) {
-                        alert("Đặt hàng thành công!");
-                        // TODO: Xóa giỏ hàng ở đây
-                        window.location.href = "/orders-history.html"; // Chuyển hướng đến trang lịch sử đơn hàng
-                    } else {
-                        res.json().then(error => {
-                            alert("Đặt hàng thất bại: " + (error.message || "Vui lòng thử lại."));
-                        });
-                    }
-                }).catch(err => {
-                    console.error("Lỗi khi đặt hàng:", err);
-                    alert("Đã có lỗi xảy ra. Vui lòng thử lại.");
-                });
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            alert("✅ Đặt hàng thành công!");
+                            fetch(`/api/cart/clear?userId=${currentUser.userID}`, {
+                                method: "DELETE"
+                            }).then(() => {
+                                window.location.href = "/cart";
+                            });
+                        } else {
+                            res.json().then(error => {
+                                console.error("❌ Lỗi từ backend:", error);
+                                alert("Đặt hàng thất bại: " + (error.message || "Vui lòng thử lại."));
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error("💥 Lỗi kết nối:", err);
+                        alert("Đã có lỗi kết nối đến máy chủ.");
+                    });
             });
         });
     </script>

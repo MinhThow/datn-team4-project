@@ -3,6 +3,7 @@ package com.java6.datn.controller;
 import com.java6.datn.DTO.OrderRequestDTO;
 import com.java6.datn.DTO.OrderResponseDTO;
 import com.java6.datn.Service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,23 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    @Autowired
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
-        try {
-            OrderResponseDTO createdOrder = orderService.createOrder(orderRequestDTO);
-            return ResponseEntity.ok(createdOrder);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+
+        System.out.println("📦 USER ID: " + orderRequestDTO.getUserId());
+        System.out.println("💳 PAYMENT METHOD ID: " + orderRequestDTO.getPaymentMethodId());
+
+        orderService.createOrder(orderRequestDTO);
+        return ResponseEntity.ok("Đặt hàng thành công");
     }
 }
+
 

@@ -77,8 +77,13 @@ public class CartItemService {
         cartItemRepo.deleteById(cartItemId);
     }
 
-    public void clearCart(Integer userId) {
-        List<CartItem> items = cartItemRepo.findByUserID(userId);
-        cartItemRepo.deleteAll(items);
+//    public void clearCart(Integer userId) {
+//        List<CartItem> items = cartItemRepo.findByUserID(userId);
+//        cartItemRepo.deleteAll(items);
+//    }
+
+    public interface CartService {
+        void clearCartByUserId(Integer userId);
     }
+
 }

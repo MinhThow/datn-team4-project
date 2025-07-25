@@ -2,7 +2,11 @@ package com.java6.datn.DTO;
 
 // Dữ liệu từ client gửi lên để tạo đơn hàng
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data
