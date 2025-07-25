@@ -72,10 +72,10 @@ public class OrderServiceImpl implements OrderService {
         // 4. Tạo danh sách các OrderItem từ DTO
         List<OrderItem> orderItems = new ArrayList<>();
         for (OrderItemDTO itemDTO : requestDTO.getOrderItems()) {
-            Product product = productRepository.findById(itemDTO.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + itemDTO.getProductId()));
-            ProductSize productSize = productSizeRepository.findById(itemDTO.getProductSizeId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy size sản phẩm với ID: " + itemDTO.getProductSizeId()));
+            Product product = productRepository.findById(itemDTO.getProductID())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + itemDTO.getProductID()));
+            ProductSize productSize = productSizeRepository.findById(itemDTO.getProductSizeID())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy size sản phẩm với ID: " + itemDTO.getProductSizeID()));
 
             // TODO: Thêm logic kiểm tra và trừ số lượng tồn kho (Stock) của ProductSize tại đây
 
@@ -102,8 +102,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderResponseDTO mapToOrderResponseDTO(Order order) {
         List<OrderItemDTO> orderItemDTOs = order.getOrderItems().stream()
                 .map(item -> OrderItemDTO.builder()
-                        .productId(item.getProduct().getProductID())
-                        .productSizeId(item.getProductSize().getProductSizeID())
+                        .productID(item.getProduct().getProductID())
+                        .productSizeID(item.getProductSize().getProductSizeID())
                         .productName(item.getProductName())
                         .size(item.getSize())
                         .quantity(item.getQuantity())

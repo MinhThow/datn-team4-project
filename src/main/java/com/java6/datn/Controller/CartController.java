@@ -35,6 +35,8 @@ public class CartController {
     private CartItemRepository cartItemRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CartItemService.CartService cartService;
 
 
     @GetMapping
@@ -77,11 +79,18 @@ public class CartController {
         return ResponseEntity.ok(item);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam Integer id) {
-        cartItemService.deleteCartItem(id);
+    @DeleteMapping("/clear")
+    public ResponseEntity<?> clearCart(@RequestParam("userId") Integer userId) {
+        cartService.clearCartByUserId(userId);
         return ResponseEntity.ok("Đã xoá");
     }
+
+//    @DeleteMapping("/api/cart/clear")
+//    public ResponseEntity<?> clearCart(@RequestParam("userId") Integer userId) {
+//        cartItemService.clearCartByUserId(userId);  // ⬅ bạn cần implement method này
+//        return ResponseEntity.noContent().build();
+//    }
+
 
     @PutMapping("/update")
     public ResponseEntity<?> updateQuantity(@RequestBody Map<String, Object> body) {
