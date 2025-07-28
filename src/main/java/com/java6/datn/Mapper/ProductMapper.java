@@ -20,12 +20,12 @@ public class ProductMapper {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setOldPrice(product.getOldPrice());
-        dto.setStock(product.getStock());
+    
         if (product.getCategory() != null) {
             dto.setCategoryID(product.getCategory().getCategoryID());
             dto.setCategoryName(product.getCategory().getName());
         }
-        if (product.getProductImages() != null) {
+        if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
 
             ProductImage img = product.getProductImages().getFirst();
             log.info("imgsssss :: {}",img.getImageUrl());
@@ -47,7 +47,7 @@ public class ProductMapper {
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setOldPrice(dto.getOldPrice());
-        product.setStock(dto.getStock());
+      
         // Category will be set outside Service as it needs CategoryRepository
         // productImages and productSizes are not mapped from DTO to Entity here
         return product;

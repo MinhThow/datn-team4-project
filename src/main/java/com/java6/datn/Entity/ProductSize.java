@@ -16,5 +16,7 @@ public class ProductSize {
     @JoinColumn(name = "productID")
     private Product product;
     private String size;
+    @Column(name = "Stock")
     private Integer stock;
+
 }

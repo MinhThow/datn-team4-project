@@ -54,7 +54,10 @@ public class UserServiceImpl implements UserService {
         entity.setName(dto.getName());
         entity.setPhone(dto.getPhone());
         entity.setAddress(dto.getAddress());
-        entity.setRole(dto.getRole());
+        if (dto.getRole() != null && !dto.getRole().isBlank()) {
+            entity.setRole(dto.getRole());
+        }
+
         return UserMapper.toDTO(userRepository.save(entity));
     }
 
@@ -62,5 +65,21 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
+    @Override
+	public boolean checkPassword(User user, String rawPassword) {
+		return passwordEncoder.matches(rawPassword, user.getPassword());
+	}
+
+	// ✅ Cập nhật mật khẩu mới
+	@Override
+	public void updatePassword(Integer userId, String newPassword) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+		// Nếu role null thì gán lại mặc định
+	    if (user.getRole() == null || user.getRole().isBlank()) {
+	        user.setRole("customer"); // hoặc "ROLE_CUSTOMER" tùy hệ thống bạn dùng
+	    }
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+	}
 }
 

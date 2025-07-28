@@ -57,7 +57,11 @@ public class AuthController {
     }
 
 
-
+    @GetMapping("/login-register")
+    public String loginRegisterPage(Model model) {
+        model.addAttribute("user", new UserRegisterDTO());
+        return "Login_Register";
+    }
 
     @GetMapping("/login")
     public String loginForm(Model model) {
