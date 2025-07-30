@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 public class UserMapper {
     public static UserDTO toDTO(User entity) {
         UserDTO dto = new UserDTO();
-        dto.setUserID(entity.getUserID());
+        dto.setUserId(entity.getUserID());
         dto.setName(entity.getName());
         dto.setEmail(entity.getEmail());
         dto.setPhone(entity.getPhone());

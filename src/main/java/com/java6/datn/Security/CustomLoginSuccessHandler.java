@@ -1,8 +1,8 @@
 package com.java6.datn.Security;
 
-import com.java6.datn.Entity.LoginHistory;
+
 import com.java6.datn.Entity.User;
-import com.java6.datn.Repository.LoginHistoryRepository;
+
 import com.java6.datn.Repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,11 +22,11 @@ import java.util.Set;
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
-    private final LoginHistoryRepository loginHistoryRepository;
+    
 
-    public CustomLoginSuccessHandler(UserRepository userRepository,LoginHistoryRepository loginHistoryRepository) {
+    public CustomLoginSuccessHandler(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.loginHistoryRepository = loginHistoryRepository;
+       
     }
 
     @Override
@@ -40,19 +40,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByEmail(userDetails.getUsername()).orElse(null);
 
-        if (user != null) {
-            String rawUserAgent = request.getHeader("User-Agent");
-            String browser = extractBrowser(rawUserAgent);
-
-            LoginHistory login = LoginHistory.builder()
-                    .user(user)
-                    .loginTime(java.time.LocalDateTime.now())
-                    .ipAddress(request.getRemoteAddr())
-                    .userAgent(browser)  // ✅ chỉ lưu tên trình duyệt
-                    .build();
-
-            loginHistoryRepository.save(login);
-        }
+        
 
         
 

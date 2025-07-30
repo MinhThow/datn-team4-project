@@ -29,7 +29,7 @@ public class Product {
 
     private BigDecimal oldPrice;
 
-    private Integer stock;
+//    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "CategoryID")
@@ -50,4 +50,11 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<ProductSize> productSizes;
+    public String getImageUrl() {
+        if (productImages != null && !productImages.isEmpty()) {
+            return productImages.get(0).getImageUrl();
+        }
+        return "/images/no-image.png";
+    }
+
 }

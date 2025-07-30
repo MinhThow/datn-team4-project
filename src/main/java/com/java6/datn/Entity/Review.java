@@ -30,5 +30,9 @@ public class Review {
     private String comment;
 
     private LocalDateTime reviewDate = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "OrderID")
+    private Order order;
+
 }
 

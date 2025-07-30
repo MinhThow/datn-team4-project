@@ -2,22 +2,22 @@ package com.java6.datn.Controller;
 
 import com.java6.datn.DTO.OrderDisplayDTO;
 import com.java6.datn.DTO.CartItemDTO;
-import com.java6.datn.DTO.LoginHistoryDTO;
+
 import com.java6.datn.DTO.OrderDisplayDTO;
 import com.java6.datn.DTO.ProductDTO;
+import com.java6.datn.DTO.ReviewDTO;
 import com.java6.datn.DTO.UserDTO;
-import com.java6.datn.Entity.BankAccount;
-import com.java6.datn.Entity.LoginHistory;
+
 import com.java6.datn.Entity.Order;
 import com.java6.datn.Entity.OrderItem;
 import com.java6.datn.Entity.ProductImage;
 import com.java6.datn.Entity.User;
 import com.java6.datn.Mapper.UserMapper;
-import com.java6.datn.Repository.LoginHistoryRepository;
+
 import com.java6.datn.Repository.OrderRepository;
 import com.java6.datn.Repository.ProductImageRepository;
 import com.java6.datn.Repository.UserRepository;
-import com.java6.datn.Service.BankAccountService;
+import com.java6.datn.Service.ReviewService;
 import com.java6.datn.Service.UserService;
 import com.java6.datn.Service.VerificationTokenService;
 
@@ -48,21 +48,22 @@ public class AccountController {
 
 	private final UserService userService;
 	private final UserRepository userRepository;
-	private final BankAccountService bankAccountService;
+
 	@Autowired
 	private OrderRepository orderRepository;
 	@Autowired
 	private ProductImageRepository productImageRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	private final LoginHistoryRepository loginHistoryRepository;
+	@Autowired
+	private VerificationTokenService tokenService;
+	@Autowired
+	private ReviewService reviewService;
 
-	public AccountController(UserService userService, UserRepository userRepository,
-			BankAccountService bankAccountService, LoginHistoryRepository loginHistoryRepository) {
+	public AccountController(UserService userService, UserRepository userRepository) {
 		this.userService = userService;
 		this.userRepository = userRepository;
-		this.bankAccountService = bankAccountService;
-		this.loginHistoryRepository = loginHistoryRepository;
+
 	}
 
 	// Hiển thị form tài khoản
@@ -78,11 +79,11 @@ public class AccountController {
 
 		String email = authentication.getName();
 		User userEntity = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+		List<ReviewDTO> userReviews = new ArrayList<>();
 		model.addAttribute("userVerified", userEntity.isEmailVerified());
 		UserDTO userDTO = UserMapper.toDTO(userEntity);
 		model.addAttribute("user", userDTO);
-		model.addAttribute("bankAccounts", bankAccountService.findByUser(userEntity));
-		model.addAttribute("newBankAccount", new BankAccount());
+
 		long passwordAge = 0;
 		if (userEntity.getPasswordChangedAt() != null) {
 			passwordAge = ChronoUnit.DAYS.between(userEntity.getPasswordChangedAt().toLocalDate(), LocalDate.now());
@@ -114,6 +115,12 @@ public class AccountController {
 						.paymentMethodName(order.getPaymentMethodName())
 						.formattedDate(order.getOrderDate().toLocalDate().toString()).badgeColor(color) // 👈 gắn thêm
 																										// dòng này
+						.productId(item.getProduct().getProductID()) // 🟢 Thêm dòng này
+						.rating(reviewService.getUserReviewRating(userEntity.getUserID(), item.getProduct().getProductID()).orElse(null))
+						.comment(reviewService.getUserReviewComment(userEntity.getUserID(), item.getProduct().getProductID()).orElse(null))
+						.reviewed(reviewService.hasUserReviewedProduct(userEntity.getUserID(), item.getProduct().getProductID()))
+
+
 						.totalPrice(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()))).build();
 
 				allOrders.add(dto);
@@ -123,28 +130,17 @@ public class AccountController {
 				case "Đã giao" -> completedOrders.add(dto);
 				case "Đã hủy" -> canceledOrders.add(dto);
 				}
+				// ✅ Gán đánh giá nếu có
+				List<ReviewDTO> productReviews = reviewService.getReviewsByProductId(item.getProduct().getProductID());
+				productReviews.stream().filter(r -> r.getUserId().equals(userEntity.getUserID())).findFirst()
+						.ifPresent(userReviews::add);
 			}
 		}
 		model.addAttribute("allOrders", allOrders);
 		model.addAttribute("deliveringOrders", deliveringOrders);
 		model.addAttribute("completedOrders", completedOrders);
 		model.addAttribute("canceledOrders", canceledOrders);
-		
-		 // Lấy login history từ DB ✅
-	    List<LoginHistory> loginHistoryList = loginHistoryRepository
-	            .findTop10ByUserOrderByLoginTimeDesc(userEntity);
-
-	    // Format loginTime thành chuỗi
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-	    List<LoginHistoryDTO> loginHistoryDTOs = loginHistoryList.stream()
-	            .map(history -> new LoginHistoryDTO(
-	                    formatter.format(history.getLoginTime()),
-	                    history.getIpAddress(),
-	                    history.getUserAgent()))
-	            .toList();
-
-	    model.addAttribute("loginHistory", loginHistoryDTOs);
-
+		model.addAttribute("userReviews", userReviews);
 		return "account"; // account.html
 
 	}
@@ -163,8 +159,8 @@ public class AccountController {
 		String email = authentication.getName();
 		User userEntity = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
 
-		updatedUser.setUserID(userEntity.getUserID()); // giữ nguyên ID gốc
-		userService.updateUser(updatedUser.getUserID(), updatedUser);
+		updatedUser.setUserId(userEntity.getUserID()); // giữ nguyên ID gốc
+		userService.updateUser(updatedUser.getUserId(), updatedUser);
 
 		redirectAttributes.addFlashAttribute("success", "Cập nhật thành công!");
 		return "redirect:/account";
@@ -201,28 +197,24 @@ public class AccountController {
 		return "redirect:/account";
 	}
 
-	@Autowired
-	private VerificationTokenService tokenService;
+	
+	@PostMapping("/review") // 👈 KHÔNG dùng "/account/review" vì đã có @RequestMapping("/account")
+	public String submitReview(@ModelAttribute ReviewDTO reviewDTO,
+	                           RedirectAttributes redirectAttributes) {
+		System.out.println("==> POST /reviews/add đã được gọi");
 
-	@PostMapping("/delete")
-	public ResponseEntity<?> deleteAccount(Principal principal) {
-		if (principal == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
 
-		String email = principal.getName();
-		Optional<User> userOpt = userRepository.findByEmail(email);
+	    try {
+	        reviewService.createReview(reviewDTO);
+	        redirectAttributes.addFlashAttribute("successMessage", "Đánh giá đã được gửi thành công!");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi gửi đánh giá: " + e.getMessage());
+	    }
 
-		if (userOpt.isPresent()) {
-			User user = userOpt.get();
-			// ✅ Xoá token trước
-			tokenService.deleteByUser(user);
-
-			userRepository.delete(user);
-			return ResponseEntity.status(HttpStatus.FOUND).header("Location", "/logout").build();
-		}
-
-		return ResponseEntity.notFound().build();
+	    return "redirect:/account";
 	}
+
+
 
 }

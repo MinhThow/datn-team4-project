@@ -74,16 +74,8 @@
 										data-bs-target="#password-tab-pane" type="button" role="tab"
 										aria-controls="password-tab-pane" aria-selected="false">Password</button>
 								</li>
-								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="bank-tab" data-bs-toggle="tab"
-										data-bs-target="#bank-tab-pane" type="button" role="tab"
-										aria-controls="bank-tab-pane" aria-selected="false">Bank Account</button>
-								</li>
-								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="delete-tab" data-bs-toggle="tab"
-										data-bs-target="#delete-tab-pane" type="button" role="tab"
-										aria-controls="delete-tab-pane" aria-selected="false">Delete Account</button>
-								</li>
+
+
 							</ul>
 
 							<div class="tab-content" id="myTabContent" style="min-height: 600px;">
@@ -97,10 +89,10 @@
 
 
 											<div class="mb-3">
-												<label for="userID" class="form-label">User ID</label>
-												<input type="text" class="form-control" id="userID" th:value="*{userID}"
+												<label for="userId" class="form-label">User ID</label>
+												<input type="text" class="form-control" id="userId" th:value="*{userId}"
 													disabled>
-												<input type="hidden" th:field="*{userID}" />
+												<input type="hidden" th:field="*{userId}" />
 											</div>
 
 											<div class="mb-3">
@@ -142,7 +134,7 @@
 									aria-labelledby="password-tab" tabindex="0">
 									<!-- Nội dung Password ở đây -->
 									<div class="w-75 mt-4">
-										<form th:action="@{/account/change-password}" method="post">
+										<form id="passwordForm" th:action="@{/account/change-password}" method="post">
 											<div class="mb-3">
 												<label for="currentPassword" class="form-label">Current Password</label>
 												<div class="input-group">
@@ -186,91 +178,10 @@
 									</div>
 
 								</div>
-								<!-- BANK ACCOUNT TAB -->
-								<div class="tab-pane fade" id="bank-tab-pane" role="tabpanel" aria-labelledby="bank-tab"
-									tabindex="0">
-									<div class="mt-4">
-										<div class="container mt-4">
-											<div class="d-flex justify-content-between align-items-center mb-3">
-												<h5 class="mb-0">My Bank Accounts</h5>
-												<button class="btn btn-primary" data-bs-toggle="modal"
-													data-bs-target="#addBankModal">+ Add New</button>
-											</div>
-
-											<!-- Bank Accounts Loop -->
-											<div th:if="${bankAccounts != null}">
-												<div th:each="account : ${bankAccounts}"
-													class="card shadow-sm w-75 mb-3">
-													<div class="card-body">
-														<div class="d-flex justify-content-between">
-															<!-- Bank Info -->
-															<div>
-																<h6 class="card-title mb-2"
-																	th:text="${account.bankName}">Vietcombank</h6>
-																<p class="mb-1"><strong>Account Number:</strong> <span
-																		th:text="${account.accountNumber}">0123456789</span>
-																</p>
-																<p class="mb-1"><strong>Account Holder:</strong> <span
-																		th:text="${account.accountHolder}">Nguyen Van
-																		A</span></p>
-																<p class="mb-1"><strong>Branch:</strong> <span
-																		th:text="${account.branch}">Ha Noi</span></p>
-																<p class="mb-1"><strong>Card Type:</strong>
-																	<span class="badge text-dark"
-																		th:classappend="${account.cardType == 'Credit'} ? 'bg-warning' : 'bg-info'"
-																		th:text="${account.cardType}">Debit</span>
-																</p>
-															</div>
-
-															<!-- Action Buttons -->
-															<div
-																class="d-flex flex-column justify-content-center align-items-end">
-																<button class="btn btn-sm btn-outline-danger"
-																	type="button"
-																	th:attr="onclick=|showDeleteModal(${account.id})|">
-																	Delete
-																</button>
-															</div>
-
-														</div>
-													</div>
-												</div>
-											</div>
-
-											<!-- No account -->
-											<div th:if="${#lists.isEmpty(bankAccounts)}" class="alert alert-info w-75">
-												You have no linked bank accounts.
-											</div>
-										</div>
-									</div>
-								</div>
 
 
-								<!-- DELETE ACCOUNT TAB -->
-								<div class="tab-pane fade" id="delete-tab-pane" role="tabpanel"
-									aria-labelledby="delete-tab" tabindex="0">
-									<div class="mt-4">
-										<!-- Initial Section -->
-										<div id="deleteAccountSection">
-											<h4>Delete Account Request</h4>
-											<button class="btn btn-warning mt-2" id="deleteBtn">Delete Account</button>
-										</div>
 
-										<!-- Confirmation Section -->
-										<div id="confirmSection" class="d-none">
-											<p class="fw-semibold">Clicking "Proceed" means you agree to the following
-												terms:</p>
-											<ul>
-												<li>You will no longer be able to access this account.</li>
-												<li>All personal data and related information will be permanently
-													deleted.</li>
-												<li>This action is irreversible.</li>
-												<li>Any pending orders will be canceled.</li>
-											</ul>
-											<button class="btn btn-danger" id="proceedBtn">Proceed</button>
-										</div>
-									</div>
-								</div>
+
 							</div>
 						</div>
 
@@ -357,9 +268,18 @@
 
 												<div class="d-flex justify-content-end gap-2"
 													th:if="${order.status == 'Đã giao'}">
-													<button class="btn btn-sm btn-outline-secondary"
-														data-bs-toggle="modal" data-bs-target="#reviewModal">Đánh
-														giá</button>
+													<button class="btn btn-primary btn-review"
+														th:data-order-id="${order.orderId}"
+														th:data-product-id="${order.productId}"
+														th:data-user-id="${user.userId}"
+														th:data-product-name="${order.productName}"
+														th:data-product-img="${order.imageUrl}"
+														th:data-rating="${order.rating}"
+														th:data-comment="${order.comment}"
+														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}">
+
+														Đánh giá
+													</button>
 													<button class="btn btn-sm btn-outline-success">Mua lại</button>
 												</div>
 
@@ -449,7 +369,9 @@
 									</div>
 
 									<!-- Nếu có đơn -->
-									<div th:each="order : ${completedOrders}" class="card shadow-sm mb-3">
+									<div th:each="order : ${completedOrders}" class="card shadow-sm mb-3"
+										th:attr="data-product-id=${order.productId}, data-user-id=${user.userId}">
+
 										<div class="card-body">
 											<!-- Header -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
@@ -494,9 +416,24 @@
 											<!-- Nút hành động -->
 											<div class="mt-3 text-end">
 												<div class="d-flex justify-content-end gap-2">
-													<button class="btn btn-sm btn-outline-secondary"
-														data-bs-toggle="modal" data-bs-target="#reviewModal">Đánh
-														giá</button>
+													<button class="btn btn-primary btn-review"
+														th:data-order-id="${order.orderId}"
+														th:data-product-id="${order.productId}"
+														th:data-user-id="${user.userId}"
+														th:data-product-name="${order.productName}"
+														th:data-product-img="${order.imageUrl}"
+														th:data-rating="${order.rating}"
+														th:data-comment="${order.comment}"
+														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}">
+
+														Đánh giá
+													</button>
+
+
+
+
+
+
 													<button class="btn btn-sm btn-outline-success">Mua lại</button>
 												</div>
 											</div>
@@ -756,40 +693,21 @@
 
 						</ul>
 						<div class="mt-3 text-end">
-							<a href="#" class="btn btn-outline-secondary btn-sm disabled">Email Verified</a>
+							<div class="mt-3 text-end">
+								<!-- Chỉ hiển thị khi đã xác minh -->
+								<a th:if="${userVerified}" href="#"
+									class="btn btn-outline-secondary btn-sm disabled">Email Verified</a>
 
-							<a th:if="${!userVerified}" href="#" class="btn btn-outline-secondary btn-sm"
-								data-bs-toggle="modal" data-bs-target="#verifyEmailModal">Verify Email</a>
+								<!-- Chỉ hiển thị khi chưa xác minh -->
+								<a th:if="${!userVerified}" href="#" class="btn btn-outline-secondary btn-sm"
+									data-bs-toggle="modal" data-bs-target="#verifyEmailModal">Verify Email</a>
+							</div>
+
 						</div>
 
 					</div>
 
-					<!-- LOGIN HISTORY -->
-					<div class="card border shadow-sm p-3 mt-4 mb-4">
-						<h5 class="mb-3">
-							<i class="bi bi-clock-history text-primary"></i> Login History
-						</h5>
 
-						<ul class="list-group list-group-flush small" id="login-history-list">
-							<li class="list-group-item" th:each="login, iterStat : ${loginHistory}"
-								th:classappend="${iterStat.index >= 2} ? 'd-none login-item-extra' : ''">
-								<strong th:text="${login.time}"></strong><br />
-								<span th:text="'IP: ' + ${login.ip}"></span><br />
-								<span th:text="${login.userAgent}"></span>
-							</li>
-						</ul>
-
-						<nav class="mt-2 d-none" id="login-pagination-container">
-							<ul class="pagination justify-content-end pagination-sm" id="login-pagination">
-								<!-- Pagination sẽ được tạo bằng JS -->
-							</ul>
-						</nav>
-
-						<div class="mt-2 text-end">
-							<button class="btn btn-sm btn-outline-secondary" id="toggle-login-history"
-								onclick="toggleLoginHistory()">Expand</button>
-						</div>
-					</div>
 
 
 
@@ -900,106 +818,9 @@
 			</div>
 		</div>
 	</div>
-	<!-- Add Bank Modal -->
-	<div class="modal fade" id="addBankModal" tabindex="-1" aria-labelledby="addBankModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form th:action="@{/api/bank-accounts}" method="post" th:object="${newBankAccount}">
-					<!-- same fields as cũ nhưng phải có `name` và `th:field` -->
-					<div class="modal-body">
-						<div class="mb-3">
-							<label for="bankName" class="form-label">Bank Name</label>
-							<select class="form-select" th:field="*{bankName}" required>
-								<option value="">Choose bank</option>
-								<option value="Vietcombank">Vietcombank</option>
-								<option value="Techcombank">Techcombank</option>
-								<option value="ACB">ACB</option>
-								<option value="TPBank">TPBank</option>
-								<option value="BIDV">BIDV</option>
-							</select>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Account Number</label>
-							<input type="text" class="form-control" th:field="*{accountNumber}" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Account Holder</label>
-							<input type="text" class="form-control" th:field="*{accountHolder}" required>
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Branch</label>
-							<input type="text" class="form-control" th:field="*{branch}">
-						</div>
-						<div class="mb-3">
-							<label class="form-label">Card Type</label>
-							<select class="form-select" th:field="*{cardType}" required>
-								<option value="">Choose type</option>
-								<option value="Debit">Debit</option>
-								<option value="Credit">Credit</option>
-							</select>
-						</div>
-						<div class="row">
-							<div class="col-md-6 mb-3">
-								<label class="form-label">CVV</label>
-								<input type="text" class="form-control" th:field="*{cvv}" maxlength="4" required>
-							</div>
-							<div class="col-md-6 mb-3">
-								<label class="form-label">Expiration Date</label>
-								<input type="month" class="form-control" th:field="*{expiryDate}" required>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-danger">Save</button>
-					</div>
-				</form>
 
-			</div>
-		</div>
-	</div>
-	<!-- Delete Bank Account -->
-	<div class="modal fade" id="bankDeleteModal" tabindex="-1" aria-labelledby="bankDeleteLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header bg-danger text-white">
-					<h5 class="modal-title" id="bankDeleteLabel">Confirm Bank Account Deletion</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
-				<div class="modal-body">
-					<p>Are you sure you want to delete this bank account?</p>
-				</div>
-				<div class="modal-footer">
-					<form id="bankDeleteForm" method="post">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-danger">Yes, Delete</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<!-- Delete Account Modal -->
-	<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content border-danger">
-				<div class="modal-header bg-danger text-white">
-					<h5 class="modal-title" id="confirmDeleteModalLabel">Final Confirmation</h5>
-					<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body text-center">
-					<p class="fw-bold text-danger fs-5">Are you sure you want to delete your account?</p>
-					<p>This action cannot be undone.</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-danger" id="finalDeleteBtn">Yes, Delete</button>
-				</div>
-			</div>
-		</div>
-	</div>
+
 	<!-- Verify Email Modal -->
 	<div class="modal fade" id="verifyEmailModal" tabindex="-1" aria-labelledby="verifyEmailModalLabel"
 		aria-hidden="true">
@@ -1029,56 +850,86 @@
 		</div>
 	</div>
 	<!-- Review Modal -->
+	<!-- Modal -->
 	<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg">
-			<div class="modal-content p-4">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<form th:action="@{/account/review}" method="post">
 
-				<div class="modal-header border-0">
-					<h5 class="modal-title mx-auto fw-bold" id="reviewModalLabel">Đánh giá sản phẩm</h5>
-				</div>
 
-				<div class="modal-body">
-					<!-- Hàng 1: Hình + Tên sản phẩm -->
-					<div class="d-flex align-items-center mb-3">
-						<img src="https://via.placeholder.com/80" alt="Product" class="rounded border me-3"
-							style="width: 80px; height: 80px; object-fit: cover;">
-						<h6 class="mb-0">Tên sản phẩm</h6>
-					</div>
-
-					<!-- Hàng 2: Tên người dùng -->
-					<p class="mb-1"><strong>Người đánh giá:</strong> Tên người dùng</p>
-
-					<!-- Hàng 3: 5 sao -->
-					<div class="mb-3">
-						<strong>Đánh giá:</strong>
-						<div>
-							<i class="bi bi-star text-warning fs-4"></i>
-							<i class="bi bi-star text-warning fs-4"></i>
-							<i class="bi bi-star text-warning fs-4"></i>
-							<i class="bi bi-star text-warning fs-4"></i>
-							<i class="bi bi-star text-secondary fs-4"></i>
+					<div class="modal-header">
+						<div class="d-flex flex-column">
+							<small class="text-muted"><strong>Order ID:</strong> <span
+									id="reviewOrderId">-</span></small>
+							<h5 class="modal-title" id="reviewModalLabel">Đánh giá sản phẩm</h5>
 						</div>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
 					</div>
-
-					<!-- Hàng 4: Bình luận -->
-					<div class="mb-3">
-						<label class="form-label"><strong>Bình luận:</strong></label>
-						<textarea class="form-control" rows="4" placeholder="Nhập nhận xét..."></textarea>
+					<div class="modal-body">
+						<div class="d-flex align-items-center mb-3">
+							<img id="reviewProductImg" src="/images/no-image.png" class="rounded border me-3"
+								style="width: 80px; height: 80px; object-fit: cover;" alt="Product">
+							<h6 class="mb-0" id="reviewProductName">Tên sản phẩm</h6>
+						</div>
+						<input type="hidden" name="productId" id="productIdInput" />
+						<input type="hidden" name="userId" id="userIdInput" />
+						<input type="hidden" name="rating" id="ratingInput" value="0" />
+						<input type="hidden" name="orderId" id="orderIdInput" />
+						<div class="mb-3">
+							<strong>Đánh giá:</strong>
+							<div id="reviewStars" data-rating="0">
+								<i class="bi bi-star fs-4" data-value="1"></i>
+								<i class="bi bi-star fs-4" data-value="2"></i>
+								<i class="bi bi-star fs-4" data-value="3"></i>
+								<i class="bi bi-star fs-4" data-value="4"></i>
+								<i class="bi bi-star fs-4" data-value="5"></i>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><strong>Bình luận:</strong></label>
+							<textarea class="form-control" rows="4" name="comment" placeholder="Nhập nhận xét..."
+								id="reviewComment" required></textarea>
+						</div>
+						<p class="text-muted mb-0">
+							<strong>Ngày đánh giá:</strong> <span id="reviewDate">-</span>
+						</p>
 					</div>
-
-					<!-- Hàng 5: Ngày đánh giá -->
-					<p class="text-muted mb-0"><strong>Ngày đánh giá:</strong> 2025-07-28</p>
-				</div>
-
-				<!-- Footer -->
-				<div class="modal-footer border-0 justify-content-center">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-					<button type="button" class="btn btn-primary" onclick="submitReview()">Gửi đánh giá</button>
-				</div>
-
+					<div class="modal-footer border-0 justify-content-center">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+						<button type="submit" class="btn btn-primary" id="submitReviewBtn">Gửi đánh giá</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
+
+
+
+
+
+
+	<!-- Warning Modal nếu chưa xác minh -->
+	<div class="modal fade" id="emailNotVerifiedModal" tabindex="-1" aria-labelledby="emailNotVerifiedModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header bg-danger text-white">
+					<h5 class="modal-title" id="emailNotVerifiedModalLabel">
+						<i class="bi bi-exclamation-triangle-fill"></i> Email Chưa Được Xác Minh
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Bạn cần xác minh email trước khi có thể đổi mật khẩu.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+					<button id="openVerifyModalBtn" type="button" class="btn btn-danger">Verify Email</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
@@ -1124,46 +975,7 @@
 		}
 	});
 </script>
-<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		const deleteBtn = document.getElementById("deleteBtn");
-		const proceedBtn = document.getElementById("proceedBtn");
-		const finalDeleteBtn = document.getElementById("finalDeleteBtn");
 
-		if (deleteBtn) {
-			deleteBtn.addEventListener("click", function () {
-				document.getElementById("deleteAccountSection")?.classList.add("d-none");
-				document.getElementById("confirmSection")?.classList.remove("d-none");
-			});
-		}
-
-		if (proceedBtn) {
-			proceedBtn.addEventListener("click", function () {
-				const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
-				modal.show();
-			});
-		}
-
-		if (finalDeleteBtn) {
-			finalDeleteBtn.addEventListener("click", function () {
-				fetch("/account/delete", {
-					method: "POST"
-				})
-					.then(response => {
-						if (response.redirected) {
-							window.location.href = response.url;
-						} else {
-							alert("Không thể xoá tài khoản!");
-						}
-					})
-					.catch(error => {
-						console.error("Lỗi khi xoá:", error);
-						alert("Đã có lỗi xảy ra!");
-					});
-			});
-		}
-	});
-</script>
 <script>
 	document.addEventListener("DOMContentLoaded", function () {
 		document.querySelectorAll(".main-toggle").forEach(toggle => {
@@ -1183,20 +995,7 @@
 		});
 	});
 </script>
-<script>
-	function showDeleteModal(id) {
-		const form = document.getElementById("bankDeleteForm");
-		if (form) {
-			form.action = "/api/bank-accounts/delete/" + id;
-		}
 
-		const modalEl = document.getElementById("bankDeleteModal");
-		if (modalEl) {
-			const modal = new bootstrap.Modal(modalEl);
-			modal.show();
-		}
-	}
-</script>
 
 
 <script>
@@ -1232,93 +1031,200 @@
 		}
 	});
 
-	function submitReview() {
-		alert("Đánh giá đã được gửi!");
-		const modal = bootstrap.Modal.getInstance(document.getElementById('reviewModal'));
-		modal.hide();
-	}
+
+</script>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	const isVerified = /*[[${userVerified}]]*/ false;
+
+	document.addEventListener('DOMContentLoaded', function () {
+		const passwordForm = document.getElementById('passwordForm');
+
+		if (passwordForm) {
+			passwordForm.addEventListener('submit', function (event) {
+				const newPassword = document.getElementById('newPassword').value;
+				const confirmPassword = document.getElementById('confirmPassword').value;
+				const errorDiv = document.getElementById('passwordError');
+
+				if (newPassword !== confirmPassword) {
+					event.preventDefault();
+					errorDiv.style.display = 'block';
+					return;
+				} else {
+					errorDiv.style.display = 'none';
+				}
+
+				if (!isVerified) {
+					event.preventDefault(); // Ngăn form submit
+
+					const warnModal = new bootstrap.Modal(document.getElementById('emailNotVerifiedModal'));
+					warnModal.show();
+				}
+			});
+		}
+
+		// Bắt sự kiện khi nhấn nút "Verify Email"
+		const openVerifyModalBtn = document.getElementById('openVerifyModalBtn');
+		if (openVerifyModalBtn) {
+			openVerifyModalBtn.addEventListener('click', function () {
+				const warnModalEl = document.getElementById('emailNotVerifiedModal');
+				const warnModal = bootstrap.Modal.getInstance(warnModalEl);
+				warnModal.hide();
+
+				const verifyModal = new bootstrap.Modal(document.getElementById('verifyEmailModal'));
+				verifyModal.show();
+			});
+		}
+	});
+	/*]]>*/
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const reviewModal = new bootstrap.Modal(document.getElementById("reviewModal"));
+		document.querySelectorAll(".btn-review").forEach(btn => {
+			btn.addEventListener("click", function () {
+				reviewModal.show();
+			});
+		});
+	});
 </script>
 <script>
-	let isExpanded = false;
-	const perPage = 3;
-	let currentPage = 1;
-	let totalItems = 0;
-	let items = [];
-
 	document.addEventListener("DOMContentLoaded", function () {
-		items = Array.from(document.querySelectorAll('#login-history-list li'));
-		totalItems = items.length;
+		const stars = document.querySelectorAll("#reviewStars i");
+		const ratingInput = document.getElementById("ratingInput");
 
-		if (totalItems > 2) {
-			// Chỉ hiển thị 2 item đầu
-			items.forEach((el, idx) => {
-				el.classList.toggle("d-none", idx >= 2);
+		let selectedRating = 0;
+
+		stars.forEach((star, index) => {
+			// Hover effect
+			star.addEventListener("mouseover", () => {
+				stars.forEach((s, i) => {
+					if (i <= index) {
+						s.classList.remove("bi-star", "text-secondary");
+						s.classList.add("bi-star-fill", "text-warning");
+					} else {
+						s.classList.remove("bi-star-fill", "text-warning");
+						s.classList.add("bi-star", "text-secondary");
+					}
+				});
 			});
-		}
 
-		// Ẩn pagination ban đầu
-		document.getElementById('login-pagination-container').classList.add("d-none");
+			// Restore on mouseout
+			star.addEventListener("mouseout", () => {
+				stars.forEach((s, i) => {
+					if (i < selectedRating) {
+						s.classList.remove("bi-star", "text-secondary");
+						s.classList.add("bi-star-fill", "text-warning");
+					} else {
+						s.classList.remove("bi-star-fill", "text-warning");
+						s.classList.add("bi-star", "text-secondary");
+					}
+				});
+			});
+
+			// Click to select
+			star.addEventListener("click", () => {
+				selectedRating = index + 1;
+				ratingInput.value = selectedRating;
+			});
+		});
+	});
+</script>
+<script>
+	document.querySelectorAll('.btn-review').forEach(btn => {
+		btn.addEventListener('click', function () {
+			// Lấy dữ liệu từ thuộc tính data-
+			const orderId = this.dataset.orderId;
+			const productId = this.dataset.productId;
+			const userId = this.dataset.userId;
+			const productName = this.dataset.productName;
+			const productImg = this.dataset.productImg;
+
+			const existingRating = parseInt(this.dataset.rating || "0");
+			const existingComment = this.dataset.comment || "";
+			const existingReviewDate = this.dataset.reviewDate || new Date().toLocaleDateString('vi-VN');
+
+			// Gán dữ liệu vào modal
+			document.getElementById('reviewOrderId').textContent = orderId;
+			document.getElementById('orderIdInput').value = orderId;
+
+			document.getElementById('productIdInput').value = productId;
+			document.getElementById('userIdInput').value = userId;
+
+			document.getElementById('reviewProductName').textContent = productName;
+			document.getElementById('reviewProductImg').src = productImg;
+
+			// Gán comment và ngày đánh giá
+			document.getElementById('reviewComment').value = existingComment;
+			document.getElementById('reviewDate').textContent = existingReviewDate;
+
+			// Gán sao (rating)
+			const stars = document.querySelectorAll('#reviewStars i');
+			document.getElementById('ratingInput').value = existingRating;
+			stars.forEach((star, index) => {
+				if (index < existingRating) {
+					star.classList.remove('bi-star', 'text-secondary');
+					star.classList.add('bi-star-fill', 'text-warning');
+				} else {
+					star.classList.remove('bi-star-fill', 'text-warning');
+					star.classList.add('bi-star', 'text-secondary');
+				}
+			});
+		});
+	});
+</script>
+<script>
+	// Bắt sự kiện nút Gửi đánh giá
+	document.getElementById('submitReviewBtn').addEventListener('click', function (e) {
+
+
+		// ✅ Hiện thông báo thành công
+		showReviewSuccessAlert();
+
+		// ✅ Thay textarea thành văn bản và ẩn nút
+		handleReviewSubmitted();
 	});
 
-	function toggleLoginHistory() {
-		if (!isExpanded) {
-			// Expand: hiện thêm dòng thứ 3
-			if (totalItems >= 3) {
-				items[2].classList.remove("d-none");
-			}
-			isExpanded = true;
-
-			// Hiện pagination nếu đủ dữ liệu
-			if (totalItems > 3) {
-				document.getElementById('login-pagination-container').classList.remove("d-none");
-				buildPagination();
-				showPage(1);
-			}
-
-			// Đổi tên nút
-			document.getElementById("toggle-login-history").innerText = "Collapse";
-		} else {
-			// Collapse: trở về chỉ hiện 2 dòng đầu
-			items.forEach((el, idx) => {
-				el.classList.toggle("d-none", idx >= 2);
-			});
-
-			document.getElementById('login-pagination-container').classList.add("d-none");
-			isExpanded = false;
-			document.getElementById("toggle-login-history").innerText = "Expand";
+	// ✅ Hàm hiển thị thông báo
+	function showReviewSuccessAlert() {
+		let alertBox = document.getElementById('reviewAlert');
+		if (!alertBox) {
+			alertBox = document.createElement('div');
+			alertBox.id = 'reviewAlert';
+			alertBox.className = 'alert alert-success mt-2';
+			alertBox.role = 'alert';
+			alertBox.textContent = 'Gửi đánh giá thành công!';
+			document.querySelector('.modal-body').appendChild(alertBox);
 		}
+		alertBox.classList.remove('d-none');
+
+		setTimeout(() => {
+			alertBox.classList.add('d-none');
+		}, 3000);
 	}
 
-	function buildPagination() {
-		const totalPages = Math.ceil(totalItems / perPage);
-		const container = document.getElementById('login-pagination');
-		container.innerHTML = '';
+	// ✅ Hàm thay textarea bằng văn bản và ẩn nút
+	function handleReviewSubmitted() {
+		const textarea = document.getElementById('reviewComment');
+		const commentText = textarea.value;
 
-		for (let i = 1; i <= totalPages; i++) {
-			const li = document.createElement('li');
-			li.className = `page-item ${i === 1 ? 'active' : ''}`;
-			li.innerHTML = `<a class="page-link" href="#" onclick="showPage(${i})">${i}</a>`;
-			container.appendChild(li);
-		}
+		// Tạo phần tử <p> hiển thị bình luận, KHÔNG gán id
+		const commentDisplay = document.createElement('p');
+		commentDisplay.classList.add('form-control', 'bg-light');
+		commentDisplay.textContent = commentText;
+
+		// Thay thế textarea bằng <p>
+		textarea.replaceWith(commentDisplay);
+
+		// Ẩn nút gửi
+		const submitBtn = document.getElementById('submitReviewBtn');
+		if (submitBtn) submitBtn.style.display = 'none';
 	}
 
-	function showPage(page) {
-		currentPage = page;
-		const start = (page - 1) * perPage;
-		const end = start + perPage;
 
-		items.forEach((el, idx) => {
-			el.classList.toggle("d-none", !(idx >= start && idx < end));
-		});
 
-		// Update active page
-		document.querySelectorAll('#login-pagination .page-item').forEach((el, idx) => {
-			el.classList.toggle("active", idx === page - 1);
-		});
-	}
+
 </script>
-
-
-
 
 </html>
