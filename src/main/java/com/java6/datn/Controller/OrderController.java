@@ -1,4 +1,4 @@
-package com.java6.datn.controller;
+package com.java6.datn.Controller;
 
 import com.java6.datn.DTO.OrderRequestDTO;
 import com.java6.datn.DTO.OrderResponseDTO;

@@ -1,0 +1,189 @@
+
+        .custom-underline-nav .nav-link {
+            position: relative;
+            color: #000;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .custom-underline-nav .nav-link::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0%;
+            height: 2px;
+            background-color: red;
+            transition: width 0.4s ease;
+        }
+
+        /* Hover: underline và màu chữ đỏ */
+        .custom-underline-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .custom-underline-nav .nav-link:hover {
+            color: red;
+        }
+
+        /* Active (được chọn): nền đỏ, chữ trắng, underline từ giữa */
+        .custom-underline-nav .nav-link.active {
+            color: #fff !important;
+            background-color: #e83434 !important;
+        }
+
+        .custom-underline-nav .nav-link.active::after {
+            width: 100%;
+            background-color: #fff;
+            display: none;
+            /* Gạch dưới màu trắng để nổi trên nền đỏ */
+        }
+
+        .toggle-password {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 0.5rem;
+            color: #888;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: #e83434;
+            /* đỏ nhấn mạnh khi hover */
+        }
+
+        .input-group .form-control {
+            border-right: none;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .input-group .toggle-password {
+            border-left: none;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-left: none;
+            background-color: #fff;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .toggle-password:active,
+        .toggle-password:focus {
+            border-color: #ced4da !important;
+            /* màu viền giống input */
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.0) !important;
+            /* vô hiệu hóa ánh sáng xanh */
+            outline: none !important;
+            background-color: #fff !important;
+        }
+
+        .form-control:focus {
+            box-shadow: none !important;
+            border-color: #ced4da !important;
+            /* màu viền mặc định Bootstrap */
+        }
+
+        .home-link {
+            position: relative;
+            display: inline-block;
+            color: #000;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .home-link::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: red;
+            transition: width 0.4s ease;
+        }
+
+        .home-link:hover {
+            color: red;
+        }
+
+        .home-link:hover::after {
+            width: 100%;
+        }
+
+        /* In đậm câu hỏi */
+        .question-btn {
+            font-weight: bold;
+        }
+
+        /* Khi mở: nền đỏ, chữ trắng */
+        .accordion-button:not(.collapsed) {
+            background-color: #e83434;
+            color: white;
+            box-shadow: none;
+            /* Bỏ viền xanh */
+        }
+
+        /* Bỏ border xanh */
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: transparent;
+            outline: none;
+        }
+
+        /* Câu trả lời: đỏ và tiền tố A: */
+        .answer-text {
+            color: #e83434;
+            font-weight: normal;
+        }
+
+        /* Đổi màu mũi tên khi accordion đang mở */
+        .accordion-button:not(.collapsed)::after {
+            filter: brightness(0) invert(1);
+            /* Biến thành màu trắng */
+        }
+
+        .custom-vertical-tab .nav-link {
+            position: relative;
+            color: #e83434;
+            background-color: #fff;
+            border-radius: 0;
+            text-align: left;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        /* Hiệu ứng nền đỏ chạy từ trái sang phải */
+        .custom-vertical-tab .nav-link::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0%;
+            height: 100%;
+            background-color: #e83434;
+            z-index: -1;
+            transition: width 0.4s ease;
+        }
+
+        .custom-vertical-tab .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .custom-vertical-tab .nav-link:hover {
+            color: #fff;
+        }
+
+        .custom-vertical-tab .nav-link.active {
+            background-color: #e83434 !important;
+            color: #fff !important;
+            z-index: 1;
+        }
+
+        .custom-vertical-tab .nav-link.active::before {
+            display: none;
+        }

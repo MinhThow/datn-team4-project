@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác minh email</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const success = /*[[${success}]]*/ false;
+        if (success) {
+            alert("✅ Xác minh email thành công!");
+        } else {
+            alert("❌ Token không hợp lệ hoặc đã hết hạn!");
+        }
+        window.location.href = "/account";
+        /*]]>*/
+    </script>
+</head>
+<body>
+</body>
+</html>
