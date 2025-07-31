@@ -276,7 +276,8 @@
 														th:data-product-img="${order.imageUrl}"
 														th:data-rating="${order.rating}"
 														th:data-comment="${order.comment}"
-														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}">
+														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}"
+														th:data-reviewed="${order.reviewed}">
 
 														Đánh giá
 													</button>
@@ -424,7 +425,8 @@
 														th:data-product-img="${order.imageUrl}"
 														th:data-rating="${order.rating}"
 														th:data-comment="${order.comment}"
-														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}">
+														th:data-review-date="${#dates.format(order.reviewDate, 'dd/MM/yyyy')}"
+														th:data-reviewed="${order.reviewed}">
 
 														Đánh giá
 													</button>
@@ -903,7 +905,56 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="reviewedModal" tabindex="-1" aria-labelledby="reviewedModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<form>
 
+
+					<div class="modal-header">
+						<div class="d-flex flex-column">
+							<small class="text-muted"><strong>Order ID:</strong> <span
+									id="reviewedOrderId">-</span></small>
+							<h5 class="modal-title" id="reviewedModalLabel">Đánh giá sản phẩm</h5>
+						</div>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+					</div>
+					<div class="modal-body">
+						<div class="d-flex align-items-center mb-3">
+							<img id="reviewedProductImg" src="/images/no-image.png" class="rounded border me-3"
+								style="width: 80px; height: 80px; object-fit: cover;" alt="Product">
+							<h6 class="mb-0" id="reviewedProductName">Tên sản phẩm</h6>
+						</div>
+						<input type="hidden" name="productId" id="productIdInput" />
+						<input type="hidden" name="userId" id="userIdInput" />
+						<input type="hidden" name="rating" id="ratingInput" value="0" />
+						<input type="hidden" name="orderId" id="orderIdInput" />
+						<div class="mb-3">
+							<strong>Đánh giá:</strong>
+							<div id="reviewedStars" data-rating="0">
+								<i class="bi bi-star fs-4" data-value="1"></i>
+								<i class="bi bi-star fs-4" data-value="2"></i>
+								<i class="bi bi-star fs-4" data-value="3"></i>
+								<i class="bi bi-star fs-4" data-value="4"></i>
+								<i class="bi bi-star fs-4" data-value="5"></i>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label"><strong>Bình luận:</strong></label>
+							<p id="reviewedComment" class="form-control bg-light text-muted"
+								style="white-space: pre-wrap; min-height: 100px;"></p>
+						</div>
+						<p class="text-muted mb-0">
+							<strong>Ngày đánh giá:</strong> <span id="reviewedDate">-</span>
+						</p>
+					</div>
+					<div class="modal-footer border-0 justify-content-center">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 
 
 
@@ -1079,13 +1130,21 @@
 	/*]]>*/
 </script>
 
+
+
+
 <script>
-	document.addEventListener("DOMContentLoaded", function () {
-		const reviewModal = new bootstrap.Modal(document.getElementById("reviewModal"));
-		document.querySelectorAll(".btn-review").forEach(btn => {
-			btn.addEventListener("click", function () {
-				reviewModal.show();
-			});
+	document.querySelectorAll('.btn-review').forEach(btn => {
+		btn.addEventListener('click', function () {
+			const isReviewed = this.dataset.reviewed === "true";
+
+			if (isReviewed) {
+				console.log("🟢 Đã đánh giá rồi → mở modal reviewedModal");
+				handleReviewedModal(btn); // xử lý tách riêng
+			} else {
+				console.log("🟡 Chưa đánh giá → mở modal reviewModal");
+				handleReviewModal(btn); // xử lý tách riêng
+			}
 		});
 	});
 </script>
@@ -1093,25 +1152,15 @@
 	document.addEventListener("DOMContentLoaded", function () {
 		const stars = document.querySelectorAll("#reviewStars i");
 		const ratingInput = document.getElementById("ratingInput");
-
-		let selectedRating = 0;
+		let selectedRating = parseInt(ratingInput.value || "0");
 
 		stars.forEach((star, index) => {
-			// Hover effect
-			star.addEventListener("mouseover", () => {
-				stars.forEach((s, i) => {
-					if (i <= index) {
-						s.classList.remove("bi-star", "text-secondary");
-						s.classList.add("bi-star-fill", "text-warning");
-					} else {
-						s.classList.remove("bi-star-fill", "text-warning");
-						s.classList.add("bi-star", "text-secondary");
-					}
-				});
-			});
+			// Click để chọn số sao
+			star.addEventListener("click", () => {
+				selectedRating = index + 1;
+				ratingInput.value = selectedRating;
 
-			// Restore on mouseout
-			star.addEventListener("mouseout", () => {
+				// Cập nhật giao diện sao đã chọn
 				stars.forEach((s, i) => {
 					if (i < selectedRating) {
 						s.classList.remove("bi-star", "text-secondary");
@@ -1122,109 +1171,87 @@
 					}
 				});
 			});
-
-			// Click to select
-			star.addEventListener("click", () => {
-				selectedRating = index + 1;
-				ratingInput.value = selectedRating;
-			});
 		});
 	});
+	//Không đụng
 </script>
+
 <script>
-	document.querySelectorAll('.btn-review').forEach(btn => {
-		btn.addEventListener('click', function () {
-			// Lấy dữ liệu từ thuộc tính data-
-			const orderId = this.dataset.orderId;
-			const productId = this.dataset.productId;
-			const userId = this.dataset.userId;
-			const productName = this.dataset.productName;
-			const productImg = this.dataset.productImg;
+	function handleReviewedModal(btn) {
+	const orderId = btn.dataset.orderId;
+	const productId = btn.dataset.productId;
+	const userId = btn.dataset.userId;
+	const productName = btn.dataset.productName;
+	const productImg = btn.dataset.productImg;
+	const rating = parseInt(btn.dataset.rating || "0");
+	const comment = btn.dataset.comment || "";
+	const existingReviewDate = btn.dataset.reviewDate || new Date().toLocaleDateString('vi-VN');
 
-			const existingRating = parseInt(this.dataset.rating || "0");
-			const existingComment = this.dataset.comment || "";
-			const existingReviewDate = this.dataset.reviewDate || new Date().toLocaleDateString('vi-VN');
+	document.getElementById('reviewedOrderId').textContent = orderId;
+	document.getElementById('reviewedProductName').textContent = productName;
+	document.getElementById('reviewedProductImg').src = productImg;
+	document.getElementById('reviewedComment').textContent = comment;
+	document.getElementById('reviewedDate').textContent = existingReviewDate;
 
-			// Gán dữ liệu vào modal
-			document.getElementById('reviewOrderId').textContent = orderId;
-			document.getElementById('orderIdInput').value = orderId;
-
-			document.getElementById('productIdInput').value = productId;
-			document.getElementById('userIdInput').value = userId;
-
-			document.getElementById('reviewProductName').textContent = productName;
-			document.getElementById('reviewProductImg').src = productImg;
-
-			// Gán comment và ngày đánh giá
-			document.getElementById('reviewComment').value = existingComment;
-			document.getElementById('reviewDate').textContent = existingReviewDate;
-
-			// Gán sao (rating)
-			const stars = document.querySelectorAll('#reviewStars i');
-			document.getElementById('ratingInput').value = existingRating;
-			stars.forEach((star, index) => {
-				if (index < existingRating) {
-					star.classList.remove('bi-star', 'text-secondary');
-					star.classList.add('bi-star-fill', 'text-warning');
-				} else {
-					star.classList.remove('bi-star-fill', 'text-warning');
-					star.classList.add('bi-star', 'text-secondary');
-				}
-			});
-		});
-	});
-</script>
-<script>
-	// Bắt sự kiện nút Gửi đánh giá
-	document.getElementById('submitReviewBtn').addEventListener('click', function (e) {
-
-
-		// ✅ Hiện thông báo thành công
-		showReviewSuccessAlert();
-
-		// ✅ Thay textarea thành văn bản và ẩn nút
-		handleReviewSubmitted();
-	});
-
-	// ✅ Hàm hiển thị thông báo
-	function showReviewSuccessAlert() {
-		let alertBox = document.getElementById('reviewAlert');
-		if (!alertBox) {
-			alertBox = document.createElement('div');
-			alertBox.id = 'reviewAlert';
-			alertBox.className = 'alert alert-success mt-2';
-			alertBox.role = 'alert';
-			alertBox.textContent = 'Gửi đánh giá thành công!';
-			document.querySelector('.modal-body').appendChild(alertBox);
+	// Gán sao và khóa tương tác
+	const stars = document.querySelectorAll('#reviewedStars i');
+	stars.forEach((star, index) => {
+		if (index < rating) {
+			star.classList.remove('bi-star', 'text-secondary');
+			star.classList.add('bi-star-fill', 'text-warning');
+		} else {
+			star.classList.remove('bi-star-fill', 'text-warning');
+			star.classList.add('bi-star', 'text-secondary');
 		}
-		alertBox.classList.remove('d-none');
+	});
 
-		setTimeout(() => {
-			alertBox.classList.add('d-none');
-		}, 3000);
+	stars.forEach(star => {
+		const newStar = star.cloneNode(true);
+		newStar.style.pointerEvents = 'none';
+		newStar.style.cursor = 'default';
+		star.replaceWith(newStar);
+	});
+
+	new bootstrap.Modal(document.getElementById('reviewedModal')).show();
+}
+
+	function handleReviewModal(btn) {
+		const orderId = btn.dataset.orderId;
+		const productId = btn.dataset.productId;
+		const userId = btn.dataset.userId;
+		const productName = btn.dataset.productName;
+		const productImg = btn.dataset.productImg;
+		const existingRating = parseInt(btn.dataset.rating || "0");
+		const existingComment = btn.dataset.comment || "";
+		const existingReviewDate = btn.dataset.reviewDate || new Date().toLocaleDateString('vi-VN');
+
+		document.getElementById('reviewOrderId').textContent = orderId;
+		document.getElementById('orderIdInput').value = orderId;
+		document.getElementById('productIdInput').value = productId;
+		document.getElementById('userIdInput').value = userId;
+		document.getElementById('reviewProductName').textContent = productName;
+		document.getElementById('reviewProductImg').src = productImg;
+		document.getElementById('reviewComment').value = existingComment;
+		document.getElementById('reviewDate').textContent = existingReviewDate;
+		document.getElementById('ratingInput').value = existingRating;
+
+		const stars = document.querySelectorAll('#reviewStars i');
+		stars.forEach((star, index) => {
+			if (index < existingRating) {
+				star.classList.remove('bi-star', 'text-secondary');
+				star.classList.add('bi-star-fill', 'text-warning');
+			} else {
+				star.classList.remove('bi-star-fill', 'text-warning');
+				star.classList.add('bi-star', 'text-secondary');
+			}
+		});
+		bootstrap.Modal.getInstance(document.getElementById('reviewedModal'))?.hide();
+		new bootstrap.Modal(document.getElementById('reviewModal')).show();
 	}
-
-	// ✅ Hàm thay textarea bằng văn bản và ẩn nút
-	function handleReviewSubmitted() {
-		const textarea = document.getElementById('reviewComment');
-		const commentText = textarea.value;
-
-		// Tạo phần tử <p> hiển thị bình luận, KHÔNG gán id
-		const commentDisplay = document.createElement('p');
-		commentDisplay.classList.add('form-control', 'bg-light');
-		commentDisplay.textContent = commentText;
-
-		// Thay thế textarea bằng <p>
-		textarea.replaceWith(commentDisplay);
-
-		// Ẩn nút gửi
-		const submitBtn = document.getElementById('submitReviewBtn');
-		if (submitBtn) submitBtn.style.display = 'none';
-	}
-
-
-
-
 </script>
+
+
+
+
 
 </html>

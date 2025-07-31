@@ -201,7 +201,7 @@ public class AccountController {
 	@PostMapping("/review") // 👈 KHÔNG dùng "/account/review" vì đã có @RequestMapping("/account")
 	public String submitReview(@ModelAttribute ReviewDTO reviewDTO,
 	                           RedirectAttributes redirectAttributes) {
-		System.out.println("==> POST /reviews/add đã được gọi");
+
 
 
 	    try {
