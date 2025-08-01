@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <title>Quản lý Đơn hàng</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .status-cho-xac-nhan { background: #fff3cd; color: #856404; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+        .status-dang-xy-ly { background: #cff4fc; color: #055160; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+        .status-dang-giao { background: #cfe2ff; color: #084298; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+        .status-da-giao { background: #d1e7dd; color: #0f5132; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+        .status-da-huy { background: #f8d7da; color: #842029; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+        .status-tra-hang { background: #e2e3e5; color: #41464b; font-weight: bold; border-radius: 6px; padding: 2px 10px; display: inline-block; }
+    </style>
 </head>
 <body>
 <th:block th:replace="layout/admin-layout :: layout">
@@ -64,7 +72,9 @@
 
     function renderOrders(orders) {
         const tbody = document.querySelector("#orderTable tbody");
-        tbody.innerHTML = orders.length ? orders.map((o, i) => `
+        tbody.innerHTML = orders.length ? orders.map((o, i) => {
+            const statusClass = getStatusClass(o.status);
+            return `
             <tr>
                 <td>${i + 1}</td>
                 <td>${o.name}</td>
@@ -72,41 +82,61 @@
                 <td>${o.total.toLocaleString()} đ</td>
                 <td>${o.paymentMethodName}</td>
                 <td>
-    <select onchange="updateStatus(${o.orderID}, this.value)">
-        ${[
-            "Cho xac nhan",
-            "Dang xy ly",
-            "Dang giao",
-            "Da giao",
-            "Da huy",
-            "Tra Hang"
-        ].map(stt => `
-            <option value="${stt}" ${stt === o.status ? 'selected' : ''}>
-                ${getStatusLabel(stt)}
-            </option>
-        `).join('')}
-    </select>
-</td>
+                    <span class="${statusClass}">${getStatusLabel(o.status)}</span>
+                    <select class="form-select form-select-sm mt-1" onchange="updateStatus(${o.orderId}, this.value)">
+                        ${[
+                            "Cho xac nhan",
+                            "Dang xy ly",
+                            "Dang giao",
+                            "Da giao",
+                            "Da huy",
+                            "Tra Hang"
+                        ].map(stt => `
+                            <option value="${stt}" ${stt === o.status ? 'selected' : ''}>
+                                ${getStatusLabel(stt)}
+                            </option>
+                        `).join('')}
+                    </select>
+                </td>
                 <td>
-                    <button class="btn btn-info btn-sm" onclick="viewOrderDetails(${o.orderID})">Chi tiết</button>
+                    <button class="btn btn-info btn-sm" onclick="viewOrderDetails(${o.orderId})">Chi tiết</button>
                 </td>
             </tr>
-        `).join('') : `<tr><td colspan="6" class="text-center">Không có đơn hàng</td></tr>`;
+        `}).join('') : `<tr><td colspan="6" class="text-center">Không có đơn hàng</td></tr>`;
     }
 
-    function updateStatus(orderID, status) {
-        const order = allOrders.find(o => o.orderID === orderID);
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Cho xac nhan': return 'status-cho-xac-nhan';
+            case 'Dang xy ly': return 'status-dang-xy-ly';
+            case 'Dang giao': return 'status-dang-giao';
+            case 'Da giao': return 'status-da-giao';
+            case 'Da huy': return 'status-da-huy';
+            case 'Tra Hang': return 'status-tra-hang';
+            default: return '';
+        }
+    }
+
+    function updateStatus(orderId, status) {
+        const order = allOrders.find(o => o.orderId === orderId);
         if (!order) return;
 
-        fetch(`${orderApi}/${orderID}`, {
+        fetch(`${orderApi}/${orderId}`, {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({...order, status})
         })
             .then(res => res.json())
-            .then(() => {
+            .then((updatedOrder) => {
                 alert("Cập nhật trạng thái thành công!");
-                loadOrders();
+                // Thay thế toàn bộ object đơn hàng trong allOrders bằng object mới trả về từ server
+                if (updatedOrder) {
+                    const idx = allOrders.findIndex(o => o.orderId === orderId);
+                    if (idx !== -1) {
+                        allOrders[idx] = updatedOrder;
+                        renderOrders(allOrders);
+                    }
+                }
             });
     }
 
@@ -125,7 +155,7 @@
             case 'Tra Hang':
                 return 'Trả hàng';
             default:
-                return status;
+                return '';
         }
     }
 
@@ -133,7 +163,8 @@
         fetch(`${orderApi}/${orderID}`)
             .then(res => res.json())
             .then(order => {
-                const productRows = order.orderItemsDTO?.map((item, i) => `
+                const statusClass = getStatusClass(order.status);
+                const productRows = order.orderItems?.map((item, i) => `
                 <tr>
                     <td>${i + 1}</td>
                     <td>${item.productName}</td>
@@ -149,7 +180,7 @@
                 <p><strong>Địa chỉ:</strong> ${order.shippingAddress}</p>
                 <p><strong>Phương thức thanh toán:</strong> ${order.paymentMethodName}</p>
                 <p><strong>Tổng tiền:</strong> ${order.total.toLocaleString()} đ</p>
-                <p><strong>Trạng thái:</strong> ${getStatusLabel(order.status)}</p>
+                <p><strong>Trạng thái:</strong> <span class="${statusClass}">${getStatusLabel(order.status)}</span></p>
                 <hr>
                 <h5>Sản phẩm trong đơn hàng:</h5>
                 <table class="table table-bordered">

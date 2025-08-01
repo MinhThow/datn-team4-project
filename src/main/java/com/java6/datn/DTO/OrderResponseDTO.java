@@ -21,5 +21,6 @@ public class OrderResponseDTO {
     private LocalDateTime orderDate;
     private String paymentMethodName;
     private List<OrderItemDTO> orderItems;
+    private String name; // tên người dùng
 }
 

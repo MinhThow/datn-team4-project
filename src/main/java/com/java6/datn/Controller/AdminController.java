@@ -14,6 +14,28 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+    // API trả về tổng số sản phẩm cho dashboard
+    @Autowired
+    com.java6.datn.Repository.OrderRepository orderRepository;
+
+    @GetMapping("/api/dashboard/summary")
+    @ResponseBody
+    public Map<String, Object> getDashboardSummary() {
+        Map<String, Object> summary = new LinkedHashMap<>();
+        summary.put("productCount", productRepository.count());
+        // Đếm tổng số đơn hàng (tất cả trạng thái)
+        long allOrderCount = orderRepository.count();
+        summary.put("orderCount", allOrderCount);
+        // Tính tổng doanh thu từ các đơn hàng đã thanh toán
+        java.math.BigDecimal totalRevenue = java.math.BigDecimal.ZERO;
+        for (com.java6.datn.Entity.Order order : orderRepository.findByStatus("PAID")) {
+            if (order.getTotal() != null) {
+                totalRevenue = totalRevenue.add(order.getTotal());
+            }
+        }
+        summary.put("revenue", totalRevenue);
+        return summary;
+    }
 
     @Autowired
     ProductRepository productRepository;

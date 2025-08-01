@@ -4,834 +4,240 @@
     <meta charset="UTF-8">
     <title>Sản phẩm</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #0d6efd;
-            --success-color: #198754;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-600: #6c757d;
-            --gray-900: #212529;
-        }
-
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
-        body {
-            background-color: var(--gray-100);
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--gray-900);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: #fff;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .btn-add {
-            background: var(--success-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: none;
-            letter-spacing: normal;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .btn-add:hover {
-            background: #157347;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-box {
-            position: relative;
-            width: 300px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px 10px 45px;
-            border: 2px solid var(--gray-200);
-            border-radius: 25px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .search-box input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 7px;
-            top: 42%;
-            transform: translateY(-50%);
-            color: var(--gray-600);
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .table {
-            margin: 0;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .table th {
-            background: var(--gray-900);
-            color: white;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 16px;
-            vertical-align: middle;
-        }
-
-        .table td {
-            padding: 16px;
-            vertical-align: middle;
-            font-size: 14px;
-            color: var(--gray-900);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .table tbody tr:hover {
-            background-color: #f8f9ff;
-        }
-
-        .product-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--gray-200);
-            display: block;
-            margin: 0 auto;
-        }
-
-        .product-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--gray-900);
-            margin-bottom: 4px;
-        }
-
-        .product-description {
-            font-size: 13px;
-            color: var(--gray-600);
-            line-height: 1.5;
-        }
-
-        .price {
-            font-weight: 600;
-            color: var(--success-color);
-            font-size: 14px;
-        }
-
-        .stock-badge {
-            font-size: 13px;
-            font-weight: 500;
-            padding: 4px 12px;
-            border-radius: 6px;
-        }
-
-        .stock-high {
-            background-color: #d1e7dd;
-            color: #0f5132;
-        }
-
-        .stock-low {
-            background-color: #f8d7da;
-            color: #842029;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .btn-action {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .btn-edit {
-            background: var(--warning-color);
-            color: #000;
-        }
-
-        .btn-edit:hover {
-            background: #ffb302;
-            transform: translateY(-1px);
-        }
-
-        .btn-delete {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #bb2d3b;
-            transform: translateY(-1px);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--gray-900);
-        }
-
-        .modal-title {
-            color: white;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .close-btn:hover {
-            background-color: var(--gray-200);
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            flex: 1;
-        }
-
-        .form-group label {
-            display:  block;
-            font-weight: 500;
-            color: white;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid var(--gray-200);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-        }
-
-        .form-control.error {
-            border-color: var(--danger-color);
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .btn-primary:hover {
-            background: #0056b3;
-        }
-
-        .btn-secondary {
-            background: var(--gray-600);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--success-color);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            z-index: 1100;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray-600);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--gray-200);
-        }
-
-        @media (max-width: 768px) {
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-
-            .table-container {
-                overflow-x: auto;
-            }
-
-            .table {
-                min-width: 600px;
-            }
-        }
-    </style>
 </head>
 <body>
 <th:block th:replace="layout/admin-layout :: layout">
     <th:block th:fragment="pageContent">
-        <div class="container">
-            <div class="header">
-                <h1><i class="bi bi-box-seam"></i> Quản lý sản phẩm</h1>
-            </div>
+        <div class="container mt-4">
 
-            <div class="controls">
-                <button class="btn-add" onclick="openAddProduct()">
-                    <i class="bi bi-plus-circle"></i>
-                    THÊM SẢN PHẨM
-                </button>
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." oninput="filterProducts()">
+            <!-- Modal Add/Edit -->
+            <div class="modal fade" id="productModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="productForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productModalLabel">Thêm sản phẩm</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="productId"/>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td><label class="form-label">Tên</label></td>
+                                                    <td><input type="text" id="productName" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Ảnh</label></td>
+                                                    <td><input type="text" id="productImage" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Mô tả</label></td>
+                                                    <td><textarea id="productDescription" class="form-control"></textarea></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td><label class="form-label">Giá</label></td>
+                                                    <td><input type="number" id="productPrice" class="form-control" step="0.01" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Số lượng</label></td>
+                                                    <td><input type="number" id="productStock" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Size</label></td>
+                                                    <td><input type="text" id="productSize" class="form-control"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Danh mục</label></td>
+                                                    <td>
+                                                        <select id="productCategory" class="form-select" required>
+                                                            <option value="">--Chọn--</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" type="submit">Lưu</button>
+                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Huỷ</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="table-container">
-                <table class="table" id="productTable">
-                    <thead>
-                    <tr>
-                        <th style="width: 5%">#</th>
-                        <th style="width: 10%">Ảnh</th>
-                        <th style="width: 25%">Tên sản phẩm</th>
-                        <th style="width: 15%">Giá</th>
-                        <th style="width: 10%">Số lượng</th>
-                        <th style="width: 10%">Size</th>
-                        <th style="width: 15%">Danh mục</th>
-                        <th style="width: 10%">Thao tác</th>
-                    </tr>
-                    </thead>
-                    <tbody id="productTableBody">
-                    <!-- Dữ liệu sẽ được load bằng JavaScript -->
-                    </tbody>
-                </table>
+            <!-- Thêm & Tìm kiếm -->
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <button class="btn btn-success" onclick="openAddProduct()">Thêm sản phẩm</button>
+                <input type="text" id="searchInput" class="form-control w-25" placeholder="Tìm kiếm..."
+                       oninput="filterProducts()">
             </div>
-        </div>
 
-        <!-- Modal -->
-        <div class="modal-overlay" id="productModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">THÊM SẢN PHẨM</h5>
-                    <button class="close-btn" onclick="closeModal()">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
-                <form id="productForm">
-                    <div class="modal-body">
-                        <input type="hidden" id="productId">
-
-                        <div class="form-row">
-                            <div class="form-group" style="flex: 2;">
-                                <label for="productName">Tên sản phẩm *</label>
-                                <input type="text" id="productName" class="form-control" required>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label for="productSize">Size</label>
-                                <input type="text" id="productSize" class="form-control" placeholder="S, M, L, XL">
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productImage">URL Ảnh *</label>
-                                <input type="text" id="productImage" class="form-control" value="/static/img/product/" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productDescription">Mô tả</label>
-                                <textarea id="productDescription" class="form-control" rows="3" placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productPrice">Giá (VNĐ) *</label>
-                                <input type="number" id="productPrice" class="form-control" step="1000" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="productStock">Số lượng *</label>
-                                <input type="number" id="productStock" class="form-control" min="0" required>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productCategory">Danh mục *</label>
-                                <select id="productCategory" class="form-control" required>
-                                    <option value="">-- Chọn danh mục --</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn-secondary" onclick="closeModal()">Hủy</button>
-                        <button type="submit" class="btn-primary">Lưu</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Toast -->
-        <div class="toast" id="toast">
-            <span id="toastMessage"></span>
+            <!-- Bảng danh sách -->
+            <table class="table table-bordered" id="productTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ảnh</th>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Danh mục</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </th:block>
 </th:block>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+    <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">Thành công!</div>
+            <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // API endpoints
     const productApi = '/api/products';
     const categoryApi = '/api/categories';
+    let allProducts = [], allCategories = [];
 
-    // Global variables
-    let allProducts = [];
-    let allCategories = [];
-    let currentProductId = null;
+    function showToast(msg = 'Success!') {
+        document.getElementById('toastMessage').textContent = msg;
+        new bootstrap.Toast(document.getElementById('toastSuccess')).show();
+    }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        loadCategories();
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch(categoryApi)
+            .then(r => r.json())
+            .then(cats => {
+                allCategories = cats;
+                const sel = document.getElementById('productCategory');
+                cats.forEach(c => sel.innerHTML += `<option value="${c.categoryID}">${c.name}</option>`);
+            });
+
         loadProducts();
-        setupEventListeners();
+
+        document.getElementById('productForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = +document.getElementById('productId').value;
+            const payload = {
+                name: document.getElementById('productName').value,
+                image: document.getElementById('productImage').value,
+                description: document.getElementById('productDescription').value,
+                price: +document.getElementById('productPrice').value,
+                stock: +document.getElementById('productStock').value,
+                size: document.getElementById('productSize').value,
+                categoryID: +document.getElementById('productCategory').value
+            };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${productApi}/${id}` : productApi;
+            if (id) payload.productID = id;
+
+            fetch(url, {
+                method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+            })
+                .then(r => r.json())
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
+                    showToast(id ? 'Cập nhật thành công!' : 'Thêm thành công!');
+                    loadProducts();
+                });
+        });
     });
 
-    function setupEventListeners() {
-        // Form submission
-        document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
-
-        // Close modal on overlay click
-        document.getElementById('productModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-
-        // Escape key to close modal
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('productModal').classList.contains('active')) {
-                closeModal();
-            }
-        });
-    }
-
-    // Load categories from API
-    async function loadCategories() {
-        try {
-            const response = await fetch(categoryApi, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+    function loadProducts() {
+        fetch(productApi)
+            .then(r => r.json())
+            .then(data => {
+                allProducts = data;
+                renderProducts(data);
             });
-            if (!response.ok) throw new Error('Không thể tải danh mục');
-            allCategories = await response.json();
-            populateCategorySelect();
-        } catch (error) {
-            showToast('Lỗi khi tải danh mục: ' + error.message);
-        }
     }
 
-    function populateCategorySelect() {
-        const select = document.getElementById('productCategory');
-        select.innerHTML = '<option value="">-- Chọn danh mục --</option>';
-
-        allCategories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category.categoryID;
-            option.textContent = category.name;
-            select.appendChild(option);
-        });
+    function renderProducts(list) {
+        const tbody = document.querySelector('#productTable tbody');
+        tbody.innerHTML = list.length ?
+            list.map((p, i) => {
+                // Lấy ảnh đầu tiên từ productImages nếu có, nếu không lấy từ p.image
+                let imgSrc = (p.productImages && p.productImages.length > 0)
+                    ? p.productImages[0].imageUrl
+                    : p.image;
+                // Nếu imgSrc đã bắt đầu bằng 'img/' hoặc '/', dùng trực tiếp, nếu không thì thêm '/img/product/'
+                let imgPath = (imgSrc && (imgSrc.startsWith('img/') || imgSrc.startsWith('/')))
+                    ? ('/' + imgSrc.replace(/^\//, ''))
+                    : ('/img/product/' + imgSrc);
+                return `
+    <tr>
+      <td>${i + 1}</td>
+      <td><img src="${imgPath}" alt="${p.name}" style="width:60px;height:auto;"></td>
+      <td>${p.name}</td>
+      <td>${p.price}</td>
+      <td>${p.stock}</td>
+      <td>${p.categoryName || ''}</td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="openEdit(${p.productID})">Sửa</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.productID})">Xoá</button>
+      </td>
+    </tr>`;
+            }).join('') :
+            '<tr><td colspan="7" class="text-center">Không có</td></tr>';
     }
 
-    // Load products from API
-    async function loadProducts() {
-        try {
-            const response = await fetch(productApi, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) throw new Error('Không thể tải sản phẩm');
-            allProducts = await response.json();
-            renderProducts(allProducts);
-        } catch (error) {
-            showToast('Lỗi khi tải sản phẩm: ' + error.message);
-        }
-    }
 
-    // Render products table
-
-    function renderProducts(products) {
-        const tbody = document.getElementById('productTableBody');
-
-        if (products.length === 0) {
-            tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="empty-state">
-                    <i class="bi bi-inbox"></i>
-                    <div>Không có sản phẩm nào</div>
-                </td>
-            </tr>
-        `;
-            return;
+        function filterProducts() {
+            const kw = document.getElementById('searchInput').value.toLowerCase();
+            renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(kw)));
         }
 
-        console.log('Products data:', products); // Log để kiểm tra dữ liệu API trả về
-        tbody.innerHTML = products.map((product, index) => {
-            console.log('Processing product image:', product.image); // Log để kiểm tra tên file ảnh
-            return `
-            <tr>
-                <td>${index + 1}</td>
-                <td>
-                    <img src="/img/product/${product.image}" alt="${product.name}" class="product-image"
-                         onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'; console.log('Image failed to load:', this.src)">
-                </td>
-                <td>
-                    <div class="product-name">${product.name}</div>
-                    ${product.description ? `<div class="product-description">${product.description.substring(0, 60)}${product.description.length > 60 ? '...' : ''}</div>` : ''}
-                </td>
-                <td class="price">${formatCurrency(product.price)}</td>
-                <td>
-                    <span class="stock-badge ${product.stock > 10 ? 'stock-high' : 'stock-low'}">
-                        ${product.stock}
-                    </span>
-                </td>
-                <td>${product.size || '-'}</td>
-                <td>${product.categoryName || '-'}</td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-action btn-edit" onclick="editProduct(${product.productID})">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn-action btn-delete" onclick="deleteProduct(${product.productID})">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        }).join('');
-    }
-
-    // Format currency
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(amount);
-    }
-
-    // Filter products
-    function filterProducts() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const filteredProducts = allProducts.filter(product =>
-            product.name.toLowerCase().includes(searchTerm) ||
-            (product.description && product.description.toLowerCase().includes(searchTerm)) ||
-            (product.categoryName && product.categoryName.toLowerCase().includes(searchTerm))
-        );
-        renderProducts(filteredProducts);
-    }
-
-    // Modal functions
-    function openAddProduct() {
-        currentProductId = null;
-        document.getElementById('modalTitle').textContent = 'Thêm sản phẩm';
-        document.getElementById('productForm').reset();
-        document.getElementById('productId').value = '';
-        openModal();
-    }
-
-    async function editProduct(id) {
-        try {
-            const response = await fetch(`${productApi}/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) throw new Error('Không thể tải sản phẩm');
-            const product = await response.json();
-            if (!product) return;
-
-            currentProductId = id;
-            document.getElementById('modalTitle').textContent = 'Sửa sản phẩm';
-            document.getElementById('productId').value = product.productID;
-            document.getElementById('productName').value = product.name;
-            document.getElementById('productImage').value = product.image;
-            document.getElementById('productDescription').value = product.description || '';
-            document.getElementById('productPrice').value = product.price;
-            document.getElementById('productStock').value = product.stock;
-            document.getElementById('productSize').value = product.size || '';
-            document.getElementById('productCategory').value = product.categoryID || '';
-
-            openModal();
-        } catch (error) {
-            showToast('Lỗi khi tải sản phẩm: ' + error.message);
+        function openAddProduct() {
+            document.getElementById('productModalLabel').textContent = 'Thêm sản phẩm';
+            ['productId', 'productName', 'productDescription', 'productPrice', 'productStock', 'productSize'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('productCategory').value = '';
+            new bootstrap.Modal(document.getElementById('productModal')).show();
         }
-    }
 
-    function openModal() {
-        document.getElementById('productModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-        document.getElementById('productModal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    // Handle form submission
-    async function handleFormSubmit(e) {
-        e.preventDefault();
-
-        // Lấy tên file từ đường dẫn đầy đủ
-        const fullPath = document.getElementById('productImage').value;
-        const fileName = fullPath.split('\\').pop().split('/').pop();
-
-        const formData = {
-            productID: currentProductId,
-            name: document.getElementById('productName').value,
-            image: fileName, // Chỉ lưu tên file
-            description: document.getElementById('productDescription').value,
-            price: parseFloat(document.getElementById('productPrice').value),
-            stock: parseInt(document.getElementById('productStock').value),
-            size: document.getElementById('productSize').value,
-            categoryID: parseInt(document.getElementById('productCategory').value),
-            categoryName: allCategories.find(c => c.categoryID === parseInt(document.getElementById('productCategory').value))?.name
-        };
-
-        try {
-            if (currentProductId) {
-                // Update existing product
-                const response = await fetch(`${productApi}/${currentProductId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+        function openEdit(id) {
+            fetch(`${productApi}/${id}`)
+                .then(r => r.json())
+                .then(p => {
+                    document.getElementById('productModalLabel').textContent = 'Cập nhật sản phẩm';
+                    document.getElementById('productId').value = p.productID;
+                    document.getElementById('productName').value = p.name;
+                    document.getElementById('productImage').value = p.image || '';
+                    document.getElementById('productDescription').value = p.description;
+                    document.getElementById('productPrice').value = p.price;
+                    document.getElementById('productStock').value = p.stock;
+                    document.getElementById('productSize').value = p.size;
+                    document.getElementById('productCategory').value = p.categoryID || '';
+                    new bootstrap.Modal(document.getElementById('productModal')).show();
                 });
-                if (!response.ok) throw new Error('Không thể cập nhật sản phẩm');
-                showToast('Cập nhật sản phẩm thành công!');
-            } else {
-                // Add new product
-                const response = await fetch(productApi, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                if (!response.ok) throw new Error('Không thể thêm sản phẩm');
-                showToast('Thêm sản phẩm thành công!');
-            }
-
-            closeModal();
-            await loadProducts(); // Reload products after save
-        } catch (error) {
-            showToast('Lỗi: ' + error.message);
         }
-    }
 
-    // Delete product
-    async function deleteProduct(id) {
-        if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-            try {
-                const response = await fetch(`${productApi}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+        function deleteProduct(id) {
+            if (!confirm('Bạn có chắc muốn xoá?')) return;
+            fetch(`${productApi}/${id}`, {method: 'DELETE'})
+                .then(() => {
+                    showToast('Xoá thành công!');
+                    loadProducts();
                 });
-                if (!response.ok) throw new Error('Không thể xóa sản phẩm');
-                showToast('Xóa sản phẩm thành công!');
-                await loadProducts(); // Reload products after delete
-            } catch (error) {
-                showToast('Lỗi khi xóa sản phẩm: ' + error.message);
-            }
         }
-    }
-
-    // Show toast notification
-    function showToast(message) {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-
-        toastMessage.textContent = message;
-        toast.classList.add('show');
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
 </script>
 </body>
 </html>

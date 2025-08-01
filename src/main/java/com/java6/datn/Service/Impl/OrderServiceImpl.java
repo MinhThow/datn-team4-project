@@ -6,6 +6,7 @@ import com.java6.datn.DTO.OrderResponseDTO;
 import com.java6.datn.Entity.*;
 import com.java6.datn.Repository.*;
 import com.java6.datn.Service.OrderService;
+import com.java6.datn.Service.CartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final ProductSizeRepository productSizeRepository;
     private final PaymentMethodRepository paymentMethodRepository;
+    private final CartItemService.CartService cartService;
 
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository,
@@ -31,13 +33,15 @@ public class OrderServiceImpl implements OrderService {
                             UserRepository userRepository,
                             ProductRepository productRepository,
                             ProductSizeRepository productSizeRepository,
-                            PaymentMethodRepository paymentMethodRepository) {
+                            PaymentMethodRepository paymentMethodRepository,
+                            CartItemService.CartService cartService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productSizeRepository = productSizeRepository;
         this.paymentMethodRepository = paymentMethodRepository;
+        this.cartService = cartService;
     }
 
     @Override
@@ -77,7 +81,13 @@ public class OrderServiceImpl implements OrderService {
             ProductSize productSize = productSizeRepository.findById(itemDTO.getProductSizeID())
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy size sản phẩm với ID: " + itemDTO.getProductSizeID()));
 
-            // TODO: Thêm logic kiểm tra và trừ số lượng tồn kho (Stock) của ProductSize tại đây
+            // Kiểm tra tồn kho và trừ số lượng
+            int currentStock = productSize.getStock() != null ? productSize.getStock() : 0;
+            if (currentStock < itemDTO.getQuantity()) {
+                throw new RuntimeException("Số lượng tồn kho không đủ cho sản phẩm: " + product.getName() + ", size: " + productSize.getSize());
+            }
+            productSize.setStock(currentStock - itemDTO.getQuantity());
+            productSizeRepository.save(productSize);
 
             OrderItem orderItem = OrderItem.builder()
                     .order(savedOrder) // Quan trọng: Gán order vừa được lưu
@@ -95,8 +105,37 @@ public class OrderServiceImpl implements OrderService {
         orderItemRepository.saveAll(orderItems);
         savedOrder.setOrderItems(orderItems); // Cập nhật lại list item cho đối tượng order
 
-        // 6. Chuyển đổi sang DTO để trả về cho client
+        // 6. Xóa giỏ hàng của user sau khi đặt hàng thành công
+        cartService.clearCartByUserId(requestDTO.getUserId());
+
+        // 7. Chuyển đổi sang DTO để trả về cho client
         return mapToOrderResponseDTO(savedOrder);
+    }
+
+    @Override
+    public List<OrderResponseDTO> getAllOrders() {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderResponseDTO> result = new ArrayList<>();
+        for (Order order : orders) {
+            result.add(mapToOrderResponseDTO(order));
+        }
+        return result;
+    }
+
+    @Override
+    public OrderResponseDTO getOrderById(Integer orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) return null;
+        return mapToOrderResponseDTO(order);
+    }
+
+    @Override
+    public OrderResponseDTO updateOrderStatus(Integer orderId, String status) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) return null;
+        order.setStatus(status);
+        orderRepository.save(order);
+        return mapToOrderResponseDTO(order);
     }
 
     private OrderResponseDTO mapToOrderResponseDTO(Order order) {
@@ -109,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(item.getQuantity())
                         .price(item.getPrice())
                         .build())
-                .collect(Collectors.toList());
+                .collect(java.util.stream.Collectors.toList());
 
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
@@ -122,6 +161,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(order.getOrderDate())
                 .paymentMethodName(order.getPaymentMethodName())
                 .orderItems(orderItemDTOs)
+                .name(order.getUser() != null ? order.getUser().getName() : "")
                 .build();
     }
 }
