@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "Categories")
+@ToString
 public class Category {
 
     @Id
@@ -23,6 +24,7 @@ public class Category {
     private String description;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Product> products;
 }
 

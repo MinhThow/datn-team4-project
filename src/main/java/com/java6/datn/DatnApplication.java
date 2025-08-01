@@ -18,6 +18,9 @@ public class DatnApplication {
         System.out.println(encoder.encode("123456")); // xuất mật khẩu đã hash
 
 
+
+
+
     }
 
 

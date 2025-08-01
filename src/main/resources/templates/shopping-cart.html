@@ -156,125 +156,26 @@
                     <div class="shopping__cart__table">
                         <table>
                             <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-1.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>T-shirt Contrast Pocket</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 30.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-2.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Diagonal Textured Cap</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 32.50</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-3.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 47.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="img/shopping-cart/cart-4.jpg" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h6>Basic Flowing Scarf</h6>
-                                            <h5>$98.49</h5>
-                                        </div>
-                                    </td>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="1">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">$ 30.00</td>
-                                    <td class="cart__close"><i class="fa fa-close"></i></td>
-                                </tr>
+                            <tbody id="cart-body">
+                            <!-- Nội dung sẽ được load từ JS -->
                             </tbody>
                         </table>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn">
-                                <a href="#">Continue Shopping</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn update__btn">
-                                <a href="#"><i class="fa fa-spinner"></i> Update cart</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="cart__discount">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Coupon code">
-                            <button type="submit">Apply</button>
-                        </form>
-                    </div>
                     <div class="cart__total">
                         <h6>Cart total</h6>
                         <ul>
-                            <li>Subtotal <span>$ 169.50</span></li>
-                            <li>Total <span>$ 169.50</span></li>
+                            <li>Total <span id="cart-total">$0.00</span></li>
                         </ul>
-                        <a href="#" class="primary-btn">Proceed to checkout</a>
+                        <a href="/checkout" class="primary-btn">Đặt Hàng</a>
                     </div>
                 </div>
             </div>
@@ -371,6 +272,85 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+
+    <script>
+        function loadCart() {
+            fetch("/api/cart")
+                .then(res => res.json())
+                .then(data => {
+                    let html = "";
+                    let total = 0;
+
+                    data.forEach(item => {
+                        total += item.total;
+
+                        html += `
+<tr>
+    <td class="product__cart__item">
+        <div class="product__cart__item__pic">
+            <img src="${item.imageUrl}" alt="" style="width: 90px;">
+        </div>
+        <div class="product__cart__item__text">
+            <h6>${item.productName}</h6>
+            <span style="font-size: 13px; color: #777;">Size: <b>${item.size}</b></span>
+        </div>
+    </td>
+    <td class="quantity-col">
+        <input type="number"
+               class="form-control"
+               style="width: 70px; border-radius: 6px; padding: 4px 6px;"
+               min="1"
+               value="${item.quantity}"
+               onchange="updateQuantity(${item.cartItemID}, this.value)">
+    </td>
+    <td class="cart__price">${item.total.toLocaleString('vi-VN')}đ</td>
+    <td class="cart__close">
+        <i class="fa fa-close" onclick="deleteItem(${item.cartItemID})"></i>
+    </td>
+</tr>
+`;
+                    });
+
+                    document.getElementById("cart-body").innerHTML = html;
+                    document.getElementById("cart-total").innerText = total.toLocaleString('vi-VN') + "đ";
+
+                });
+        }
+
+        function updateQuantity(cartItemId, quantity) {
+            fetch("/api/cart/update", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    cartItemID: cartItemId,
+                    quantity: parseInt(quantity)
+                })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Update failed: " + res.status);
+                    return res.text();
+                })
+                .then(msg => {
+                    console.log("✅ Updated:", msg);
+                    loadCart(); // reload lại cart
+                })
+                .catch(err => {
+                    console.error("❌ Lỗi cập nhật:", err);
+                    alert("Cập nhật thất bại: " + err.message);
+                });
+        }
+
+
+        function deleteItem(id) {
+            fetch(`/api/cart/delete?id=${id}`, { method: 'DELETE' })
+                .then(() => loadCart());
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCart);
+    </script>
+
 </body>
 
 </html>

@@ -1,6 +1,5 @@
 package com.java6.datn.Controller;
 
-import com.java6.datn.Repository.OrderRepository;
 import com.java6.datn.Repository.ProductRepository;
 import com.java6.datn.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class AdminController {
     UserRepository userRepository;
 
     @Autowired
-    OrderRepository orderRepository;
+//    OrderRepository orderRepository;
 
     @GetMapping("/dashboard")
     public String dashboard() {
@@ -64,7 +63,7 @@ public class AdminController {
         // Gọi đúng qua biến đã autowired
         stats.put("Sản phẩm", productRepository.count());
         stats.put("Người dùng", userRepository.count());
-        stats.put("Đơn hàng", orderRepository.count());
+//        stats.put("Đơn hàng", orderRepository.count());
 
         return stats;
     }

@@ -4042,3 +4042,34 @@ ol {
 .search-switch {
     display: none !important;
 }
+
+
+.checkout__input textarea {
+	width: 100%;
+	padding: 10px 20px;
+	font-size: 14px;
+	border: 1px solid #ebebeb;
+	border-radius: 4px;
+	resize: vertical; /* cho phép kéo độ cao nếu muốn */
+}
+
+.payment-methods {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-top: 8px;
+}
+
+.radio-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.radio-item input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #007bff; /* Tùy chỉnh màu nếu muốn */
+}

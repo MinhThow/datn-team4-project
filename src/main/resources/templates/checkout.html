@@ -151,133 +151,69 @@
     <!-- Checkout Section Begin -->
     <section class="checkout spad">
         <div class="container">
-            <div class="checkout__form">
-                <form action="#">
-                    <div class="row">
-                        <div class="col-lg-8 col-md-6">
-                            <h6 class="coupon__code"><span class="icon_tag_alt"></span> Have a coupon? <a href="#">Click
-                            here</a> to enter your code</h6>
-                            <h6 class="checkout__title">Billing Details</h6>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Fist Name<span>*</span></p>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Last Name<span>*</span></p>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="checkout__input">
-                                <p>Country<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="checkout__input">
-                                <p>Address<span>*</span></p>
-                                <input type="text" placeholder="Street Address" class="checkout__input__add">
-                                <input type="text" placeholder="Apartment, suite, unite ect (optinal)">
-                            </div>
-                            <div class="checkout__input">
-                                <p>Town/City<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="checkout__input">
-                                <p>Country/State<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="checkout__input">
-                                <p>Postcode / ZIP<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Phone<span>*</span></p>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Email<span>*</span></p>
-                                        <input type="text">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="checkout__input__checkbox">
-                                <label for="acc">
-                                    Create an account?
-                                    <input type="checkbox" id="acc">
-                                    <span class="checkmark"></span>
+            <form id="checkout-form">
+                <div class="row">
+                    <!-- BÊN TRÁI: THÔNG TIN GIAO HÀNG -->
+                    <div class="col-lg-7">
+                        <h4>Thông tin giao hàng</h4>
+                        <div class="checkout__input">
+                            <p>Họ tên</p>
+                            <input type="text" id="fullname" required>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Email</p>
+                            <input type="email" id="email" readonly>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Số điện thoại</p>
+                            <input type="text" id="phone" required>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Địa chỉ giao hàng</p>
+                            <input type="text" id="address" required>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Ghi chú (tuỳ chọn)</p>
+                            <textarea id="note" rows="3" placeholder="Ví dụ: giao ngoài giờ hành chính, gọi trước khi đến..."></textarea>
+                        </div>
+
+                        <div class="checkout__input">
+                            <p>Phương thức thanh toán<span>*</span></p>
+                            <div class="payment-methods">
+                                <label class="radio-item">
+                                    <input type="radio" name="paymentMethod" value="COD" checked>
+                                    Thanh toán khi nhận hàng (COD)
                                 </label>
-                                <p>Create an account by entering the information below. If you are a returning customer
-                                please login at the top of the page</p>
-                            </div>
-                            <div class="checkout__input">
-                                <p>Account Password<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="checkout__input__checkbox">
-                                <label for="diff-acc">
-                                    Note about your order, e.g, special noe for delivery
-                                    <input type="checkbox" id="diff-acc">
-                                    <span class="checkmark"></span>
+                                <label class="radio-item">
+                                    <input type="radio" name="paymentMethod" value="BANK">
+                                    Chuyển khoản ngân hàng
                                 </label>
-                            </div>
-                            <div class="checkout__input">
-                                <p>Order notes<span>*</span></p>
-                                <input type="text"
-                                placeholder="Notes about your order, e.g. special notes for delivery.">
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
-                            <div class="checkout__order">
-                                <h4 class="order__title">Your order</h4>
-                                <div class="checkout__order__products">Product <span>Total</span></div>
-                                <ul class="checkout__total__products">
-                                    <li>01. Vanilla salted caramel <span>$ 300.0</span></li>
-                                    <li>02. German chocolate <span>$ 170.0</span></li>
-                                    <li>03. Sweet autumn <span>$ 170.0</span></li>
-                                    <li>04. Cluten free mini dozen <span>$ 110.0</span></li>
-                                </ul>
-                                <ul class="checkout__total__all">
-                                    <li>Subtotal <span>$750.99</span></li>
-                                    <li>Total <span>$750.99</span></li>
-                                </ul>
-                                <div class="checkout__input__checkbox">
-                                    <label for="acc-or">
-                                        Create an account?
-                                        <input type="checkbox" id="acc-or">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adip elit, sed do eiusmod tempor incididunt
-                                ut labore et dolore magna aliqua.</p>
-                                <div class="checkout__input__checkbox">
-                                    <label for="payment">
-                                        Check Payment
-                                        <input type="checkbox" id="payment">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <div class="checkout__input__checkbox">
-                                    <label for="paypal">
-                                        Paypal
-                                        <input type="checkbox" id="paypal">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <button type="submit" class="site-btn">PLACE ORDER</button>
-                            </div>
+
+
+                    </div>
+
+
+
+                    <!-- BÊN PHẢI: DANH SÁCH SẢN PHẨM -->
+                    <div class="col-lg-5">
+                        <div class="checkout__order">
+                            <h4>Thông tin đơn hàng</h4>
+                            <ul id="checkout-products" class="checkout__total__products" style="padding-left: 0;">
+                                <!-- JS sẽ render các sản phẩm ở đây -->
+                            </ul>
+                            <ul class="checkout__total__all">
+                                <li>Tổng cộng <span id="checkout-total">0đ</span></li>
+                            </ul>
+                            <button type="submit" class="site-btn">XÁC NHẬN ĐẶT HÀNG</button>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </section>
+
     <!-- Checkout Section End -->
 
     <!-- Footer Section Begin -->
@@ -369,6 +305,110 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Cuối file, đoạn <script> -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let currentUser = null;
+            let cartItems = [];
+
+            // 1. Lấy thông tin người dùng
+            fetch("/api/users/info")
+                .then(res => res.json())
+                .then(user => {
+                    console.log("✅ USER từ API:", user);
+                    currentUser = user;
+                    document.getElementById("fullname").value = user.name || "";
+                    document.getElementById("email").value = user.email || "";
+                    document.getElementById("phone").value = user.phone || "";
+                    document.getElementById("address").value = user.address || "";
+                });
+
+            // 2. Lấy thông tin giỏ hàng
+            fetch("/api/cart")
+                .then(res => res.json())
+                .then(cart => {
+                    console.log("✅ CART từ API:", cart);    // ✅ THÊM DÒNG NÀY Ở ĐÂY
+                    console.log("➡️ Cart Items:", cartItems);
+                    cartItems = cart;
+                    let html = "";
+                    let total = 0;
+
+                    cart.forEach((item, index) => {
+                        const itemTotal = item.price * item.quantity;
+                        total += itemTotal;
+
+                        html += `<li>
+${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
+<span>${itemTotal.toLocaleString('vi-VN')}đ</span>
+</li>`;
+                    });
+
+                    document.getElementById("checkout-products").innerHTML = html;
+                    document.getElementById("checkout-total").innerText = total.toLocaleString("vi-VN") + "đ";
+                });
+
+            // 3. Xử lý đặt hàng
+            document.getElementById("checkout-form").addEventListener("submit", e => {
+                e.preventDefault();
+
+                if (!currentUser || !currentUser.userID) {
+                    alert("Không thể xác định người dùng.");
+                    return;
+                }
+
+                const paymentValue = document.querySelector('input[name="paymentMethod"]:checked').value;
+                const paymentMethodId = paymentValue === 'COD' ? 1 : 2;
+
+                const body = {
+                    userId: currentUser.userID,
+                    recipientName: document.getElementById("fullname").value,
+                    phone: document.getElementById("phone").value,
+                    shippingAddress: document.getElementById("address").value,
+                    note: document.getElementById("note").value,
+                    paymentMethodId: paymentMethodId,
+                    orderItems: cartItems.map(item => ({
+                        productID: item.productID,
+                        productSizeID: item.productSizeID,
+                        productName: item.productName,
+                        size: item.size,
+                        quantity: item.quantity,
+                        price: item.price
+                    }))
+                };
+
+                console.log("🚀 BODY gửi lên:", body);
+
+                fetch("/api/orders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            alert("✅ Đặt hàng thành công!");
+                            fetch(`/api/cart/clear?userId=${currentUser.userID}`, {
+                                method: "DELETE"
+                            }).then(() => {
+                                window.location.href = "/cart";
+                            });
+                        } else {
+                            res.json().then(error => {
+                                console.error("❌ Lỗi từ backend:", error);
+                                alert("Đặt hàng thất bại: " + (error.message || "Vui lòng thử lại."));
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error("💥 Lỗi kết nối:", err);
+                        alert("Đã có lỗi kết nối đến máy chủ.");
+                    });
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

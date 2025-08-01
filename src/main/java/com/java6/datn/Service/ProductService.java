@@ -2,6 +2,8 @@ package com.java6.datn.Service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.java6.datn.DTO.ProductDTO;
 
 /**
@@ -35,7 +37,7 @@ public interface ProductService {
     /**
      * Lấy danh sách tất cả sản phẩm
      * 
-     * @return List&lt;ProductDTO&gt; danh sách tất cả sản phẩm trong hệ thống
+     * @return List<ProductDTO> danh sách tất cả sản phẩm trong hệ thống
      */
     List<ProductDTO> getAllProducts();
     
@@ -84,7 +86,7 @@ public interface ProductService {
      * dựa trên số lượng bán, rating, hoặc các metrics khác.</p>
      * 
      * @param limit số lượng sản phẩm tối đa cần lấy
-     * @return List&lt;ProductDTO&gt; danh sách sản phẩm bán chạy
+     * @return List<ProductDTO> danh sách sản phẩm bán chạy
      */
     List<ProductDTO> getBestSellers(int limit);
     
@@ -96,7 +98,7 @@ public interface ProductService {
      * dựa trên ngày tạo, ngày import, hoặc flag "isNew".</p>
      * 
      * @param limit số lượng sản phẩm tối đa cần lấy
-     * @return List&lt;ProductDTO&gt; danh sách sản phẩm mới
+     * @return List<ProductDTO> danh sách sản phẩm mới
      */
     List<ProductDTO> getNewArrivals(int limit);
     
@@ -108,7 +110,7 @@ public interface ProductService {
      * dựa trên discount percentage, promotion flags, hoặc special pricing.</p>
      * 
      * @param limit số lượng sản phẩm tối đa cần lấy
-     * @return List&lt;ProductDTO&gt; danh sách sản phẩm khuyến mãi
+     * @return List<ProductDTO> danh sách sản phẩm khuyến mãi
      */
     List<ProductDTO> getHotSales(int limit);
     
@@ -140,7 +142,7 @@ public interface ProductService {
      * </ul>
      * 
      * @param query từ khóa tìm kiếm
-     * @return List&lt;ProductDTO&gt; danh sách sản phẩm khớp với từ khóa
+     * @return List<ProductDTO> danh sách sản phẩm khớp với từ khóa
      */
     List<ProductDTO> searchProducts(String query);
 
@@ -175,7 +177,7 @@ public interface ProductService {
      *
      * @param productId ID của sản phẩm hiện tại
      * @param limit số lượng sản phẩm liên quan tối đa (default: 4-6 sản phẩm)
-     * @return List&lt;ProductDTO&gt; danh sách sản phẩm liên quan
+     * @return List<ProductDTO> danh sách sản phẩm liên quan
      * @throws RuntimeException nếu không tìm thấy sản phẩm gốc
      *
      * @apiNote Được sử dụng bởi ProductController.getProductDetail()
@@ -190,11 +192,18 @@ public interface ProductService {
      * Phù hợp cho hầu hết use cases của product detail page.</p>
      *
      * @param productId ID của sản phẩm hiện tại
-     * @return List&lt;ProductDTO&gt; danh sách tối đa 4 sản phẩm liên quan
+     * @return List<ProductDTO> danh sách tối đa 4 sản phẩm liên quan
      * @see #getRelatedProducts(Integer, int)
      */
     default List<ProductDTO> getRelatedProducts(Integer productId) {
         return getRelatedProducts(productId, 4);
     }
-}
 
+    /**
+     * Phân trang sản phẩm
+     * @param page trang hiện tại
+     * @param size số sản phẩm/trang
+     * @return Page<ProductDTO>
+     */
+    Page<ProductDTO> getProductsPage(int page, int size);
+}

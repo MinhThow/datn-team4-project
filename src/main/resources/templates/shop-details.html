@@ -10,8 +10,7 @@
     <title th:text="${product != null ? product.name + ' - Male Fashion' : 'Product Detail - Male Fashion'}">Male-Fashion | Template</title>
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-    rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Css Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
@@ -23,6 +22,273 @@
     <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="stylesheet" href="/css/product-detail.css" type="text/css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .product__details__text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            padding: 0 20px;
+        }
+
+        .product__details__pic__item--large {
+            max-height: 400px; /* hoặc 350px tuỳ thiết kế */
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+        .product__details__text h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .product__details__text .rating {
+            margin-bottom: 10px;
+        }
+        .product__details__text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+        .product__details__text h3 .current-price {
+            color: #111;
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .product__details__text h3 .old-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+        .product__details__text p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 25px;
+            max-width: 100%;
+        }
+        .product__details__option {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        .product__details__option__size {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .product__details__option__size span {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #333;
+        }
+
+
+
+
+        .product__details__option__size label {
+            display: inline-block;
+            padding: 4px 8px;
+            border: 1px solid #333;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: #fff;
+            color: #333;
+            margin-right: 4px;
+            transition: all 0.2s;
+            min-width: 32px;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .product__details__option__size label.active {
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
+        }
+        .product__details__option__size label:hover {
+            background: #111111;
+            color: #ffffff;
+            border-color: #111111;
+        }
+        .product__details__option__color {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .product__details__option__color span {
+            font-weight: 500;
+            font-size: 1rem;
+            color: #333;
+        }
+        .product__details__option__color label {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: inline-block;
+            margin-right: 8px;
+            cursor: pointer;
+            transition: border 0.2s, transform 0.1s;
+        }
+        .product__details__option__color label.active,
+        .product__details__option__color input[type="radio"]:checked + label {
+            border: 3px solid #111;
+        }
+        .c-1 { background: #111; }
+        .c-2 { background: #1976d2; }
+        .c-3 { background: #d32f2f; }
+        .c-4 { background: #ff9800; }
+        .product__details__cart__option {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+        }
+        .pro-qty {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+            height: 45px;
+        }
+        .pro-qty .qtybtn {
+            padding: 0 12px;
+            border: none;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #666;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pro-qty input {
+            width: 50px;
+            text-align: center;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            background: #fff;
+            height: 100%;
+        }
+        .add-cart-btn {
+            padding: 12px 35px;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .add-cart-btn:hover {
+            background: #333;
+        }
+        .product__details__btns__option {
+            display: flex;
+            justify-content: flex-start;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        .product__details__btns__option a {
+            color: #666;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .product__details__btns__option a:hover {
+            color: #111;
+        }
+        .product__details__last__option {
+            margin-top: 30px;
+            padding: 30px 20px 0;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+        .product__details__last__option h5 {
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .product__details__last__option ul {
+            list-style: none;
+            padding: 0;
+            display: inline-block;
+            text-align: left;
+        }
+        .product__details__last__option li {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .product__details__last__option li span:first-child {
+            font-weight: 500;
+            min-width: 100px;
+            color: #333;
+        }
+        .product__details__last__option li span:last-child {
+            color: #666;
+        }
+                 /* Responsive */
+         @media (max-width: 768px) {
+             .product__details__text, .product__details__option, .product__details__cart__option, .product__details__btns__option, .product__details__last__option {
+                 padding: 0 10px;
+             }
+             .product__details__option {
+                 flex-direction: column;
+                 gap: 20px;
+                 align-items: flex-start;
+             }
+             .product__details__option__size, .product__details__option__color {
+                 justify-content: flex-start;
+                 width: 100%;
+             }
+             .product__details__cart__option, .product__details__btns__option {
+                 flex-direction: column;
+                 align-items: flex-start;
+                 gap: 15px;
+             }
+             .add-cart-btn {
+                 width: 100%;
+                 max-width: 250px;
+             }
+         }
+    </style>
 </head>
 
 <body>
@@ -156,17 +422,35 @@
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
-                            <!--/*@thymesVar id="product" type=""*/-->
-                            <img th:src="${product != null ? '/' + product.image : '/img/shop-details/product-big.png'}" 
-                                 th:alt="${product != null ? product.name : 'Product Image'}"
+                            <!-- Main product image -->
+                            <img th:if="${product != null and product.imageUrl != null}"
+                                 th:src="${'/' + product.imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="product__details__pic__item--large">
+                            <img th:unless="${product != null and product.imageUrl != null}"
+                                 th:if="${productImages != null and !productImages.isEmpty()}"
+                                 th:src="${'/' + productImages[0].imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="product__details__pic__item--large">
+                            <img th:unless="${product != null and product.imageUrl != null or (productImages != null and !productImages.isEmpty())}"
+                                 src="/img/shop-details/product-big.png"
+                                 alt="Default Product Image"
                                  class="product__details__pic__item--large">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
-                            <img th:data-imgbigurl="${product != null ? '/' + product.image : '/img/shop-details/product-big.png'}"
-                                 th:src="${product != null ? '/' + product.image : '/img/shop-details/thumb-1.png'}" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-2.png" src="/img/shop-details/thumb-2.png" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-3.png" src="/img/shop-details/thumb-3.png" alt="">
-                            <img data-imgbigurl="/img/shop-details/product-big-4.png" src="/img/shop-details/thumb-4.png" alt="">
+                            <!-- Dynamic product images -->
+                            <th:block th:if="${productImages != null and !productImages.isEmpty()}">
+                                <img th:each="image : ${productImages}"
+                                     th:data-imgbigurl="${'/' + image.imageUrl}"
+                                     th:src="${'/' + image.imageUrl}" alt="">
+                            </th:block>
+                            <!-- Fallback static images if no dynamic images -->
+                            <th:block th:unless="${productImages != null and !productImages.isEmpty()}">
+                                <img data-imgbigurl="/img/shop-details/product-big.png" src="/img/shop-details/thumb-1.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-2.png" src="/img/shop-details/thumb-2.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-3.png" src="/img/shop-details/thumb-3.png" alt="">
+                                <img data-imgbigurl="/img/shop-details/product-big-4.png" src="/img/shop-details/thumb-4.png" alt="">
+                            </th:block>
                         </div>
                     </div>
                 </div>
@@ -184,9 +468,11 @@
                             <span th:text="' - ' + ${totalReviews} + ' Reviews'"> - 5 Reviews</span>
                         </div>
                         <h3>
-                            <span th:if="${product != null && product.oldPrice != null}" class="old-price" th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VND'}">$270.00</span>
-                            <span th:text="${product != null ? #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VND' : '$270.00'}">$270.00</span>
+                            <span class="current-price" th:text="${product != null ? #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' VNĐ' : '270.000 VNĐ'}">270.000 VNĐ</span>
+                            <span th:if="${product != null && product.oldPrice != null}" class="old-price"
+                                  th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">300.000 VNĐ</span>
                         </h3>
+
                         <!--/*@thymesVar id="product" type=""*/-->
                         <p th:text="${product != null ? product.description : 'Product description will be displayed here.'}">
                             Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable
@@ -194,53 +480,55 @@
                             with placket.
                         </p>
                         <div class="product__details__option">
-                            <div class="product__details__option__size" th:if="${product != null and product.size != null}">
+                            <div class="product__details__option__size">
                                 <span>Size:</span>
-                                <th:block th:each="size, iterStat : ${product.size.split(',')}">
-                                    <label th:for="'size-' + ${iterStat.index}" th:class="${iterStat.index == 0 ? 'active' : ''}">
-                                        <span th:text="${size.trim()}">Size</span>
-                                        <input type="radio" th:id="'size-' + ${iterStat.index}" name="productSize" th:value="${size.trim()}" th:checked="${iterStat.index == 0}">
+                                <th:block th:if="${productSizes != null and !productSizes.isEmpty()}">
+                                    <label th:each="size : ${productSizes}">
+                                        <input type="radio"
+                                               name="productSize"
+                                               th:value="${size.size}"
+                                               th:attr="data-product-size-id=${size.productSizeID}">
+                                        <span th:text="${size.size}"></span>
+                                    </label>
+
+                                </th:block>
+                                <!-- Fallback static sizes if no dynamic sizes -->
+                                <th:block th:unless="${productSizes != null and !productSizes.isEmpty()}">
+                                    <label for="size-xxl">
+                                        <input type="radio" id="size-xxl" name="productSize" value="XXL">
+                                        <span>XXL</span>
+                                    </label>
+                                    <label for="size-xl">
+                                        <input type="radio" id="size-xl" name="productSize" value="XL">
+                                        <span>XL</span>
+                                    </label>
+                                    <label for="size-l" class="active">
+                                        <input type="radio" id="size-l" name="productSize" value="L" checked>
+                                        <span>L</span>
+                                    </label>
+                                    <label for="size-s">
+                                        <input type="radio" id="size-s" name="productSize" value="S">
+                                        <span>S</span>
                                     </label>
                                 </th:block>
                             </div>
-                            <div class="product__details__option__color">
-                                <span>Color:</span>
-                                <label class="c-1" for="sp-1">
-                                    <input type="radio" id="sp-1" name="productColor" value="black">
-                                </label>
-                                <label class="c-2" for="sp-2">
-                                    <input type="radio" id="sp-2" name="productColor" value="blue">
-                                </label>
-                                <label class="c-3" for="sp-3">
-                                    <input type="radio" id="sp-3" name="productColor" value="red">
-                                </label>
-                                <label class="c-4" for="sp-4">
-                                    <input type="radio" id="sp-4" name="productColor" value="orange">
-                                </label>
                             </div>
                         </div>
                         <div class="product__details__cart__option">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1" min="1" th:max="${product != null ? product.stock : 99}">
+                                    <input type="text" name="quantity" value="1" min="1" th:max="${product != null ? product.stock : 99}">
+                                    <span class="qtybtn inc quantity-increment">+</span>
+                                    <span class="qtybtn inc quantity-increment">-</span>
                                 </div>
                             </div>
-                            <a href="#" class="primary-btn add-cart-btn" th:data-product-id="${product != null ? product.productID : 0}">add to cart</a>
+                            <a href="#" class="add-cart-btn" th:data-product-id="${product != null ? product.productID : 0}">Add to Cart</a>
                         </div>
-                        <div class="product__details__btns__option">
-                            <a href="#" th:onclick="'addToWishlist(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-heart"></i> add to wishlist</a>
-                            <a href="#" th:onclick="'addToCompare(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-exchange"></i> Add To Compare</a>
-                        </div>
-                        <div class="product__details__last__option">
-                            <h5><span>Guaranteed Safe Checkout</span></h5>
-                            <img src="/img/shop-details/details-payment.png" alt="">
-                            <ul>
-                                <li><span>SKU:</span> <span th:text="${product != null ? product.productID : 'N/A'}">3812912</span></li>
-                                <li><span>Categories:</span> <span th:text="${product != null and product.categoryID != null ? 'Category ' + product.categoryID : 'Clothes'}">Clothes</span></li>
-                                <li><span>Tag:</span> <span>Clothes, Skin, Body</span></li>
-                            </ul>
-                        </div>
-                        </div>
+<!--                        <div class="product__details__btns__option">-->
+<!--                            <a href="#" th:onclick="'addToWishlist(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-heart"></i> add to wishlist</a>-->
+<!--                            <a href="#" th:onclick="'addToCompare(' + ${product != null ? product.productID : 0} + ')'"><i class="fa fa-exchange"></i> Add To Compare</a>-->
+<!--                        </div>-->
+
                     </div>
                 </div>
             </div>
@@ -248,19 +536,13 @@
                 <div class="col-lg-12">
                     <div class="product__details__tab">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-5"
-                                role="tab">Description</a>
-                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">
                                     Customer Reviews(<span th:text="${totalReviews}">5</span>)
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Additional
-                                information</a>
-                            </li>
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="tabs-5" role="tabpanel">
@@ -306,7 +588,7 @@
                                             <div class="rating-overview">
                                                 <div class="rating" style="margin-bottom: 10px;">
                                                     <th:block th:each="i : ${#numbers.sequence(1, fullStars)}">
-                                                        <i class="fa fa-star"></i>
+                                                         <i class="fa fa-star"></i>
                                                     </th:block>
                                                     <i th:if="${hasHalfStar}" class="fa fa-star-half-o"></i>
                                                     <th:block th:each="i : ${#numbers.sequence(1, emptyStars)}">
@@ -352,7 +634,7 @@
                                             <form id="reviewForm" style="margin-top: 15px;">
                                                 <input type="hidden" id="productId" th:value="${product != null ? product.productID : 0}">
                                                 <input type="hidden" id="userId" value="1">
-                                                
+
                                                 <div class="form-group" style="margin-bottom: 15px;">
                                                     <label>Rating:</label>
                                                     <div class="rating-input" style="margin-top: 5px;">
@@ -368,12 +650,12 @@
                                                         <label for="star1">1 star</label>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="form-group" style="margin-bottom: 15px;">
                                                     <label for="reviewComment">Your Review:</label>
                                                     <textarea id="reviewComment" name="comment" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 3px;" placeholder="Share your experience with this product..."></textarea>
                                                 </div>
-                                                
+
                                                 <button type="button" onclick="submitReview()" class="primary-btn">Submit Review</button>
                                             </form>
                                         </div>
@@ -421,13 +703,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- Shop Details Section End -->
-
-    <!-- Related Section Begin -->
-    <section class="related spad">
-        <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <h3 class="related-title">Related Products</h3>
@@ -437,11 +712,11 @@
                 <!-- Dynamic Related Products -->
                 <div th:if="${relatedProducts != null and !relatedProducts.isEmpty()}" th:each="relatedProduct : ${relatedProducts}" class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" th:data-setbg="${'/' + relatedProduct.image}">
+                        <div class="product__item__pic set-bg" th:data-setbg="${relatedProduct.imageUrl != null ? '/' + relatedProduct.imageUrl : (relatedProduct.productImages != null and !relatedProduct.productImages.isEmpty() ? '/' + relatedProduct.productImages[0].imageUrl : '/img/product/product-1.jpg')}">
                             <!-- Add labels based on product characteristics -->
                             <span class="label" th:if="${relatedProduct.stock > 50}">New</span>
                             <span class="label sale" th:if="${relatedProduct.price < 300000}">Sale</span>
-                            
+
                             <ul class="product__hover">
                                 <li><a href="#" th:onclick="'addToWishlist(' + ${relatedProduct.productID} + ')'"><img src="/img/icon/heart.png" alt=""></a></li>
                                 <li><a href="#" th:onclick="'addToCompare(' + ${relatedProduct.productID} + ')'"><img src="/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
@@ -453,7 +728,7 @@
                                 <a th:href="'/product/' + ${relatedProduct.productID}" th:text="${relatedProduct.name}">Product Name</a>
                             </h6>
                             <a href="#" class="add-cart" th:onclick="'addToCart(' + ${relatedProduct.productID} + ')'">+ Add To Cart</a>
-                            
+
                             <!-- Rating placeholder (can be enhanced with actual ratings later) -->
                             <div class="rating">
                                 <i class="fa fa-star"></i>
@@ -462,10 +737,10 @@
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star-o"></i>
                             </div>
-                            
+
                             <!-- Dynamic Price -->
                             <h5 th:text="${#numbers.formatDecimal(relatedProduct.price, 0, 'COMMA', 0, 'POINT') + ' VND'}">$67.24</h5>
-                            
+
                             <!-- Color options (static for now) -->
                             <div class="product__color__select">
                                 <label th:for="'rp-' + ${relatedProduct.productID} + '-1'">
@@ -481,7 +756,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Static Related Products (fallback when no dynamic products) -->
                 <div th:if="${relatedProducts == null or relatedProducts.isEmpty()}">
                     <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
@@ -572,24 +847,6 @@
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star"></i>
                                     <i class="fa fa-star-o"></i>
-                                </div>
-                                <h5>$43.48</h5>
-                                <div class="product__color__select">
-                                    <label for="pc-7">
-                                        <input type="radio" id="pc-7">
-                                    </label>
-                                    <label class="active black" for="pc-8">
-                                        <input type="radio" id="pc-8">
-                                    </label>
-                                    <label class="grey" for="pc-9">
-                                        <input type="radio" id="pc-9">
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                        <div class="product__item">
                             <div class="product__item__pic set-bg" data-setbg="/img/product/product-4.jpg">
                                 <ul class="product__hover">
                                     <li><a href="#"><img src="/img/icon/heart.png" alt=""></a></li>
@@ -797,6 +1054,62 @@
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addToCartBtn = document.querySelector('.add-cart-btn');
+
+            addToCartBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const productId = this.getAttribute('data-product-id');
+                const selectedSizeInput = document.querySelector('input[name="productSize"]:checked');
+                const quantityInput = document.querySelector('input[name="quantity"]');
+                const userId = localStorage.getItem('userId') || 1; // bạn có thể thay đổi nếu lấy từ session
+
+                if (!selectedSizeInput) {
+                    alert("Vui lòng chọn size sản phẩm!");
+                    return;
+                }
+
+                const sizeValue = selectedSizeInput.value;
+                const productSizeId = selectedSizeInput.getAttribute('data-product-size-id');
+                const quantity = parseInt(quantityInput.value) || 1;
+
+                if (!productSizeId) {
+                    alert("Không tìm thấy productSizeId cho size đã chọn!");
+                    return;
+                }
+
+                // Gửi request với x-www-form-urlencoded
+                const params = new URLSearchParams();
+                params.append("productId", productId);
+                params.append("productSizeId", productSizeId);
+                params.append("quantity", quantity);
+
+                fetch("/api/cart/add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params.toString()
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("Lỗi khi thêm vào giỏ hàng");
+                        return response.text(); // hoặc .json() nếu backend trả về JSON
+                    })
+                    .then(data => {
+                        alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("❌ Thêm vào giỏ hàng thất bại.");
+                    });
+            });
+        });
+    </script>
+
+
+
     <!-- Additional CSS for styling -->
     <style>
         .rating-input {
@@ -832,6 +1145,70 @@
             margin: 0 8px;
             position: relative;
         }
+        
+        /* Size and Color selection functionality */
+        .product__details__option__size input[type="radio"] {
+            display: none;
+        }
+        
+        .product__details__option__color input[type="radio"] {
+            display: none;
+        }
+        
+        /* Color dots */
+        .c-1 { background-color: #000; }
+        .c-2 { background-color: #0066cc; }
+        .c-3 { background-color: #cc0000; }
+        .c-4 { background-color: #ff6600; }
+        
+        /* Quantity controls */
+        .pro-qty .qtybtn {
+            user-select: none;
+        }
+        
+        .pro-qty input {
+            user-select: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .product__details__cart__option {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product__details__option__size label {
+                padding: 3px 6px;
+                font-size: 0.65rem;
+                min-width: 28px;
+            }
+            
+            .product__details__option__color label {
+                width: 18px;
+                height: 18px;
+                margin-right: 6px;
+            }
+            
+            .pro-qty {
+                width: 90px;
+                height: 32px;
+            }
+            
+            .pro-qty .qtybtn {
+                width: 24px;
+                line-height: 32px;
+                font-size: 11px;
+            }
+            
+            .pro-qty input {
+                width: 42px;
+                font-size: 12px;
+                line-height: 32px;
+            }
+        }
+    </style>
+    
+
         
         .breadcrumb__links a:not(:last-child):after {
             content: ">";

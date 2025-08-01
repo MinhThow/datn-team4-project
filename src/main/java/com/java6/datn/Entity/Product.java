@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "Products")
+@ToString
 public class Product {
 
     @Id
@@ -28,25 +29,32 @@ public class Product {
 
     private BigDecimal oldPrice;
 
-    private Integer stock;
-
-    private String image;
-
-    private String size;
+//    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "CategoryID")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<OrderItem> orderItems;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<ProductImage> productImages;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<ProductSize> productSizes;
+    public String getImageUrl() {
+        if (productImages != null && !productImages.isEmpty()) {
+            return productImages.get(0).getImageUrl();
+        }
+        return "/images/no-image.png";
+    }
+
 }
-
-
