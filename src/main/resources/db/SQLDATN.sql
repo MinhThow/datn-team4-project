@@ -568,13 +568,3 @@ FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
 
 
 DELETE FROM Reviews;
-
-
-
-
-
-
-
-
-
-
