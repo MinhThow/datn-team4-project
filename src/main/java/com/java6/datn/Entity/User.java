@@ -42,4 +42,10 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
+    
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
+    @Column(name = "password_changed_at")
+    private LocalDateTime passwordChangedAt;
+
 }

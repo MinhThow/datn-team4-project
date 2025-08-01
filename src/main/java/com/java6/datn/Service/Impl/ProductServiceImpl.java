@@ -124,7 +124,7 @@ private final com.java6.datn.Repository.ProductSizeRepository productSizeReposit
         existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setOldPrice(existingProduct.getPrice());
         existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setStock(productDTO.getStock());
+    
         if (productDTO.getCategoryID() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryID())
                     .orElseThrow(() -> new RuntimeException("Category not found"));

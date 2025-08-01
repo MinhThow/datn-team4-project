@@ -493,7 +493,7 @@ public class ProductController {
     @PostMapping("/{id}/reviews")
     public ReviewDTO addProductReview(@PathVariable Integer id, @RequestBody ReviewDTO reviewDTO) {
         // Set product ID từ path parameter
-        reviewDTO.setProductID(id);
+        reviewDTO.setProductId(id);
         
         // Delegate to review service
         return reviewService.createReview(reviewDTO);

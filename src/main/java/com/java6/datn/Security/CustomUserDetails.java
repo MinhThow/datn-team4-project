@@ -40,8 +40,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        String safeRole = (role != null) ? role.toUpperCase() : "USER";
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + safeRole));
     }
+
 
     @Override
     public String getPassword() { return password; }
