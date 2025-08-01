@@ -21,35 +21,51 @@
                             </div>
                             <div class="modal-body">
                                 <input type="hidden" id="productId"/>
-                                <div class="mb-3">
-                                    <label class="form-label">Tên</label>
-                                    <input type="text" id="productName" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Ảnh</label>
-                                    <input type="text" id="productImage" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mô tả</label>
-                                    <textarea id="productDescription" class="form-control"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Giá</label>
-                                    <input type="number" id="productPrice" class="form-control" step="0.01" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Số lượng</label>
-                                    <input type="number" id="productStock" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Size</label>
-                                    <input type="text" id="productSize" class="form-control">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Danh mục</label>
-                                    <select id="productCategory" class="form-select" required>
-                                        <option value="">--Chọn--</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td><label class="form-label">Tên</label></td>
+                                                    <td><input type="text" id="productName" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Ảnh</label></td>
+                                                    <td><input type="text" id="productImage" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Mô tả</label></td>
+                                                    <td><textarea id="productDescription" class="form-control"></textarea></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td><label class="form-label">Giá</label></td>
+                                                    <td><input type="number" id="productPrice" class="form-control" step="0.01" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Số lượng</label></td>
+                                                    <td><input type="number" id="productStock" class="form-control" required></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Size</label></td>
+                                                    <td><input type="text" id="productSize" class="form-control"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label class="form-label">Danh mục</label></td>
+                                                    <td>
+                                                        <select id="productCategory" class="form-select" required>
+                                                            <option value="">--Chọn--</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -158,10 +174,19 @@
     function renderProducts(list) {
         const tbody = document.querySelector('#productTable tbody');
         tbody.innerHTML = list.length ?
-            list.map((p, i) => `
+            list.map((p, i) => {
+                // Lấy ảnh đầu tiên từ productImages nếu có, nếu không lấy từ p.image
+                let imgSrc = (p.productImages && p.productImages.length > 0)
+                    ? p.productImages[0].imageUrl
+                    : p.image;
+                // Nếu imgSrc đã bắt đầu bằng 'img/' hoặc '/', dùng trực tiếp, nếu không thì thêm '/img/product/'
+                let imgPath = (imgSrc && (imgSrc.startsWith('img/') || imgSrc.startsWith('/')))
+                    ? ('/' + imgSrc.replace(/^\//, ''))
+                    : ('/img/product/' + imgSrc);
+                return `
     <tr>
       <td>${i + 1}</td>
-      <td><img src="${p.image}" alt="${p.name}" style="width:60px;height:auto;"></td> <!-- hiển thị ảnh -->
+      <td><img src="${imgPath}" alt="${p.name}" style="width:60px;height:auto;"></td>
       <td>${p.name}</td>
       <td>${p.price}</td>
       <td>${p.stock}</td>
@@ -170,7 +195,8 @@
         <button class="btn btn-warning btn-sm" onclick="openEdit(${p.productID})">Sửa</button>
         <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.productID})">Xoá</button>
       </td>
-    </tr>`).join('') :
+    </tr>`;
+            }).join('') :
             '<tr><td colspan="7" class="text-center">Không có</td></tr>';
     }
 

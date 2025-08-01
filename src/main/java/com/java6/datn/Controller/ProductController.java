@@ -180,8 +180,15 @@ public class ProductController {
      * </pre>
      */
     @PostMapping
-    public ProductDTO create(@RequestBody ProductDTO productDTO) {
-        return productService.createProduct(productDTO);
+    public Map<String, Object> create(@RequestBody ProductDTO productDTO) {
+        // Gọi service để tạo sản phẩm và lưu ảnh
+        ProductDTO createdProduct = productService.createProduct(productDTO);
+        // Lấy danh sách ảnh vừa lưu (giả sử productDTO có trường images là List<String> hoặc List<ProductImageDTO>)
+        List<?> productImages = productService.getProductImagesByProductId(createdProduct.getProductID());
+        Map<String, Object> response = new HashMap<>();
+        response.put("product", createdProduct);
+        response.put("productImages", productImages);
+        return response;
     }
 
     /**

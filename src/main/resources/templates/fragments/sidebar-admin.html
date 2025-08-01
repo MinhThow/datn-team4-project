@@ -3,6 +3,82 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Fragments</title>
+    <style>
+        .app-sidebar {
+            background: linear-gradient(135deg, #3a8dde 0%, #6dd5ed 100%);
+            color: #fff;
+            min-height: 100vh;
+            border-radius: 18px 0 0 18px;
+            box-shadow: 2px 0 16px 0 rgba(58,141,222,0.08);
+            padding-top: 18px;
+        }
+        .sidebar-brand {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .brand-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #fff;
+        }
+        .brand-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .brand-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .sidebar-menu .nav-link {
+            color: #e3f2fd;
+            border-radius: 8px;
+            margin: 4px 8px;
+            transition: background 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.08rem;
+        }
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255,255,255,0.13);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(58,141,222,0.10);
+        }
+        .sidebar-menu .nav-link.active, .sidebar-menu .nav-link[aria-current="page"] {
+            background: #fff;
+            color: #3a8dde;
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(58,141,222,0.13);
+        }
+        .sidebar-menu .nav-icon {
+            font-size: 1.3rem;
+            color: inherit;
+            transition: color 0.2s;
+        }
+        .sidebar-menu .nav-link.active .nav-icon,
+        .sidebar-menu .nav-link[aria-current="page"] .nav-icon {
+            color: #3a8dde;
+        }
+        .sidebar-menu p {
+            margin: 0;
+            font-size: 1.05rem;
+        }
+        @media (max-width: 900px) {
+            .app-sidebar {
+                min-width: 60px;
+                padding-top: 8px;
+            }
+            .brand-text, .sidebar-menu p {
+                display: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -24,49 +100,49 @@
                 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
                     <li class="nav-item">
                         <a th:href="@{/admin/dashboard}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-speedometer2"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/admin/category}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-tags"></i>
                             <p>Quản lý danh mục</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/admin/product}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-box-seam"></i>
                             <p>Quản lý sản phẩm</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/admin/method}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-credit-card"></i>
                             <p>Quản lý phương thức</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/admin/order}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-cart-check"></i>
                             <p>Quản lý đơn hàng</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/admin/user}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-people"></i>
                             <p>Quản lý người dùng</p>
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a th:href="@{/logout}" class="nav-link">
-                            <i class="nav-icon bi bi-grip-horizontal"></i>
+                            <i class="nav-icon bi bi-box-arrow-right"></i>
                             <p>Đăng xuất</p>
                         </a>
                     </li>

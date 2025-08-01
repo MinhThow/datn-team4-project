@@ -340,7 +340,9 @@
                         <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products.content}">
                             <!-- sản phẩm -->
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" th:data-setbg="@{${product.imageUrl}}" style="position:relative;">
+<div class="product__item__pic set-bg"
+     th:data-setbg="${#strings.startsWith(product.imageUrl, 'http') || #strings.startsWith(product.imageUrl, '/') || #strings.startsWith(product.imageUrl, 'img/') ? product.imageUrl : '/img/product/' + product.imageUrl}"
+     style="position:relative;">
                                     <a th:href="@{'/product/' + ${product.productID}}">
                                         <ul class="product__hover">
                                             <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>

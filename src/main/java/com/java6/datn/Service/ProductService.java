@@ -31,6 +31,12 @@ import com.java6.datn.DTO.ProductDTO;
  * @see com.java6.datn.DTO.ProductDTO
  */
 public interface ProductService {
+    /**
+     * Lấy danh sách ảnh của sản phẩm theo productID
+     * @param productID ID sản phẩm
+     * @return List<ProductImageDTO> danh sách ảnh
+     */
+    java.util.List<com.java6.datn.DTO.ProductImageDTO> getProductImagesByProductId(Integer productID);
     
     // === CRUD OPERATIONS ===
     
