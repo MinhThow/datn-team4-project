@@ -24,17 +24,17 @@
 						<a class="navbar-brand d-flex align-items-center me-3" href="/">
 							<img src="/img/logo.png" alt="Logo" class="d-inline-block align-text-top me-2">
 						</a>
-						<a href="/" class="nav-link home-link text-dark fw-semibold">Home</a>
+						<a href="/" class="nav-link home-link text-dark fw-semibold">Trang chủ</a>
 					</div>
 
 					<!-- Tiêu đề ở giữa tuyệt đối -->
 					<div class="position-absolute top-50 start-50 translate-middle">
-						<span class="fw-bold fs-5 text-dark">Account Center</span>
+						<span class="fw-bold fs-5 text-dark">Tài khoản</span>
 					</div>
 
 					<div>
 						<a href="/logout" class="nav-link home-link text-dark fw-semibold d-flex align-items-center">
-							<i class="bi bi-box-arrow-right me-1"></i> Log out
+							<i class="bi bi-box-arrow-right me-1"></i> Đăng xuất
 						</a>
 					</div>
 				</div>
@@ -48,11 +48,10 @@
 					<div class="nav flex-column nav-pills custom-vertical-tab" id="v-pills-tab" role="tablist"
 						aria-orientation="vertical">
 						<button class="nav-link active" id="v-pills-security-tab" data-bs-toggle="pill"
-							data-bs-target="#v-pills-security" type="button" role="tab">Security</button>
+							data-bs-target="#v-pills-security" type="button" role="tab">Bảo mật</button>
 						<button class="nav-link" id="v-pills-order-tab" data-bs-toggle="pill"
-							data-bs-target="#v-pills-order" type="button" role="tab">Order</button>
-						<button class="nav-link" id="v-pills-notify-tab" data-bs-toggle="pill"
-							data-bs-target="#v-pills-notify" type="button" role="tab">Notification</button>
+							data-bs-target="#v-pills-order" type="button" role="tab">Đơn hàng</button>
+						
 					</div>
 				</div>
 
@@ -66,13 +65,12 @@
 								<li class="nav-item" role="presentation">
 									<button class="nav-link active" id="account-tab" data-bs-toggle="tab"
 										data-bs-target="#account-tab-pane" type="button" role="tab"
-										aria-controls="account-tab-pane" aria-selected="true">Account
-										Details</button>
+										aria-controls="account-tab-pane" aria-selected="true">Tài khoản</button>
 								</li>
 								<li class="nav-item" role="presentation">
 									<button class="nav-link" id="password-tab" data-bs-toggle="tab"
 										data-bs-target="#password-tab-pane" type="button" role="tab"
-										aria-controls="password-tab-pane" aria-selected="false">Password</button>
+										aria-controls="password-tab-pane" aria-selected="false">Mật khẩu</button>
 								</li>
 
 
@@ -89,14 +87,14 @@
 
 
 											<div class="mb-3">
-												<label for="userId" class="form-label">User ID</label>
+												<label for="userId" class="form-label">ID</label>
 												<input type="text" class="form-control" id="userId" th:value="*{userId}"
 													disabled>
 												<input type="hidden" th:field="*{userId}" />
 											</div>
 
 											<div class="mb-3">
-												<label for="name" class="form-label">Name</label>
+												<label for="name" class="form-label">Tên</label>
 												<input type="text" class="form-control" id="name" th:field="*{name}">
 											</div>
 
@@ -107,24 +105,24 @@
 											</div>
 
 											<div class="mb-3">
-												<label for="phone" class="form-label">Phone</label>
+												<label for="phone" class="form-label">Số điện thoại</label>
 												<input type="text" class="form-control" id="phone" th:field="*{phone}">
 											</div>
 
 											<div class="mb-3">
-												<label for="address" class="form-label">Address</label>
+												<label for="address" class="form-label">Địa chỉ</label>
 												<input type="text" class="form-control" id="address"
 													th:field="*{address}">
 											</div>
 
 											<div class="mb-3">
-												<label for="createdAt" class="form-label">Created At</label>
+												<label for="createdAt" class="form-label">Tạo ngày</label>
 												<input type="text" class="form-control" id="createdAt"
 													th:value="${user.createdAt}" disabled>
 											</div>
 
 											<div class="text-center">
-												<button type="submit" class="btn btn-danger">Update</button>
+												<button type="submit" class="btn btn-danger">Cập nhật</button>
 											</div>
 										</form>
 									</div>
@@ -136,7 +134,7 @@
 									<div class="w-75 mt-4">
 										<form id="passwordForm" th:action="@{/account/change-password}" method="post">
 											<div class="mb-3">
-												<label for="currentPassword" class="form-label">Current Password</label>
+												<label for="currentPassword" class="form-label">Mật khẩu cũ</label>
 												<div class="input-group">
 													<input type="password" class="form-control" id="currentPassword"
 														name="currentPassword" required>
@@ -147,7 +145,7 @@
 											</div>
 
 											<div class="mb-3">
-												<label for="newPassword" class="form-label">New Password</label>
+												<label for="newPassword" class="form-label">Mật khẩu mới</label>
 												<div class="input-group">
 													<input type="password" class="form-control" id="newPassword"
 														name="newPassword" required>
@@ -157,8 +155,7 @@
 												</div>
 											</div>
 											<div class="mb-3">
-												<label for="confirmPassword" class="form-label">Confirm New
-													Password</label>
+												<label for="confirmPassword" class="form-label">Xác nhận lại mật khẩu</label>
 												<div class="input-group">
 													<input type="password" class="form-control" id="confirmPassword"
 														name="confirmPassword" required>
@@ -167,12 +164,11 @@
 														data-target="confirmPassword"><i class="bi bi-eye"></i></button>
 												</div>
 												<div id="passwordError" class="text-danger mt-1" style="display: none;">
-													Passwords do not
-													match.
+													Mật khẩu không khớp
 												</div>
 											</div>
 											<div class="text-center">
-												<button type="submit" class="btn btn-danger">Change Password</button>
+												<button type="submit" class="btn btn-danger">Đổi mật khẩu</button>
 											</div>
 										</form>
 									</div>
@@ -190,20 +186,19 @@
 							<ul class="nav custom-underline-nav mt-3" role="tablist">
 								<li class="nav-item" role="presentation">
 									<button class="nav-link active" id="all-tab" data-bs-toggle="tab"
-										data-bs-target="#all-pane" type="button" role="tab">All</button>
+										data-bs-target="#all-pane" type="button" role="tab">Tất cả</button>
 								</li>
 								<li class="nav-item" role="presentation">
 									<button class="nav-link" id="delivering-tab" data-bs-toggle="tab"
-										data-bs-target="#delivering-pane" type="button" role="tab">Being
-										Delivered</button>
+										data-bs-target="#delivering-pane" type="button" role="tab">Đơn đang giao</button>
 								</li>
 								<li class="nav-item" role="presentation">
 									<button class="nav-link" id="completed-tab" data-bs-toggle="tab"
-										data-bs-target="#completed-pane" type="button" role="tab">Completed</button>
+										data-bs-target="#completed-pane" type="button" role="tab">Đơn hoàn thành</button>
 								</li>
 								<li class="nav-item" role="presentation">
 									<button class="nav-link" id="canceled-tab" data-bs-toggle="tab"
-										data-bs-target="#canceled-pane" type="button" role="tab">Canceled</button>
+										data-bs-target="#canceled-pane" type="button" role="tab">Đơn hủy</button>
 								</li>
 							</ul>
 
@@ -222,7 +217,7 @@
 										<div class="card-body">
 											<!-- Tiêu đề đơn hàng -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
-												<h6 class="mb-3">Order #[[${order.orderId}]]</h6>
+												<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
 												<span class="badge"
 													th:classappend="${order.badgeColor}">[[${order.status}]]</span>
 											</div>
@@ -238,16 +233,16 @@
 													</div>
 													<div class="ms-3">
 														<p class="mb-1 fw-semibold">[[${order.productName}]]</p>
-														<p class="mb-1 text-muted">Qty: [[${order.quantity}]]</p>
-														<p class="mb-1 text-muted">Size: [[${order.size}]]</p>
+														<p class="mb-1 text-muted">Số lượng: [[${order.quantity}]]</p>
+														<p class="mb-1 text-muted">Kích cỡ: [[${order.size}]]</p>
 													</div>
 												</div>
 
 												<!-- Bên phải: đơn giá và tổng -->
 												<div
 													class="text-end d-flex flex-column justify-content-center align-items-end">
-													<p class="mb-1 text-muted">Đơn giá: $[[${order.price}]]</p>
-													<p class="mb-0 fw-bold text-danger">Tổng: $[[${order.totalPrice}]]
+													<p class="mb-1 text-muted">Đơn giá: [[${order.price}]] VND</p> 
+													<p class="mb-0 fw-bold text-danger">Tổng: [[${order.totalPrice}]] VND
 													</p>
 												</div>
 											</div>
@@ -309,7 +304,7 @@
 
 												<!-- Header -->
 												<div class="d-flex justify-content-between align-items-start mb-2">
-													<h6 class="mb-3">Order #[[${order.orderId}]]</h6>
+													<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
 													<span class="badge bg-primary">Đang giao</span>
 												</div>
 
@@ -324,17 +319,17 @@
 														</div>
 														<div class="ms-3">
 															<p class="mb-1 fw-semibold">[[${order.productName}]]</p>
-															<p class="mb-1 text-muted">Qty: [[${order.quantity}]]</p>
-															<p class="mb-1 text-muted">Size: [[${order.size}]]</p>
+															<p class="mb-1 text-muted">Số lượng: [[${order.quantity}]]</p>
+															<p class="mb-1 text-muted">Kích cỡ: [[${order.size}]]</p>
 														</div>
 													</div>
 
 													<!-- Bên phải: đơn giá + tổng -->
 													<div
 														class="text-end d-flex flex-column justify-content-center align-items-end">
-														<p class="mb-1 text-muted">Đơn giá: $[[${order.price}]]</p>
+														<p class="mb-1 text-muted">Đơn giá: [[${order.price}]] VND</p>
 														<p class="mb-0 fw-bold text-danger">Tổng:
-															$[[${order.totalPrice}]]</p>
+															[[${order.totalPrice}]] VND</p>
 													</div>
 												</div>
 
@@ -376,7 +371,7 @@
 										<div class="card-body">
 											<!-- Header -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
-												<h6 class="mb-3">Order #[[${order.orderId}]]</h6>
+												<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
 												<span class="badge bg-success">Đã giao</span>
 											</div>
 
@@ -391,16 +386,16 @@
 													</div>
 													<div class="ms-3">
 														<p class="mb-1 fw-semibold">[[${order.productName}]]</p>
-														<p class="mb-1 text-muted">Qty: [[${order.quantity}]]</p>
-														<p class="mb-1 text-muted">Size: [[${order.size}]]</p>
+														<p class="mb-1 text-muted">Số lượng: [[${order.quantity}]]</p>
+														<p class="mb-1 text-muted">Kích cỡ: [[${order.size}]]</p>
 													</div>
 												</div>
 
 												<!-- Phải: giá -->
 												<div
 													class="text-end d-flex flex-column justify-content-center align-items-end">
-													<p class="mb-1 text-muted">Đơn giá: $[[${order.price}]]</p>
-													<p class="mb-0 fw-bold text-danger">Tổng: $[[${order.totalPrice}]]
+													<p class="mb-1 text-muted">Đơn giá: [[${order.price}]] VND</p>
+													<p class="mb-0 fw-bold text-danger">Tổng: [[${order.totalPrice}]] VND
 													</p>
 												</div>
 											</div>
@@ -459,7 +454,7 @@
 										<div class="card-body">
 											<!-- Tiêu đề đơn hàng -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
-												<h6 class="mb-3">Order #[[${order.orderId}]]</h6>
+												<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
 												<span class="badge bg-secondary">Đã hủy</span>
 											</div>
 
@@ -474,16 +469,16 @@
 													</div>
 													<div class="ms-3">
 														<p class="mb-1 fw-semibold">[[${order.productName}]]</p>
-														<p class="mb-1 text-muted">Qty: [[${order.quantity}]]</p>
-														<p class="mb-1 text-muted">Size: [[${order.size}]]</p>
+														<p class="mb-1 text-muted">Số lượng: [[${order.quantity}]]</p>
+														<p class="mb-1 text-muted">Kích cỡ: [[${order.size}]]</p>
 													</div>
 												</div>
 
 												<!-- Bên phải: đơn giá và tổng -->
 												<div
 													class="text-end d-flex flex-column justify-content-center align-items-end">
-													<p class="mb-1 text-muted">Đơn giá: $[[${order.price}]]</p>
-													<p class="mb-0 fw-bold text-danger">Tổng: $[[${order.totalPrice}]]
+													<p class="mb-1 text-muted">Đơn giá: [[${order.price}]] VND</p>
+													<p class="mb-0 fw-bold text-danger">Tổng: [[${order.totalPrice}]] VND
 													</p>
 												</div>
 											</div>
@@ -511,186 +506,29 @@
 
 
 
-						<!-- NOTIFICATION -->
-						<div class="tab-pane fade" id="v-pills-notify" role="tabpanel">
-							<ul class="nav custom-underline-nav mt-3" role="tablist">
-								<li class="nav-item" role="presentation">
-									<button class="nav-link active" id="noti-setting-tab" data-bs-toggle="tab"
-										data-bs-target="#noti-setting-pane" type="button" role="tab">Setting</button>
-								</li>
-								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="noti-news-tab" data-bs-toggle="tab"
-										data-bs-target="#noti-news-pane" type="button" role="tab">News</button>
-								</li>
-							</ul>
-
-							<div class="tab-content mt-3" style="min-height: 600px;">
-								<div class="tab-pane fade show active" id="noti-setting-pane" role="tabpanel">
-									<div class="container py-4">
-										<!-- Notification Section Template -->
-										<div class="mb-4">
-											<div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 rounded toggle-header"
-												data-bs-target="#emailOptions" aria-expanded="true">
-												<div>
-													<strong>Email Notifications</strong>
-													<p class="text-muted small mb-0">Important alerts cannot be disabled
-													</p>
-												</div>
-												<div class="form-check form-switch">
-													<input class="form-check-input main-toggle" type="checkbox" checked
-														data-target="#emailOptions">
-												</div>
-											</div>
-											<div class="collapse show mt-2 ms-3" id="emailOptions">
-												<div class="form-check">
-													<input class="form-check-input" type="checkbox" checked
-														id="orderUpdatesEmail">
-													<label class="form-check-label" for="orderUpdatesEmail">Order
-														Updates</label>
-												</div>
-												<div class="form-check">
-													<input class="form-check-input" type="checkbox" checked
-														id="promoEmail">
-													<label class="form-check-label" for="promoEmail">Promotions</label>
-												</div>
-												<div class="form-check">
-													<input class="form-check-input" type="checkbox" checked
-														id="surveyEmail">
-													<label class="form-check-label" for="surveyEmail">Surveys</label>
-												</div>
-											</div>
-										</div>
-
-										<!-- SMS Notifications -->
-										<div class="mb-4">
-											<div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 rounded toggle-header"
-												data-bs-target="#smsOptions" aria-expanded="true">
-												<div>
-													<strong>SMS Notifications</strong>
-													<p class="text-muted small mb-0">Important alerts cannot be disabled
-													</p>
-												</div>
-												<div class="form-check form-switch">
-													<input class="form-check-input main-toggle" type="checkbox" checked
-														data-target="#smsOptions">
-												</div>
-											</div>
-											<div class="collapse show mt-2 ms-3" id="smsOptions">
-												<div class="form-check">
-													<input class="form-check-input" type="checkbox" checked
-														id="promoSMS">
-													<label class="form-check-label" for="promoSMS">Promotions</label>
-												</div>
-											</div>
-										</div>
-
-										<!-- Zalo Notifications -->
-										<div class="mb-4">
-											<div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 rounded toggle-header"
-												data-bs-target="#zaloOptions" aria-expanded="true">
-												<div>
-													<strong>Zalo Notifications</strong>
-													<p class="text-muted small mb-0">Important alerts cannot be disabled
-													</p>
-												</div>
-												<div class="form-check form-switch">
-													<input class="form-check-input main-toggle" type="checkbox" checked
-														data-target="#zaloOptions">
-												</div>
-											</div>
-											<div class="collapse show mt-2 ms-3" id="zaloOptions">
-												<div class="form-check">
-													<input class="form-check-input" type="checkbox" checked
-														id="promoZalo">
-													<label class="form-check-label" for="promoZalo">Promotions</label>
-												</div>
-											</div>
-										</div>
-									</div>
-
-								</div>
-								<div class="tab-pane fade" id="noti-news-pane" role="tabpanel">
-									<h5 class="mb-3">Latest News & Notifications</h5>
-
-									<!-- News Item -->
-									<div class="card shadow-sm mb-3 border-start border-primary border-4">
-										<div class="card-body">
-											<div class="d-flex justify-content-between">
-												<div>
-													<h6 class="fw-bold mb-1">
-														<i class="bi bi-megaphone-fill text-primary me-1"></i> Summer
-														Sale is Live!
-													</h6>
-													<p class="mb-1 text-muted">Enjoy up to 50% off on selected items
-														until August 31st.</p>
-													<a href="#" class="text-decoration-none">View details</a>
-												</div>
-												<small class="text-muted">3 hours ago</small>
-											</div>
-										</div>
-									</div>
-
-									<!-- News Item -->
-									<div class="card shadow-sm mb-3 border-start border-success border-4">
-										<div class="card-body">
-											<div class="d-flex justify-content-between">
-												<div>
-													<h6 class="fw-bold mb-1">
-														<i class="bi bi-box-seam text-success me-1"></i> New Shipping
-														Policy
-													</h6>
-													<p class="mb-1 text-muted">We’ve updated our shipping terms to offer
-														faster delivery.</p>
-													<a href="#" class="text-decoration-none">Learn more</a>
-												</div>
-												<small class="text-muted">1 day ago</small>
-											</div>
-										</div>
-									</div>
-
-									<!-- News Item -->
-									<div class="card shadow-sm mb-3 border-start border-danger border-4">
-										<div class="card-body">
-											<div class="d-flex justify-content-between">
-												<div>
-													<h6 class="fw-bold mb-1">
-														<i class="bi bi-exclamation-circle-fill text-danger me-1"></i>
-														System Maintenance
-													</h6>
-													<p class="mb-1 text-muted">We’ll be undergoing scheduled maintenance
-														on August 1 from 1:00–3:00 AM.</p>
-													<a href="#" class="text-decoration-none">Check schedule</a>
-												</div>
-												<small class="text-muted">2 days ago</small>
-											</div>
-										</div>
-									</div>
-								</div>
-
-							</div>
-						</div>
-
+					
+						
 
 					</div>
 				</div>
 				<div class="col-md-3 ps-2">
 					<!-- Security Overview -->
 					<div class="card border shadow-sm p-3">
-						<h5 class="mb-3"><i class="bi bi-shield-lock-fill text-danger"></i> Security Overview</h5>
+						<h5 class="mb-3"><i class="bi bi-shield-lock-fill text-danger"></i> Tổng quan</h5>
 						<ul class="list-group list-group-flush small">
 							<li class="list-group-item d-flex justify-content-between">
-								<span>Phone</span>
-								<span class="badge bg-success">Verified</span>
+								<span>Số điện thoại:</span>
+								<span class="badge bg-success">Đã xác minh</span>
 							</li>
 							<li class="list-group-item d-flex justify-content-between">
 								<span>Email</span>
-								<span th:if="${userVerified}" class="badge bg-success">Verified</span>
-								<span th:if="${!userVerified}" class="badge bg-warning text-dark">Not Verified</span>
+								<span th:if="${userVerified}" class="badge bg-success">Đã xác minh</span>
+								<span th:if="${!userVerified}" class="badge bg-warning text-dark">Chưa xác minh</span>
 
 							</li>
 							<li class="list-group-item d-flex justify-content-between">
-								<span>Password age</span>
-								<span class="badge bg-info text-dark" th:text="${passwordAge} + ' days'">50 days</span>
+								<span>Tuổi thọ mật khẩu</span>
+								<span class="badge bg-info text-dark" th:text="${passwordAge} + ' days'">50 ngày</span>
 							</li>
 
 						</ul>
@@ -698,11 +536,11 @@
 							<div class="mt-3 text-end">
 								<!-- Chỉ hiển thị khi đã xác minh -->
 								<a th:if="${userVerified}" href="#"
-									class="btn btn-outline-secondary btn-sm disabled">Email Verified</a>
+									class="btn btn-outline-secondary btn-sm disabled">Email đã xác minh</a>
 
 								<!-- Chỉ hiển thị khi chưa xác minh -->
 								<a th:if="${!userVerified}" href="#" class="btn btn-outline-secondary btn-sm"
-									data-bs-toggle="modal" data-bs-target="#verifyEmailModal">Verify Email</a>
+									data-bs-toggle="modal" data-bs-target="#verifyEmailModal">Xác minh Email</a>
 							</div>
 
 						</div>
@@ -831,21 +669,20 @@
 
 				<div class="modal-header bg-warning">
 					<h5 class="modal-title" id="verifyEmailModalLabel"><i class="bi bi-envelope-exclamation-fill"></i>
-						Verify Your Email</h5>
+						Xác minh Email của bạn</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 
 				<div class="modal-body">
 					<p>
-						We will send a verification link to your registered email address.
-						Please check your inbox and follow the instructions to verify.
+						Chúng tôi sẽ gửi đường dẫn xác minh tới địa chỉ email mà bạn đã đăng ký.
+						Hãy kiểm tra hộp thư và làm theo hướng dẫn để xác minh. 
 					</p>
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-					<button id="confirmVerifyEmailBtn" type="button" class="btn btn-warning">Send Verification
-						Email</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+					<button id="confirmVerifyEmailBtn" type="button" class="btn btn-warning">Gửi xác minh về email</button>
 				</div>
 
 			</div>
@@ -861,7 +698,7 @@
 
 					<div class="modal-header">
 						<div class="d-flex flex-column">
-							<small class="text-muted"><strong>Order ID:</strong> <span
+							<small class="text-muted"><strong>Đơn số:</strong> <span
 									id="reviewOrderId">-</span></small>
 							<h5 class="modal-title" id="reviewModalLabel">Đánh giá sản phẩm</h5>
 						</div>
@@ -913,7 +750,7 @@
 
 					<div class="modal-header">
 						<div class="d-flex flex-column">
-							<small class="text-muted"><strong>Order ID:</strong> <span
+							<small class="text-muted"><strong>Đơn số:</strong> <span
 									id="reviewedOrderId">-</span></small>
 							<h5 class="modal-title" id="reviewedModalLabel">Đánh giá sản phẩm</h5>
 						</div>
@@ -975,7 +812,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-					<button id="openVerifyModalBtn" type="button" class="btn btn-danger">Verify Email</button>
+					<button id="openVerifyModalBtn" type="button" class="btn btn-danger">Xác minh email</button>
 				</div>
 			</div>
 		</div>
@@ -1027,25 +864,7 @@
 	});
 </script>
 
-<script>
-	document.addEventListener("DOMContentLoaded", function () {
-		document.querySelectorAll(".main-toggle").forEach(toggle => {
-			toggle.addEventListener("change", function () {
-				const targetId = this.getAttribute("data-target");
-				const target = document.querySelector(targetId);
-				if (!target) return;
 
-				const bsCollapse = bootstrap.Collapse.getOrCreateInstance(target);
-
-				if (this.checked) {
-					bsCollapse.show();
-				} else {
-					bsCollapse.hide();
-				}
-			});
-		});
-	});
-</script>
 
 
 
