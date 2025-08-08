@@ -288,6 +288,41 @@
                  max-width: 250px;
              }
          }
+
+
+         /* Thay thế hoặc thêm vào <style> */
+.product__details__option__size label {
+    display: inline-block;
+    padding: 8px 18px;
+    border: 1.5px solid #333;
+    border-radius: 999px; /* Bo tròn */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    background: #fff;
+    color: #333;
+    margin-right: 8px;
+    margin-bottom: 6px;
+    transition: all 0.2s;
+    min-width: 40px;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: none;
+}
+.product__details__option__size input[type="radio"]:checked + span,
+.product__details__option__size label.active span {
+    background: #111;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 18px;
+}
+.product__details__option__size input[type="radio"]:checked + span {
+    background: #111;
+    color: #fff;
+}
+.product__details__option__size input[type="radio"] {
+    display: none;
+}
     </style>
 </head>
 
@@ -329,71 +364,71 @@
 
     <!-- Header Section Begin -->
     <header class="header">
-        <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-7">
-                        <div class="header__top__left">
-                            <p>Free shipping, 30-day return or refund guarantee.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-5">
-                        <div class="header__top__right">
-                            <div class="header__top__links">
-                                <a href="#">Sign in</a>
-                                <a href="#">FAQs</a>
-                            </div>
-                            <div class="header__top__hover">
-                                <span>Usd <i class="arrow_carrot-down"></i></span>
-                                <ul>
-                                    <li>USD</li>
-                                    <li>EUR</li>
-                                    <li>USD</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="header__top">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-3">
-                    <div class="header__logo">
-                        <a href="/"><img src="/img/logo.png" alt=""></a>
+                <div class="col-lg-6 col-md-7">
+                    <div class="header__top__left">
+                        <p>Miễn phí vận chuyển, đảm bảo hoàn trả trong 30 ngày.</p>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6">
-                    <nav class="header__menu mobile-menu">
-                        <ul>
-                            <li><a href="/">Home</a></li>
-                            <li class="active"><a href="/shop">Shop</a></li>
-                            <li><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="/about">About Us</a></li>
-                                    <li><a href="/shop-details">Shop Details</a></li>
-                                    <li><a href="/shopping-cart">Shopping Cart</a></li>
-                                    <li><a href="/checkout">Check Out</a></li>
-                                    <li><a href="/blog-details">Blog Details</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="/blog">Blog</a></li>
-                            <li><a href="/contact">Contacts</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3 col-md-3">
-                    <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="/img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="/img/icon/heart.png" alt=""></a>
-                        <a href="#"><img src="/img/icon/cart.png" alt=""> <span th:text="${cartItemCount ?: 0}">0</span></a>
-                        <div class="price" th:text="'$' + ${cartTotalPrice ?: '0.00'}">$0.00</div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__links">
+                            <a href="#">Đăng nhập</a>
+                            <a href="#">FAQs</a>
+                        </div>
+                        <div class="header__top__hover">
+                            <span>VND <i class="arrow_carrot-down"></i></span>
+                            <ul>
+                                <li>VND</li>
+                                <li>USD</li>
+                                <li>EUR</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="canvas__open"><i class="fa fa-bars"></i></div>
         </div>
-    </header>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a href="/"><img src="/img/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li><a href="/home">Trang chủ</a></li>
+                        <li class="active"><a href="/shop">Cửa hàng</a></li>
+                        <li><a href="#">Trang</a>
+                            <ul class="dropdown">
+                                <li><a href="/about.html">Giới thiệu</a></li>
+                                <li><a href="/shop-details.html">Chi tiết sản phẩm</a></li>
+                                <li><a href="/shopping-cart.html">Giỏ hàng</a></li>
+                                <li><a href="/checkout.html">Thanh toán</a></li>
+                                <li><a href="/blog-details.html">Chi tiết blog</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/contact.html">Liên hệ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <div class="header__nav__option">
+                    <a href="#" class="search-switch"><img src="/img/icon/search.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/heart.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/cart.png" alt=""> <span th:text="${cartItemCount ?: 0}">0</span></a>
+                    <div class="price" th:text="'₫' + ${cartTotalPrice ?: '0.00'}">₫0.00</div>
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>
     <!-- Header Section End -->
 
     <!-- Breadcrumb Section Begin -->
@@ -515,13 +550,13 @@
                             </div>
                         </div>
                         <div class="product__details__cart__option">
-                            <div class="quantity">
-                                <div class="pro-qty">
-                                    <input type="text" name="quantity" value="1" min="1" th:max="${product != null ? product.stock : 99}">
-                                    <span class="qtybtn inc quantity-increment">+</span>
-                                    <span class="qtybtn inc quantity-increment">-</span>
-                                </div>
-                            </div>
+     <div class="quantity">
+    <div class="pro-qty">
+        <button type="button" class="qtybtn dec">-</button>
+        <input type="text" name="quantity" value="1" min="1" readonly>
+        <button type="button" class="qtybtn inc">+</button>
+    </div>
+</div>
                             <a href="#" class="add-cart-btn" th:data-product-id="${product != null ? product.productID : 0}">Add to Cart</a>
                         </div>
 <!--                        <div class="product__details__btns__option">-->
@@ -892,41 +927,41 @@
                 <div class="col-lg-3 col-md-6 col-sm-6">
                     <div class="footer__about">
                         <div class="footer__logo">
-                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
+                            <a href="#"><img src="/img/footer-logo.png" alt=""></a>
                         </div>
-                        <p>The customer is at the heart of our unique business model, which includes design.</p>
-                        <a href="#"><img src="img/payment.png" alt=""></a>
+                        <p>Khách hàng là trung tâm của mô hình kinh doanh độc đáo của chúng tôi, bao gồm cả thiết kế.</p>
+                        <a href="#"><img src="/img/payment.png" alt=""></a>
                     </div>
                 </div>
                 <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Mua sắm</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
+                            <li><a href="#">Cửa hàng quần áo</a></li>
+                            <li><a href="#">Giày thịnh hành</a></li>
+                            <li><a href="#">Phụ kiện</a></li>
+                            <li><a href="#">Khuyến mãi</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Hỗ trợ</h6>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a href="#">Liên hệ</a></li>
+                            <li><a href="#">Phương thức thanh toán</a></li>
+                            <li><a href="#">Giao hàng</a></li>
+                            <li><a href="#">Đổi trả & hoàn tiền</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
                     <div class="footer__widget">
-                        <h6>NewLetter</h6>
+                        <h6>Nhận tin mới</h6>
                         <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
+                            <p>Đăng ký để nhận thông tin về sản phẩm mới, ưu đãi và khuyến mãi!</p>
                             <form action="#">
-                                <input type="text" placeholder="Your email">
+                                <input type="text" placeholder="Email của bạn">
                                 <button type="submit"><span class="icon_mail_alt"></span></button>
                             </form>
                         </div>
@@ -936,15 +971,13 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <div class="footer__copyright__text">
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         <p>Copyright ©
                             <script>
                                 document.write(new Date().getFullYear());
-                            </script>2020
+                            </script>
                             All rights reserved | This template is made with <i class="fa fa-heart-o"
-                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                                                                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
                         </p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </div>
                 </div>
             </div>
@@ -1108,7 +1141,22 @@
         });
     </script>
 
-
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Số lượng: cộng trừ không cho về 0
+    document.querySelectorAll('.pro-qty').forEach(function(qtyBox) {
+        const input = qtyBox.querySelector('input[name="quantity"]');
+        qtyBox.querySelector('.dec').onclick = function() {
+            let val = parseInt(input.value, 10) || 1;
+            if (val > 1) input.value = val - 1;
+        };
+        qtyBox.querySelector('.inc').onclick = function() {
+            let val = parseInt(input.value, 10) || 1;
+            input.value = val + 1;
+        };
+    });
+});
+</script>
 
     <!-- Additional CSS for styling -->
     <style>

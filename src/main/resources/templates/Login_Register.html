@@ -41,7 +41,7 @@
             font-size: 2rem;
             font-weight: 600;
             margin-bottom: 24px;
-            color: #1976d2;
+            color: #111 !important; /* Chữ đen */
             text-align: center;
         }
         .auth-form input,
@@ -64,34 +64,33 @@
             outline: none;
         }
         .auth-form button[type="submit"] {
-            background: #1976d2;
-            color: #fff;
+            background: #111 !important; /* Nền đen */
+            color: #fff !important;      /* Chữ trắng */
             border: none;
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
+            border-radius: 8px;
             transition: background 0.2s;
         }
         .auth-form button[type="submit"]:hover {
-            background: #1565c0;
+            background: #333 !important;
         }
-        .auth-form .switch-link {
-            margin-top: 18px;
-            color: #1976d2;
+        .auth-form .switch-link,
+        .auth-form .forgot-link {
+            color: #111 !important;         /* Chữ đen */
+            text-decoration: none !important; /* Bỏ gạch chân */
             cursor: pointer;
-            text-decoration: underline;
             font-size: 15px;
             text-align: center;
-        }
-        .auth-form .forgot-link {
-            color: #1976d2;
-            text-decoration: underline;
-            font-size: 14px;
+            font-weight: 600;               /* In đậm */
             display: block;
-            margin-bottom: 12px;
-            text-align: right;
-            cursor: pointer;
+            margin-top: 12px;
+            transition: color 0.2s;
+        }
+        .auth-form .switch-link:hover,
+        .auth-form .forgot-link:hover {
+            color: #1976d2 !important;
+            text-decoration: underline;
         }
         .password-group {
             position: relative;
