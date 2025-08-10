@@ -4,45 +4,78 @@ import com.java6.datn.Entity.User;
 import com.java6.datn.Entity.VerificationToken;
 import com.java6.datn.Repository.UserRepository;
 import com.java6.datn.Repository.VerificationTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class VerificationTokenService {
 
-	@Autowired
-	private VerificationTokenRepository tokenRepo;
-	@Autowired
-	private UserRepository userRepository; // ✅ Thêm dòng này
+    private final VerificationTokenRepository tokenRepository;
+    private final UserRepository userRepository;
+    // Tạo mã OTP mới cho user
+    @Transactional
+    public String createOtpForUser(User user) {
+    	try {
+            // Xóa OTP cũ của user
+            tokenRepository.deleteByUser(user);
 
-	public String createToken(User user) {
-		String token = UUID.randomUUID().toString();
-		VerificationToken verificationToken = new VerificationToken();
-		verificationToken.setToken(token);
-		verificationToken.setUser(user);
-		verificationToken.setExpiryDate(LocalDateTime.now().plusHours(24));
-		tokenRepo.save(verificationToken);
-		return token;
-	}
+            // Sinh mã OTP ngẫu nhiên 6 số
+            String otp = String.format("%06d", new Random().nextInt(999999));
 
-	public boolean verifyToken(String token) {
-		return tokenRepo.findByToken(token).filter(t -> t.getExpiryDate().isAfter(LocalDateTime.now())).map(t -> {
-			User user = t.getUser();
-			user.setEmailVerified(true); // 👈 thêm cột này nếu bạn cần
-			userRepository.save(user); // bạn gọi nếu muốn lưu
-			tokenRepo.delete(t);
-			return true;
-		}).orElse(false);
-	}
+            // Tạo đối tượng VerificationToken
+            VerificationToken token = VerificationToken.builder()
+                    .otp(otp)
+                    .user(user)
+                    .expiryDate(LocalDateTime.now().plusMinutes(5)) // hết hạn sau 5 phút
+                    .build();
 
+            // Lưu vào DB
+            tokenRepository.save(token);
 
-	 @Transactional 
-	public void deleteByUser(User user) {
-		tokenRepo.deleteByUser(user);
-	}
+            return otp;
+        } catch (Exception e) {
+            System.err.println("❌ Lỗi khi tạo OTP cho user " + user.getEmail() + ": " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Không thể tạo OTP. Vui lòng thử lại.");
+        }
+    }
 
+    // Xác minh OTP
+    public boolean verifyOtp(String otp, User user) {
+    	try {
+            Optional<VerificationToken> tokenOpt = tokenRepository.findByUserAndOtp(user, otp);
+
+            if (tokenOpt.isEmpty()) {
+                return false; // Không tìm thấy OTP
+            }
+
+            VerificationToken token = tokenOpt.get();
+
+            // Kiểm tra hết hạn
+            if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+                tokenRepository.delete(token); // Xóa OTP hết hạn
+                return false;
+            }
+
+            // Nếu hợp lệ → Xóa OTP khỏi DB
+            tokenRepository.delete(token);
+
+            // Đánh dấu user đã xác minh email
+            user.setEmailVerified(true);
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("❌ Lỗi khi xác minh OTP cho user " + user.getEmail() + ": " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khi xác minh OTP. Vui lòng thử lại.");
+        }
+    }
 }

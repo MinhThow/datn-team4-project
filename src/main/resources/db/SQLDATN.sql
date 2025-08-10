@@ -30,9 +30,15 @@ CREATE TABLE Users (
     Password NVARCHAR(255),
     Phone NVARCHAR(20),
     Address NVARCHAR(MAX),
-    Role NVARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
-    CreatedAt DATETIME DEFAULT GETDATE()
+    Role NVARCHAR(20) DEFAULT N'customer',
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    Email_Verified BIT NOT NULL DEFAULT 0, -- ✅ Đã merge
+    Password_Changed_At DATETIME NULL,     -- ✅ Đã merge
+    CONSTRAINT CK_Users_Role CHECK (
+        Role IN (N'customer', N'admin')    -- ✅ Unicode chuẩn
+    )
 );
+
 
 -- Danh mục sản phẩm
 CREATE TABLE Categories (
@@ -47,9 +53,11 @@ CREATE TABLE Products (
     Name NVARCHAR(150) NOT NULL,
     Description NVARCHAR(MAX),
     Price DECIMAL(10,2) NOT NULL,
+    OldPrice DECIMAL(10,2),  -- ✅ Đã merge vào
     CategoryID INT,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
+
 
 -- Size sản phẩm
 CREATE TABLE ProductSizes (
@@ -95,6 +103,17 @@ CREATE TABLE Orders (
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
 );
 
+
+
+ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status
+CHECK ([Status] IN (
+    N'Chờ xác nhận',
+    N'Đang xử lý',
+    N'Đang giao',
+    N'Đã giao',
+    N'Đã hủy',
+    N'Trả hàng'
+));
 -- Chi tiết đơn hàng
 CREATE TABLE OrderItems (
     OrderItemID INT PRIMARY KEY IDENTITY(1,1),
@@ -128,11 +147,22 @@ CREATE TABLE Reviews (
     ReviewID INT PRIMARY KEY IDENTITY(1,1),
     ProductID INT,
     UserID INT,
+    OrderID INT, -- ✅ Cột thêm mới, đã merge
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment NVARCHAR(MAX),
     ReviewDate DATETIME DEFAULT GETDATE(),
+
+    -- 🔗 Khóa ngoại
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) -- ✅ Đã gộp luôn
+);
+CREATE TABLE VerificationToken (
+    id INT IDENTITY PRIMARY KEY,
+    otp NVARCHAR(6) NOT NULL,              -- GỌI RÕ LÀ OTP, thay vì "token"
+    user_id INT NOT NULL,
+    expiryDate DATETIME NOT NULL,
+    CONSTRAINT FK_VerificationToken_User FOREIGN KEY (user_id) REFERENCES Users(UserID)
 );
 
 -- Dữ liệu mẫu: Danh mục
@@ -456,118 +486,8 @@ VALUES
 (31, 'S', 99), (31, 'M', 99), (31, 'L', 99), (31, 'XL', 99), (31, 'XXL', 99),
 (32, 'S', 99), (32, 'M', 99), (32, 'L', 99), (32, 'XL', 99), (32, 'XXL', 99);
 
------------------------------------------------------------------------------
-CREATE TABLE VerificationToken (
-    id INT IDENTITY PRIMARY KEY,
-    token NVARCHAR(255),
-    user_id INT,
-    expiryDate DATETIME,
-    CONSTRAINT FK_VerificationToken_User FOREIGN KEY (user_id) REFERENCES Users(UserID)
-);
 
 
-ALTER TABLE Products ADD oldPrice DECIMAL(10, 2);
-
-
-ALTER TABLE Users ADD email_verified BIT NOT NULL DEFAULT 0;
-
-
-ALTER TABLE Users
-ADD password_changed_at DATETIME NULL;
-
--- ✅ Sử dụng N'Đã giao' với N đứng trước
-ALTER TABLE Orders DROP CONSTRAINT CK__Orders__Status__4CA06362;
-
-
-ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status
-CHECK ([Status] IN (
-    N'Chờ xác nhận',
-    N'Đang xử lý',
-    N'Đang giao',
-    N'Đã giao',
-    N'Đã hủy',
-    N'Trả hàng'
-));
-
-INSERT INTO [Orders] (
-    [UserID],
-    [RecipientName],
-    [Phone],
-    [ShippingAddress],
-    [Note],
-    [Total],
-    [Status],
-    [OrderDate],
-    [PaymentMethodID],
-    [PaymentMethodName]
-)
-VALUES (
-    2,
-    N'Nguyễn Văn A',
-    '0123456789',
-    N'123 Main Street',
-    N'Test đơn hàng completed',
-    199.99,
-    N'Đã giao',  -- ✅ Giờ đã hợp lệ
-    GETDATE(),
-    1,
-    N'Thanh toán khi nhận hàng'
-);
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderDate DESC;
-
-INSERT INTO [OrderItems] (
-    [OrderID],
-    [ProductID],
-    [ProductSizeID],
-    [ProductName],
-    [Size],
-    [Quantity],
-    [Price]
-)
-VALUES (
-    1,                -- Thay bằng OrderID đúng nếu khác
-    1,
-    1,
-    N'Áo thun nam basic',
-    N'S',
-    1,
-    199000.00
-);
-
-INSERT INTO Orders (UserID, RecipientName, Phone, ShippingAddress, Note, Total, Status, OrderDate, PaymentMethodID, PaymentMethodName)
-VALUES (2, N'Trần Văn A', '0123456789', N'123 Đường ABC', N'Giao giờ hành chính', 500000, N'Đang giao', GETDATE(), 1, N'Thanh toán khi nhận hàng');
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC;
-
-INSERT INTO OrderItems (OrderID, ProductID, ProductSizeID, ProductName, Size, Quantity, Price)
-VALUES (2, 2, 6, N'Giày sneaker trắng', '38', 2, 890000.00);
-
-INSERT INTO Orders (
-    UserID, RecipientName, Phone, ShippingAddress, Note, Total, Status, OrderDate, PaymentMethodID, PaymentMethodName
-)
-VALUES (
-    2, N'Nguyễn Văn B', '0912345678', N'456 Đường XYZ', N'Hủy vì thay đổi ý định', 200000, N'Đã hủy', GETDATE(), 1, N'Thanh toán khi nhận hàng'
-);
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC;
-
-INSERT INTO OrderItems (
-    OrderID, ProductID, ProductSizeID, ProductName, Size, Quantity, Price
-)
-VALUES (
-    3, 3, 21, N'Balo laptop chống sốc', 'S', 1, 459000.00
-);
-
-ALTER TABLE Reviews
-ADD OrderID INT;
-
-ALTER TABLE Reviews
-ADD CONSTRAINT FK_Reviews_Orders
-FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
-
-
-DELETE FROM Reviews;
 
 
 

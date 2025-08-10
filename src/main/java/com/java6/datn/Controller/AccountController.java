@@ -17,6 +17,7 @@ import com.java6.datn.Mapper.UserMapper;
 import com.java6.datn.Repository.OrderRepository;
 import com.java6.datn.Repository.ProductImageRepository;
 import com.java6.datn.Repository.UserRepository;
+import com.java6.datn.Service.EmailService;
 import com.java6.datn.Service.ReviewService;
 import com.java6.datn.Service.UserService;
 import com.java6.datn.Service.VerificationTokenService;
@@ -59,6 +60,8 @@ public class AccountController {
 	private VerificationTokenService tokenService;
 	@Autowired
 	private ReviewService reviewService;
+	@Autowired
+	private EmailService emailService;
 
 	public AccountController(UserService userService, UserRepository userRepository) {
 		this.userService = userService;
@@ -213,6 +216,57 @@ public class AccountController {
 	    }
 
 	    return "redirect:/account";
+	}
+	@PostMapping("/send-otp")
+	@ResponseBody
+	public ResponseEntity<?> sendOtp() {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+	    if (authentication == null || !authentication.isAuthenticated()
+	            || authentication.getPrincipal().equals("anonymousUser")) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+	    }
+
+	    String email = authentication.getName();
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    try {
+	        String otp = tokenService.createOtpForUser(user);
+	        emailService.sendOtpEmail(email, otp);
+	        return ResponseEntity.ok("Mã OTP đã được gửi tới email của bạn");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi gửi OTP: " + e.getMessage());
+	    }
+
+	}
+	@PostMapping("/verify-otp")
+	@ResponseBody
+	public ResponseEntity<?> verifyOtp(@RequestParam("otp") String otp) {
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+	    if (authentication == null || !authentication.isAuthenticated()
+	            || authentication.getPrincipal().equals("anonymousUser")) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+	    }
+
+	    String email = authentication.getName();
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    if (tokenService.verifyOtp(otp, user)) {
+	        user.setEmailVerified(true);
+	        userRepository.save(user);
+	        return ResponseEntity.ok("Xác minh email thành công!");
+	    } else {
+	        return ResponseEntity.badRequest().body("Mã OTP không hợp lệ hoặc đã hết hạn.");
+	    }
+	}
+	@PostMapping("/verify-email")
+	@ResponseBody
+	public ResponseEntity<?> verifyEmailAlias() {
+	    return sendOtp();
 	}
 
 
