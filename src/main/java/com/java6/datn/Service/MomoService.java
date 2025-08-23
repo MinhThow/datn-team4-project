@@ -22,6 +22,7 @@ public class MomoService {
         String momoOrderId = orderId + "_" + requestId; // orderId duy nhất cho MoMo
         String orderInfo = "Thanh toán đơn hàng " + orderId;
 
+        // ✅ Fix: orderId phải dùng momoOrderId
         String rawHash = "accessKey=" + MomoConfig.ACCESS_KEY +
                 "&amount=" + amount +
                 "&extraData=" +
@@ -37,11 +38,11 @@ public class MomoService {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("partnerCode", MomoConfig.PARTNER_CODE);
-        body.put("partnerName", "MoMo Payment");
+        body.put("partnerName", "MoMo Payment"); // chỉ gửi trong body, KHÔNG ký
         body.put("storeId", "MomoTestStore");
         body.put("requestId", requestId);
-        body.put("amount", amount); // Long, không phải String
-        body.put("orderId", momoOrderId);
+        body.put("amount", amount);
+        body.put("orderId", momoOrderId); // ✅ khớp với rawHash
         body.put("orderInfo", orderInfo);
         body.put("redirectUrl", MomoConfig.REDIRECT_URL);
         body.put("ipnUrl", MomoConfig.IPN_URL);
@@ -53,6 +54,7 @@ public class MomoService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+        System.out.println("🔎 Request gửi lên MoMo: " + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body));
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
         ResponseEntity<Map> response = restTemplate.exchange(
@@ -87,4 +89,3 @@ public class MomoService {
         return hash.toString();
     }
 }
-

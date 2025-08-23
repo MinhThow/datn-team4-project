@@ -191,6 +191,11 @@
                                     Thanh toán MoMo (QR)
                                 </label>
 
+                                <label class="radio-item">
+                                    <input type="radio" name="paymentMethod" value="VNPAY">
+                                    Thanh toán VNPAY (ATM / QR)
+                                </label>
+
                             </div>
                         </div>
 
@@ -339,9 +344,9 @@
                         const itemTotal = item.price * item.quantity;
                         total += itemTotal;
                         html += `<li>
-                    ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
-                    <span>${itemTotal.toLocaleString('vi-VN')}đ</span>
-                </li>`;
+                        ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
+                        <span>${itemTotal.toLocaleString('vi-VN')}đ</span>
+                    </li>`;
                     });
                     document.getElementById("checkout-products").innerHTML = html;
                     document.getElementById("checkout-total").innerText = total.toLocaleString("vi-VN") + "đ";
@@ -364,7 +369,7 @@
                     phone: document.getElementById("phone").value,
                     shippingAddress: document.getElementById("address").value,
                     note: document.getElementById("note").value,
-                    paymentMethodId: paymentValue === 'COD' ? 1 : 2,
+                    paymentMethodId: paymentValue === 'COD' ? 1 : (paymentValue === 'MOMO' ? 2 : 3),
                     orderItems: cartItems.map(item => ({
                         productID: item.productID,
                         productSizeID: item.productSizeID,
@@ -375,44 +380,8 @@
                     }))
                 };
 
-                if (paymentValue === "MOMO") {
-                    // 👉 B1: tạo order
-                    const orderRes = await fetch("/api/orders", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(body)
-                    });
-                    const order = await orderRes.json();
-                    console.log("✅ Order tạo thành công:", order);
-
-                    // 👉 B2: gọi MoMo
-                    const amount = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-                    const momoRes = await fetch(`/api/pay/momo?orderId=${order.id}&amount=${amount}`);
-                    const momoData = await momoRes.json();
-                    console.log("🔎 Kết quả từ MoMo:", momoData);
-
-                    // 👉 B3: hiển thị QR trong popup
-                    if (momoData.payUrl) {
-                        let payUrl = momoData.payUrl.replace(/[<>]/g, "");
-
-                        // Xóa QR cũ (nếu có)
-                        document.getElementById("momoQrContainer").innerHTML = "";
-
-                        // Tạo QR bằng QRCode.js
-                        new QRCode(document.getElementById("momoQrContainer"), {
-                            text: payUrl,
-                            width: 300,
-                            height: 300
-                        });
-
-                        document.getElementById("momoPayLink").href = payUrl;
-                        document.getElementById("momoModal").style.display = "flex";
-                    } else {
-                        alert("❌ Không thể tạo QR MoMo. Kiểm tra console log!");
-                    }
-
-                } else {
-                    // 👉 COD
+                // 👉 COD
+                if (paymentValue === "COD") {
                     fetch("/api/orders", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -420,7 +389,7 @@
                     })
                         .then(res => res.json())
                         .then(order => {
-                            alert(order.message);
+                            alert(order.message || "Đặt hàng thành công!");
                             fetch(`/api/cart/clear?userId=${currentUser.userID}`, { method: "DELETE" })
                                 .then(() => { window.location.href = "/cart"; });
                         })
@@ -429,37 +398,77 @@
                             alert("Đã có lỗi kết nối đến máy chủ.");
                         });
                 }
+
+                // 👉 MoMo
+                else if (paymentValue === "MOMO") {
+                    try {
+                        const orderRes = await fetch("/api/orders", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body)
+                        });
+                        const order = await orderRes.json();
+                        console.log("✅ Order (PENDING) đã tạo:", order);
+
+                        const amount = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+                        const momoRes = await fetch(`/api/pay/momo?orderId=${order.id}&amount=${amount}`);
+                        const momoData = await momoRes.json();
+                        console.log("🔎 Kết quả từ MoMo:", momoData);
+
+                        if (momoData.payUrl) {
+                            window.location.href = momoData.payUrl; // redirect sang MoMo
+                        } else {
+                            alert("❌ Không thể tạo link thanh toán MoMo.");
+                        }
+                    } catch (err) {
+                        console.error("💥 Lỗi MoMo:", err);
+                        alert("Không thể kết nối đến MoMo.");
+                    }
+                }
+
+                // 👉 VNPAY
+                else if (paymentValue === "VNPAY") {
+                    try {
+                        const orderRes = await fetch("/api/orders", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body)
+                        });
+                        const order = await orderRes.json();
+                        console.log("✅ Order (Paid) đã tạo:", order);
+
+                        const amount = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+                        const vnpayRes = await fetch(`/api/pay/vnpay?orderId=${order.id}&amount=${amount}`);
+
+                        // ✅ log thêm status & raw text để debug
+                        if (!vnpayRes.ok) {
+                            const errorText = await vnpayRes.text();
+                            console.error("❌ Lỗi response từ server VNPAY API:", vnpayRes.status, errorText);
+                            alert("Không thể kết nối đến server VNPAY.");
+                            return;
+                        }
+
+                        const vnpayData = await vnpayRes.json();
+                        console.log("🔎 Kết quả từ VNPAY:", vnpayData);
+
+                        if (vnpayData.paymentUrl) {
+                            window.location.href = vnpayData.paymentUrl; // redirect sang VNPAY
+                        } else {
+                            console.error("❌ VNPAY không trả về paymentUrl:", vnpayData);
+                            alert("❌ Không thể tạo link thanh toán VNPAY.");
+                        }
+                    } catch (err) {
+                        console.error("💥 Exception khi gọi VNPAY:", err);
+                        alert("Không thể kết nối đến VNPAY.");
+                    }
+                }
+
             });
         });
     </script>
 
 
-
-
-    <!-- Modal QR MoMo -->
-    <div id="momoModal" style="
-    display:none;
-    position:fixed;
-    top:0; left:0; right:0; bottom:0;
-    background:rgba(0,0,0,0.5);
-    justify-content:center;
-    align-items:center;
-    z-index:1000;
-">
-        <div style="background:white; padding:20px; border-radius:10px; text-align:center; max-width:400px;">
-            <h3>Quét QR bằng MoMo</h3>
-            <div id="momoQrContainer"></div>
-            <p style="margin-top:10px;">
-                <a id="momoPayLink" href="#" target="_blank" style="color:#d82d8b; font-weight:bold;">
-                    Hoặc bấm vào đây để thanh toán
-                </a>
-            </p>
-            <button onclick="document.getElementById('momoModal').style.display='none'"
-                    style="margin-top:15px; padding:8px 16px; border:none; background:#ccc; border-radius:5px;">
-                Đóng
-            </button>
-        </div>
-    </div>
 
 
 </body>
