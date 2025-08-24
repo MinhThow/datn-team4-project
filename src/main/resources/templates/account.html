@@ -259,10 +259,10 @@
 											<!-- Nút hành động theo trạng thái -->
 											<div class="mt-3 text-end">
 												<button class="btn btn-sm btn-outline-primary"
-													th:if="${order.status == 'Đang giao'}">Theo dõi</button>
+													th:if="${order.status == 'Delivering'}">Theo dõi</button>
 
 												<div class="d-flex justify-content-end gap-2"
-													th:if="${order.status == 'Đã giao'}">
+													th:if="${order.status == 'Completed'}">
 													<button class="btn btn-primary btn-review"
 														th:data-order-id="${order.orderId}"
 														th:data-product-id="${order.productId}"
@@ -280,7 +280,7 @@
 												</div>
 
 												<button class="btn btn-sm btn-outline-secondary"
-													th:if="${order.status == 'Đã hủy'}">Chi tiết</button>
+													th:if="${order.status == 'Canceled'}">Chi tiết</button>
 											</div>
 										</div>
 									</div>
@@ -305,7 +305,7 @@
 												<!-- Header -->
 												<div class="d-flex justify-content-between align-items-start mb-2">
 													<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
-													<span class="badge bg-primary">Đang giao</span>
+													<span class="badge bg-primary">Delivering</span>
 												</div>
 
 												<!-- Thân card: ảnh + info + giá -->
@@ -372,7 +372,7 @@
 											<!-- Header -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
 												<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
-												<span class="badge bg-success">Đã giao</span>
+												<span class="badge bg-success">Completed</span>
 											</div>
 
 											<!-- Thân card -->
@@ -455,7 +455,7 @@
 											<!-- Tiêu đề đơn hàng -->
 											<div class="d-flex justify-content-between align-items-start mb-2">
 												<h6 class="mb-3">Đơn #[[${order.orderId}]]</h6>
-												<span class="badge bg-secondary">Đã hủy</span>
+												<span class="badge bg-secondary">Canceled</span>
 											</div>
 
 											<!-- Thân card -->
@@ -675,9 +675,10 @@
 
 				<div class="modal-body">
 					<p>
-						Chúng tôi sẽ gửi đường dẫn xác minh tới địa chỉ email mà bạn đã đăng ký.
-						Hãy kiểm tra hộp thư và làm theo hướng dẫn để xác minh. 
+					    Chúng tôi sẽ gửi mã xác minh gồm 6 chữ số đến địa chỉ email mà bạn đã đăng ký.
+					    Vui lòng kiểm tra hộp thư đến và nhập mã vào biểu mẫu tiếp theo để hoàn tất xác minh.
 					</p>
+
 				</div>
 
 				<div class="modal-footer">
@@ -818,6 +819,36 @@
 		</div>
 	</div>
 
+	<!-- Modal nhập mã OTP -->
+	<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+
+				<div class="modal-header bg-primary text-white">
+					<h5 class="modal-title" id="otpModalLabel"><i class="bi bi-shield-lock-fill"></i> Nhập mã xác minh</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+				<div class="modal-body text-center">
+					<p>Nhập mã 6 chữ số đã gửi tới email của bạn:</p>
+					<div class="d-flex justify-content-center gap-2">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+						<input type="text" class="form-control otp-input" maxlength="1" inputmode="numeric">
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+					<button type="button" class="btn btn-primary" id="submitOtpBtn">Xác minh</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
 
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
@@ -845,7 +876,7 @@
 		const btn = document.getElementById('confirmVerifyEmailBtn');
 		if (btn) {
 			btn.addEventListener('click', function () {
-				fetch('/verify-email', {method: 'POST'})
+				fetch('/account/send-otp', {method: 'POST'})
 					.then(res => {
 						if (res.ok) {
 							alert("Email xác minh đã được gửi!");
@@ -868,48 +899,32 @@
 
 
 
-<script>
-	document.querySelectorAll('.toggle-password').forEach(button => {
-		button.addEventListener('click', () => {
-			const targetId = button.getAttribute('data-target');
-			const input = document.getElementById(targetId);
-			const icon = button.querySelector('i');
-
-			if (input.type === 'password') {
-				input.type = 'text';
-				icon.classList.remove('bi-eye');
-				icon.classList.add('bi-eye-slash');
-			} else {
-				input.type = 'password';
-				icon.classList.remove('bi-eye-slash');
-				icon.classList.add('bi-eye');
-			}
-		});
-	});
-
-	const passwordForm = document.getElementById('passwordForm');
-	passwordForm.addEventListener('submit', function (event) {
-		const newPassword = document.getElementById('newPassword').value;
-		const confirmPassword = document.getElementById('confirmPassword').value;
-		const errorDiv = document.getElementById('passwordError');
-
-		if (newPassword !== confirmPassword) {
-			event.preventDefault(); // Ngăn form submit
-			errorDiv.style.display = 'block';
-		} else {
-			errorDiv.style.display = 'none'; // Ẩn lỗi nếu đúng
-		}
-	});
-
-
-</script>
 <script th:inline="javascript">
-	/*<![CDATA[*/
+/*<![CDATA[*/
 	const isVerified = /*[[${userVerified}]]*/ false;
 
 	document.addEventListener('DOMContentLoaded', function () {
-		const passwordForm = document.getElementById('passwordForm');
+		// 👁 Hiện/ẩn mật khẩu
+		document.querySelectorAll('.toggle-password').forEach(button => {
+			button.addEventListener('click', () => {
+				const targetId = button.getAttribute('data-target');
+				const input = document.getElementById(targetId);
+				const icon = button.querySelector('i');
 
+				if (input.type === 'password') {
+					input.type = 'text';
+					icon.classList.remove('bi-eye');
+					icon.classList.add('bi-eye-slash');
+				} else {
+					input.type = 'password';
+					icon.classList.remove('bi-eye-slash');
+					icon.classList.add('bi-eye');
+				}
+			});
+		});
+
+		// 🔒 Form đổi mật khẩu
+		const passwordForm = document.getElementById('passwordForm');
 		if (passwordForm) {
 			passwordForm.addEventListener('submit', function (event) {
 				const newPassword = document.getElementById('newPassword').value;
@@ -925,15 +940,14 @@
 				}
 
 				if (!isVerified) {
-					event.preventDefault(); // Ngăn form submit
-
+					event.preventDefault();
 					const warnModal = new bootstrap.Modal(document.getElementById('emailNotVerifiedModal'));
 					warnModal.show();
 				}
 			});
 		}
 
-		// Bắt sự kiện khi nhấn nút "Verify Email"
+		// 📩 Bắt sự kiện mở modal xác minh
 		const openVerifyModalBtn = document.getElementById('openVerifyModalBtn');
 		if (openVerifyModalBtn) {
 			openVerifyModalBtn.addEventListener('click', function () {
@@ -945,9 +959,21 @@
 				verifyModal.show();
 			});
 		}
+
+		// ✅ Mở modal nhập mã OTP khi nhấn nút xác minh (dành để test UI)
+		const confirmVerifyEmailBtn = document.getElementById('confirmVerifyEmailBtn');
+		if (confirmVerifyEmailBtn) {
+			confirmVerifyEmailBtn.addEventListener('click', function () {
+				// Tạm thời không fetch, chỉ hiện modal OTP để test
+				const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+				otpModal.show();
+			});
+		}
 	});
-	/*]]>*/
+/*]]>*/
 </script>
+
+
 
 
 
@@ -1068,6 +1094,70 @@
 		new bootstrap.Modal(document.getElementById('reviewModal')).show();
 	}
 </script>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const inputs = document.querySelectorAll('.otp-input');
+
+		inputs.forEach((input, index) => {
+			// Xử lý nhập từng số
+			input.addEventListener('input', (e) => {
+				const value = e.target.value;
+				if (/^\d$/.test(value)) {
+					if (index < inputs.length - 1) {
+						inputs[index + 1].focus();
+					}
+				} else {
+					e.target.value = ''; // chỉ cho phép số
+				}
+			});
+
+			// Xử lý Backspace
+			input.addEventListener('keydown', (e) => {
+				if (e.key === 'Backspace' && !e.target.value && index > 0) {
+					inputs[index - 1].focus();
+				}
+			});
+
+			// Xử lý Paste
+			input.addEventListener('paste', (e) => {
+				e.preventDefault();
+				const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+				if (/^\d{6}$/.test(pasteData)) {
+					pasteData.split('').forEach((char, i) => {
+						if (inputs[i]) {
+							inputs[i].value = char;
+						}
+					});
+					inputs[inputs.length - 1].focus(); // focus ô cuối
+				}
+			});
+		});
+
+		// Gửi OTP khi bấm nút
+		document.getElementById('submitOtpBtn').addEventListener('click', function () {
+			const code = Array.from(inputs).map(i => i.value).join('');
+			if (code.length === 6) {
+				fetch('/account/verify-otp', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: new URLSearchParams({ otp: code })
+				})
+				.then(res => res.text())
+				.then(msg => {
+					alert(msg);
+					location.reload();
+				})
+				.catch(err => {
+					console.error("Lỗi xác minh OTP:", err);
+					alert("Lỗi hệ thống!");
+				});
+			} else {
+				alert("Vui lòng nhập đủ 6 số.");
+			}
+		});
+	});
+</script>
+
 
 
 

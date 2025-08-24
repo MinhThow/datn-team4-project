@@ -4,6 +4,8 @@ import com.java6.datn.Service.VnPayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller; // ✅ Sửa ở đây
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@RestController
+@Controller // ✅ Đổi từ @RestController thành @Controller
 @RequestMapping("/api/pay")
 public class VnPayController {
 
@@ -22,8 +24,9 @@ public class VnPayController {
         this.vnPayService = vnPayService;
     }
 
-    // API frontend gọi: /api/pay/vnpay?orderId=35&amount=259000
+    // ✅ API tạo thanh toán vẫn trả JSON nên cần @ResponseBody
     @GetMapping("/vnpay")
+    @ResponseBody
     public ResponseEntity<?> createPayment(
             @RequestParam("orderId") int orderId,
             @RequestParam("amount") long amount,
@@ -45,16 +48,12 @@ public class VnPayController {
         }
     }
 
+    // ✅ Callback hiển thị trang thành công
     @GetMapping("/vnpay-return")
-    public ResponseEntity<?> handleVnpayReturn(HttpServletRequest request) {
+    public String handleVnpayReturn(HttpServletRequest request, Model model) {
         Map<String, String> params = new HashMap<>();
-        Map<String, String[]> fields = request.getParameterMap();
+        request.getParameterMap().forEach((key, value) -> params.put(key, value[0]));
 
-        for (Map.Entry<String, String[]> entry : fields.entrySet()) {
-            params.put(entry.getKey(), entry.getValue()[0]);
-        }
-
-        // Chỉ check mã phản hồi
         String responseCode = params.get("vnp_ResponseCode");
         String message;
 
@@ -64,11 +63,9 @@ public class VnPayController {
             message = "Thanh toán thất bại. Mã lỗi: " + responseCode;
         }
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("message", message);
-        result.put("params", params);
+        model.addAttribute("message", message);
+        model.addAttribute("params", params);
 
-        return ResponseEntity.ok(result);
+        return "payment_success"; // ✅ Render file payment_success.html trong templates/
     }
-
 }

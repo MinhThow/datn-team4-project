@@ -187,3 +187,12 @@
         .custom-vertical-tab .nav-link.active::before {
             display: none;
         }
+		.otp-input {
+			width: 45px;
+			height: 55px;
+			text-align: center;
+			font-size: 1.5rem;
+			border: 2px solid #ced4da;
+			border-radius: 8px;
+		}
+

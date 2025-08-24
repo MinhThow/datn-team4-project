@@ -17,6 +17,7 @@ import com.java6.datn.Mapper.UserMapper;
 import com.java6.datn.Repository.OrderRepository;
 import com.java6.datn.Repository.ProductImageRepository;
 import com.java6.datn.Repository.UserRepository;
+import com.java6.datn.Service.EmailService;
 import com.java6.datn.Service.ReviewService;
 import com.java6.datn.Service.UserService;
 import com.java6.datn.Service.VerificationTokenService;
@@ -59,6 +60,8 @@ public class AccountController {
 	private VerificationTokenService tokenService;
 	@Autowired
 	private ReviewService reviewService;
+	@Autowired
+	private EmailService emailService;
 
 	public AccountController(UserService userService, UserRepository userRepository) {
 		this.userService = userService;
@@ -102,9 +105,9 @@ public class AccountController {
 				ProductImage img = productImageRepository.findFirstByProductAndIsMain(item.getProduct(), true);
 				// ✅ Map màu dựa theo order.getStatus()
 				String color = switch (order.getStatus()) {
-				case "Đã giao" -> "bg-success";
-				case "Đang giao" -> "bg-primary";
-				case "Đã hủy" -> "bg-secondary";
+				case "Completed" -> "bg-success";
+				case "Delivering" -> "bg-primary";
+				case "Canceled" -> "bg-secondary";
 				default -> "bg-secondary";
 				};
 
@@ -116,19 +119,23 @@ public class AccountController {
 						.formattedDate(order.getOrderDate().toLocalDate().toString()).badgeColor(color) // 👈 gắn thêm
 																										// dòng này
 						.productId(item.getProduct().getProductID()) // 🟢 Thêm dòng này
-						.rating(reviewService.getUserReviewRating(userEntity.getUserID(), item.getProduct().getProductID()).orElse(null))
-						.comment(reviewService.getUserReviewComment(userEntity.getUserID(), item.getProduct().getProductID()).orElse(null))
-						.reviewed(reviewService.hasUserReviewedProduct(userEntity.getUserID(), item.getProduct().getProductID()))
-
+						.rating(reviewService
+								.getUserReviewRating(userEntity.getUserID(), item.getProduct().getProductID())
+								.orElse(null))
+						.comment(reviewService
+								.getUserReviewComment(userEntity.getUserID(), item.getProduct().getProductID())
+								.orElse(null))
+						.reviewed(reviewService.hasUserReviewedProduct(userEntity.getUserID(),
+								item.getProduct().getProductID()))
 
 						.totalPrice(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()))).build();
 
 				allOrders.add(dto);
 
 				switch (order.getStatus()) {
-				case "Đang giao" -> deliveringOrders.add(dto);
-				case "Đã giao" -> completedOrders.add(dto);
-				case "Đã hủy" -> canceledOrders.add(dto);
+				case "Delivering" -> deliveringOrders.add(dto);
+				case "Completed" -> completedOrders.add(dto);
+				case "Canceled" -> canceledOrders.add(dto);
 				}
 				// ✅ Gán đánh giá nếu có
 				List<ReviewDTO> productReviews = reviewService.getReviewsByProductId(item.getProduct().getProductID());
@@ -197,24 +204,70 @@ public class AccountController {
 		return "redirect:/account";
 	}
 
-	
 	@PostMapping("/review") // 👈 KHÔNG dùng "/account/review" vì đã có @RequestMapping("/account")
-	public String submitReview(@ModelAttribute ReviewDTO reviewDTO,
-	                           RedirectAttributes redirectAttributes) {
+	public String submitReview(@ModelAttribute ReviewDTO reviewDTO, RedirectAttributes redirectAttributes) {
 
+		try {
+			reviewService.createReview(reviewDTO);
+			redirectAttributes.addFlashAttribute("successMessage", "Đánh giá đã được gửi thành công!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi gửi đánh giá: " + e.getMessage());
+		}
 
-
-	    try {
-	        reviewService.createReview(reviewDTO);
-	        redirectAttributes.addFlashAttribute("successMessage", "Đánh giá đã được gửi thành công!");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi gửi đánh giá: " + e.getMessage());
-	    }
-
-	    return "redirect:/account";
+		return "redirect:/account";
 	}
 
+	@PostMapping("/send-otp")
+	@ResponseBody
+	public ResponseEntity<?> sendOtp() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal().equals("anonymousUser")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+		}
+
+		String email = authentication.getName();
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+		try {
+			String otp = tokenService.createOtpForUser(user);
+			emailService.sendOtpEmail(email, otp);
+			return ResponseEntity.ok("Mã OTP đã được gửi tới email của bạn");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi gửi OTP: " + e.getMessage());
+		}
+
+	}
+
+	@PostMapping("/verify-otp")
+	@ResponseBody
+	public ResponseEntity<?> verifyOtp(@RequestParam("otp") String otp) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication.getPrincipal().equals("anonymousUser")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập");
+		}
+
+		String email = authentication.getName();
+		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+		if (tokenService.verifyOtp(otp, user)) {
+			user.setEmailVerified(true);
+			userRepository.save(user);
+			return ResponseEntity.ok("Xác minh email thành công!");
+		} else {
+			return ResponseEntity.badRequest().body("Mã OTP không hợp lệ hoặc đã hết hạn.");
+		}
+	}
+
+	@PostMapping("/verify-email")
+	@ResponseBody
+	public ResponseEntity<?> verifyEmailAlias() {
+		return sendOtp();
+	}
 
 }
