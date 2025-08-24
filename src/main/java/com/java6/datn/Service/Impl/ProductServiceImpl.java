@@ -282,4 +282,18 @@ private final com.java6.datn.Repository.ProductSizeRepository productSizeReposit
         List<ProductDTO> dtos = productPage.getContent().stream().map(productMapper::toDTO).collect(Collectors.toList());
         return new PageImpl<>(dtos, PageRequest.of(page, size), productPage.getTotalElements());
     }
+
+
+
+    @Override
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> findByCategory(Integer categoryID) {
+        return productRepository.findByCategory_CategoryID(categoryID);
+    }
+
+
 }

@@ -4073,3 +4073,10 @@ ol {
 	height: 18px;
 	accent-color: #007bff; /* Tùy chỉnh màu nếu muốn */
 }
+
+.product__pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+}
