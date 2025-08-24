@@ -93,8 +93,8 @@ CREATE TABLE Orders (
     ShippingAddress NVARCHAR(MAX),
     Note NVARCHAR(MAX),
     Total DECIMAL(10,2),
-    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (
-        Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy', 'Trả hàng')
+    Status NVARCHAR(20) DEFAULT 'Pending' CHECK (
+        Status IN ('Pending', 'Processing', 'Delivering', 'Completed', 'Canceled', 'Returned')
     ),
     OrderDate DATETIME DEFAULT GETDATE(),
     PaymentMethodID INT,
@@ -103,17 +103,6 @@ CREATE TABLE Orders (
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
 );
 
-
-
-ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status
-CHECK ([Status] IN (
-    N'Chờ xác nhận',
-    N'Đang xử lý',
-    N'Đang giao',
-    N'Đã giao',
-    N'Đã hủy',
-    N'Trả hàng'
-));
 -- Chi tiết đơn hàng
 CREATE TABLE OrderItems (
     OrderItemID INT PRIMARY KEY IDENTITY(1,1),
@@ -164,6 +153,7 @@ CREATE TABLE VerificationToken (
     expiryDate DATETIME NOT NULL,
     CONSTRAINT FK_VerificationToken_User FOREIGN KEY (user_id) REFERENCES Users(UserID)
 );
+
 
 -- Dữ liệu mẫu: Danh mục
 INSERT INTO Categories (Name, Description) VALUES
@@ -486,7 +476,8 @@ VALUES
 (31, 'S', 99), (31, 'M', 99), (31, 'L', 99), (31, 'XL', 99), (31, 'XXL', 99),
 (32, 'S', 99), (32, 'M', 99), (32, 'L', 99), (32, 'XL', 99), (32, 'XXL', 99);
 
-
+-----------------------------------------------------------------------------
+--Phần làm việc của Việt
 
 
 
