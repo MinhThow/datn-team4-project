@@ -151,11 +151,12 @@
     <section class="shop spad">
         <div class="container">
             <div class="row">
+                <!-- Sidebar -->
                 <div class="col-lg-3">
                     <div class="shop__sidebar">
-
                         <div class="shop__sidebar__accordion">
                             <div class="accordion" id="accordionExample">
+                                <!-- Danh mục -->
                                 <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseOne">Danh mục</a>
@@ -171,10 +172,7 @@
                                     </div>
                                 </div>
 
-
-
-
-
+                                <!-- Size -->
                                 <div class="card">
                                     <div class="card-heading">
                                         <a data-toggle="collapse" data-target="#collapseFour">Size</a>
@@ -182,40 +180,24 @@
                                     <div id="collapseFour" class="collapse show" data-parent="#accordionExample">
                                         <div class="card-body">
                                             <div class="shop__sidebar__size">
-                                                <label for="xs">xs
-                                                    <input type="radio" id="xs">
-                                                </label>
-                                                <label for="sm">s
-                                                    <input type="radio" id="sm">
-                                                </label>
-                                                <label for="md">m
-                                                    <input type="radio" id="md">
-                                                </label>
-                                                <label for="xl">xl
-                                                    <input type="radio" id="xl">
-                                                </label>
-                                                <label for="2xl">2xl
-                                                    <input type="radio" id="2xl">
-                                                </label>
-                                                <label for="xxl">xxl
-                                                    <input type="radio" id="xxl">
-                                                </label>
-                                                <label for="3xl">3xl
-                                                    <input type="radio" id="3xl">
-                                                </label>
-                                                <label for="4xl">4xl
-                                                    <input type="radio" id="4xl">
-                                                </label>
+                                                <label for="xs">xs <input type="radio" id="xs"></label>
+                                                <label for="sm">s <input type="radio" id="sm"></label>
+                                                <label for="md">m <input type="radio" id="md"></label>
+                                                <label for="xl">xl <input type="radio" id="xl"></label>
+                                                <label for="2xl">2xl <input type="radio" id="2xl"></label>
+                                                <label for="xxl">xxl <input type="radio" id="xxl"></label>
+                                                <label for="3xl">3xl <input type="radio" id="3xl"></label>
+                                                <label for="4xl">4xl <input type="radio" id="4xl"></label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Sản phẩm + phân trang -->
                 <div class="col-lg-9">
                     <div class="shop__product__option">
                         <div class="row">
@@ -226,43 +208,37 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-6">
                                 <div class="shop__product__option__right">
-                                    <p>Sort by Price:</p>
-                                    <select>
+                                    <p>Sắp xếp:</p>
+                                    <select id="sort-price">
                                         <option value="">Mặc định</option>
-                                        <option value="">Tăng dần</option>
-                                        <option value="">Giảm dần</option>
-
+                                        <option value="asc">Tăng dần</option>
+                                        <option value="desc">Giảm dần</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-
-                    <div class="row">
+                    <!-- Danh sách sản phẩm (mặc định Thymeleaf render phân trang) -->
+                    <div class="row" id="product-container">
                         <div class="col-lg-4 col-md-6 col-sm-6" th:each="product : ${products.content}">
-                            <!-- sản phẩm -->
                             <div class="product__item">
-<div class="product__item__pic set-bg"
-     th:data-setbg="${#strings.startsWith(product.imageUrl, 'http') || #strings.startsWith(product.imageUrl, '/') || #strings.startsWith(product.imageUrl, 'img/') ? product.imageUrl : '/img/product/' + product.imageUrl}"
-     style="position:relative;">
-                                    <a th:href="@{'/product/' + ${product.productID}}">
-
-                                    </a>
-
+                                <div class="product__item__pic set-bg"
+                                     th:data-setbg="${#strings.startsWith(product.imageUrl, 'http') || #strings.startsWith(product.imageUrl, '/') || #strings.startsWith(product.imageUrl, 'img/') ? product.imageUrl : '/img/product/' + product.imageUrl}"
+                                     style="position:relative;">
                                 </div>
-                                <h6><a th:href="@{'/product/' + ${product.productID}}" th:text="${product.name}" style="color:#e53637;font-weight:bold;text-decoration:none;">Product Name</a></h6>
-
+                                <h6>
+                                    <a th:href="@{'/product/' + ${product.productID}}" th:text="${product.name}"
+                                       style="color:#e53637;font-weight:bold;text-decoration:none;">Product Name</a>
+                                </h6>
                                 <div class="product__item__text">
-
                                     <h5 th:text="${#numbers.formatInteger(product.price, 0, 'POINT')} + ' ₫'"></h5>
-
-
-
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Phân trang -->
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="product__pagination">
@@ -274,10 +250,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </section>
     <!-- Shop Section End -->
+
 
     <!-- Footer Section Begin -->
 <footer class="footer">
@@ -367,27 +345,22 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // Đảm bảo hình ảnh hiển thị cho class set-bg
-        $(document).ready(function() {
-            $(".set-bg").each(function() {
-                var bg = $(this).attr("data-setbg");
-                if(bg) {
-                    $(this).css("background-image", "url('" + bg + "')");
-                }
-            });
-        });
-
-
-            document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load danh mục
             fetch("/api/categories")
                 .then(response => response.json())
                 .then(data => {
                     let list = document.getElementById("category-list");
-                    list.innerHTML = ""; // clear cứng nếu có
+                    list.innerHTML = "";
 
                     data.forEach(cat => {
                         let li = document.createElement("li");
-                        li.innerHTML = `<a href="/shop?category=${cat.id}">${cat.name}</a>`;
+                        li.innerHTML = `<a href="#" data-id="${cat.categoryID}">${cat.name}</a>`;
+
+                        li.querySelector("a").addEventListener("click", function (e) {
+                            e.preventDefault();
+                            loadProductsByCategory(cat.categoryID);
+                        });
 
                         list.appendChild(li);
                     });
@@ -395,8 +368,53 @@
                 .catch(err => console.error("Lỗi load danh mục:", err));
         });
 
+        // Hàm load sản phẩm theo danh mục bằng fetch
+        function loadProductsByCategory(categoryId) {
+            console.log("Gọi API:", `/api/products?category=${categoryId}`);
+            fetch(`/api/products?category=${categoryId}`)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json();
+                })
+                .then(products => {
+                    let container = document.getElementById("product-container");
+                    container.innerHTML = ""; // clear sản phẩm cũ
 
+                    if (products.length === 0) {
+                        container.innerHTML = `<div class="col-lg-12"><p>Không có sản phẩm nào trong danh mục này.</p></div>`;
+                        document.querySelector(".product__pagination").style.display = "none"; // ẩn phân trang
+                        return;
+                    }
+
+                    products.forEach(product => {
+                        let imageUrl = product.imageUrl ? product.imageUrl : '/img/default-product.jpg';
+                        let item = `
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                            <div class="product__item">
+                                <div class="product__item__pic set-bg"
+                                    style="background-image:url('${imageUrl}'); height:300px; background-size:cover; background-position:center;">
+                                </div>
+                                <h6>
+                                    <a href="/product/${product.productID}" style="color:#e53637;font-weight:bold;text-decoration:none;">
+                                        ${product.name}
+                                    </a>
+                                </h6>
+                                <div class="product__item__text">
+                                    <h5>${Number(product.price).toLocaleString()} ₫</h5>
+                                </div>
+                            </div>
+                        </div>`;
+                        container.innerHTML += item;
+                    });
+
+                    // Ẩn phân trang khi lọc
+                    document.querySelector(".product__pagination").style.display = "none";
+                })
+                .catch(err => console.error("Lỗi load sản phẩm:", err));
+        }
     </script>
+
+
 </body>
 
 </html>
