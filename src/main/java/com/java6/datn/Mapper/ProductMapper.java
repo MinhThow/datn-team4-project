@@ -20,20 +20,29 @@ public class ProductMapper {
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
         dto.setOldPrice(product.getOldPrice());
-    
+//        dto.setStock(product.getStock());
         if (product.getCategory() != null) {
             dto.setCategoryID(product.getCategory().getCategoryID());
             dto.setCategoryName(product.getCategory().getName());
         }
+        // Map danh sách ảnh sang DTO
         if (product.getProductImages() != null && !product.getProductImages().isEmpty()) {
-
-            ProductImage img = product.getProductImages().getFirst();
-            log.info("imgsssss :: {}",img.getImageUrl());
-            dto.setImageUrl(img.getImageUrl());
-        }else {
+            java.util.List<com.java6.datn.DTO.ProductImageDTO> imageDTOs = new java.util.ArrayList<>();
+            for (com.java6.datn.Entity.ProductImage img : product.getProductImages()) {
+                com.java6.datn.DTO.ProductImageDTO imgDTO = new com.java6.datn.DTO.ProductImageDTO();
+                imgDTO.setImageID(img.getImageID());
+                imgDTO.setProductID(product.getProductID());
+                imgDTO.setImageUrl(img.getImageUrl());
+                imgDTO.setMain(img.isMain());
+                imageDTOs.add(imgDTO);
+            }
+            dto.setProductImages(imageDTOs);
+            // Set imageUrl đại diện (nếu có)
+            dto.setImageUrl(imageDTOs.get(0).getImageUrl());
+        } else {
+            dto.setProductImages(new java.util.ArrayList<>());
             dto.setImage("img/product/product-1.jpg");
         }
-
         return dto;
     }
 
@@ -47,7 +56,7 @@ public class ProductMapper {
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setOldPrice(dto.getOldPrice());
-      
+//        product.setStock(dto.getStock());
         // Category will be set outside Service as it needs CategoryRepository
         // productImages and productSizes are not mapped from DTO to Entity here
         return product;

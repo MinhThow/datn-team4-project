@@ -2,6 +2,8 @@ package com.java6.datn.Service;
 
 import java.util.List;
 
+import com.java6.datn.Entity.Product;
+import com.java6.datn.Repository.ProductRepository;
 import org.springframework.data.domain.Page;
 
 import com.java6.datn.DTO.ProductDTO;
@@ -31,6 +33,12 @@ import com.java6.datn.DTO.ProductDTO;
  * @see com.java6.datn.DTO.ProductDTO
  */
 public interface ProductService {
+    /**
+     * Lấy danh sách ảnh của sản phẩm theo productID
+     * @param productID ID sản phẩm
+     * @return List<ProductImageDTO> danh sách ảnh
+     */
+    java.util.List<com.java6.datn.DTO.ProductImageDTO> getProductImagesByProductId(Integer productID);
     
     // === CRUD OPERATIONS ===
     
@@ -206,4 +214,7 @@ public interface ProductService {
      * @return Page<ProductDTO>
      */
     Page<ProductDTO> getProductsPage(int page, int size);
+
+    List<Product> findAll();
+    List<Product> findByCategory(Integer categoryID);
 }

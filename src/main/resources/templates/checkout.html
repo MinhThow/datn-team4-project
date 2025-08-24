@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
+<!-- Modal QR MoMo -->
+
 
 <body>
     <!-- Page Preloder -->
@@ -185,9 +187,15 @@
                                     Thanh toán khi nhận hàng (COD)
                                 </label>
                                 <label class="radio-item">
-                                    <input type="radio" name="paymentMethod" value="BANK">
-                                    Chuyển khoản ngân hàng
+                                    <input type="radio" name="paymentMethod" value="MOMO">
+                                    Thanh toán MoMo (QR)
                                 </label>
+
+                                <label class="radio-item">
+                                    <input type="radio" name="paymentMethod" value="VNPAY">
+                                    Thanh toán VNPAY (ATM / QR)
+                                </label>
+
                             </div>
                         </div>
 
@@ -305,6 +313,7 @@
     <script src="js/mixitup.min.js"></script>
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <!-- Cuối file, đoạn <script> -->
 
@@ -313,11 +322,10 @@
             let currentUser = null;
             let cartItems = [];
 
-            // 1. Lấy thông tin người dùng
+            // 1. Lấy thông tin user
             fetch("/api/users/info")
                 .then(res => res.json())
                 .then(user => {
-                    console.log("✅ USER từ API:", user);
                     currentUser = user;
                     document.getElementById("fullname").value = user.name || "";
                     document.getElementById("email").value = user.email || "";
@@ -325,32 +333,27 @@
                     document.getElementById("address").value = user.address || "";
                 });
 
-            // 2. Lấy thông tin giỏ hàng
+            // 2. Lấy giỏ hàng
             fetch("/api/cart")
                 .then(res => res.json())
                 .then(cart => {
-                    console.log("✅ CART từ API:", cart);    // ✅ THÊM DÒNG NÀY Ở ĐÂY
-                    console.log("➡️ Cart Items:", cartItems);
                     cartItems = cart;
                     let html = "";
                     let total = 0;
-
                     cart.forEach((item, index) => {
                         const itemTotal = item.price * item.quantity;
                         total += itemTotal;
-
                         html += `<li>
-${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
-<span>${itemTotal.toLocaleString('vi-VN')}đ</span>
-</li>`;
+                        ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
+                        <span>${itemTotal.toLocaleString('vi-VN')}đ</span>
+                    </li>`;
                     });
-
                     document.getElementById("checkout-products").innerHTML = html;
                     document.getElementById("checkout-total").innerText = total.toLocaleString("vi-VN") + "đ";
                 });
 
             // 3. Xử lý đặt hàng
-            document.getElementById("checkout-form").addEventListener("submit", e => {
+            document.getElementById("checkout-form").addEventListener("submit", async e => {
                 e.preventDefault();
 
                 if (!currentUser || !currentUser.userID) {
@@ -359,7 +362,6 @@ ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
                 }
 
                 const paymentValue = document.querySelector('input[name="paymentMethod"]:checked').value;
-                const paymentMethodId = paymentValue === 'COD' ? 1 : 2;
 
                 const body = {
                     userId: currentUser.userID,
@@ -367,7 +369,7 @@ ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
                     phone: document.getElementById("phone").value,
                     shippingAddress: document.getElementById("address").value,
                     note: document.getElementById("note").value,
-                    paymentMethodId: paymentMethodId,
+                    paymentMethodId: paymentValue === 'COD' ? 1 : (paymentValue === 'MOMO' ? 2 : 3),
                     orderItems: cartItems.map(item => ({
                         productID: item.productID,
                         productSizeID: item.productSizeID,
@@ -378,35 +380,95 @@ ${index + 1}. ${item.productName} (Size: ${item.size}) x${item.quantity}
                     }))
                 };
 
-                console.log("🚀 BODY gửi lên:", body);
-
-                fetch("/api/orders", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body)
-                })
-                    .then(res => {
-                        if (res.ok) {
-                            alert("✅ Đặt hàng thành công!");
-                            fetch(`/api/cart/clear?userId=${currentUser.userID}`, {
-                                method: "DELETE"
-                            }).then(() => {
-                                window.location.href = "/cart";
-                            });
-                        } else {
-                            res.json().then(error => {
-                                console.error("❌ Lỗi từ backend:", error);
-                                alert("Đặt hàng thất bại: " + (error.message || "Vui lòng thử lại."));
-                            });
-                        }
+                // 👉 COD
+                if (paymentValue === "COD") {
+                    fetch("/api/orders", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(body)
                     })
-                    .catch(err => {
-                        console.error("💥 Lỗi kết nối:", err);
-                        alert("Đã có lỗi kết nối đến máy chủ.");
-                    });
+                        .then(res => res.json())
+                        .then(order => {
+                            alert(order.message || "Đặt hàng thành công!");
+                            fetch(`/api/cart/clear?userId=${currentUser.userID}`, { method: "DELETE" })
+                                .then(() => { window.location.href = "/cart"; });
+                        })
+                        .catch(err => {
+                            console.error("💥 Lỗi kết nối:", err);
+                            alert("Đã có lỗi kết nối đến máy chủ.");
+                        });
+                }
+
+                // 👉 MoMo
+                else if (paymentValue === "MOMO") {
+                    try {
+                        const orderRes = await fetch("/api/orders", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body)
+                        });
+                        const order = await orderRes.json();
+                        console.log("✅ Order (PENDING) đã tạo:", order);
+
+                        const amount = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+                        const momoRes = await fetch(`/api/pay/momo?orderId=${order.id}&amount=${amount}`);
+                        const momoData = await momoRes.json();
+                        console.log("🔎 Kết quả từ MoMo:", momoData);
+
+                        if (momoData.payUrl) {
+                            window.location.href = momoData.payUrl; // redirect sang MoMo
+                        } else {
+                            alert("❌ Không thể tạo link thanh toán MoMo.");
+                        }
+                    } catch (err) {
+                        console.error("💥 Lỗi MoMo:", err);
+                        alert("Không thể kết nối đến MoMo.");
+                    }
+                }
+
+                // 👉 VNPAY
+                else if (paymentValue === "VNPAY") {
+                    try {
+                        const orderRes = await fetch("/api/orders", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(body)
+                        });
+                        const order = await orderRes.json();
+                        console.log("✅ Order (Paid) đã tạo:", order);
+
+                        const amount = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+                        const vnpayRes = await fetch(`/api/pay/vnpay?orderId=${order.id}&amount=${amount}`);
+
+                        // ✅ log thêm status & raw text để debug
+                        if (!vnpayRes.ok) {
+                            const errorText = await vnpayRes.text();
+                            console.error("❌ Lỗi response từ server VNPAY API:", vnpayRes.status, errorText);
+                            alert("Không thể kết nối đến server VNPAY.");
+                            return;
+                        }
+
+                        const vnpayData = await vnpayRes.json();
+                        console.log("🔎 Kết quả từ VNPAY:", vnpayData);
+
+                        if (vnpayData.paymentUrl) {
+                            window.location.href = vnpayData.paymentUrl; // redirect sang VNPAY
+                        } else {
+                            console.error("❌ VNPAY không trả về paymentUrl:", vnpayData);
+                            alert("❌ Không thể tạo link thanh toán VNPAY.");
+                        }
+                    } catch (err) {
+                        console.error("💥 Exception khi gọi VNPAY:", err);
+                        alert("Không thể kết nối đến VNPAY.");
+                    }
+                }
+
             });
         });
     </script>
+
+
 
 
 </body>

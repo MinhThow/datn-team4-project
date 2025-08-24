@@ -1,287 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sliding signup and signin form - BYTEWEBSTER</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <title>Đăng nhập & Đăng ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- CSS nhúng trực tiếp -->
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
-    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css");
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: "Poppins", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #ddd;
-      font-size: 14px;
-    }
-    .container {
-      background-color: #fff;
-      width: 760px;
-      max-width: 100vw;
-      height: 480px;
-      position: relative;
-      overflow-x: hidden;
-    }
-    .container .forms-container {
-      position: relative;
-      width: 50%;
-      text-align: center;
-    }
-    .container .forms-container .form-control {
-      position: absolute;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      height: 480px;
-      transition: all 0.5s ease-in;
-    }
-    .container .forms-container .form-control h2 {
-      font-size: 2rem;
-    }
-    .container .forms-container .form-control form {
-      display: flex;
-      flex-direction: column;
-      margin: 0 30px;
-    }
-    .container .forms-container .form-control form input {
-      margin: 10px 0;
-      border: none;
-      padding: 15px;
-      background-color: #efefef;
-      border-radius: 5px;
-    }
-    .container .forms-container .form-control form button {
-      border: none;
-      padding: 20px;
-      margin-top: 5px;
-      background-color: #059669;
-      border-radius: 5px;
-      color: #fff;
-      cursor: pointer;
-    }
-    .container .forms-container .form-control span {
-      margin: 10px 0;
-    }
-    .container .forms-container .form-control .socials i {
-      margin: 0 5px;
-      color: #fff;
-      border-radius: 50%;
-    }
-    .container .forms-container .form-control .socials .fa-facebook-f {
-      padding: 5px 8px;
-      background-color: #3b5998;
-    }
-    .container .forms-container .form-control .socials .fa-google-plus-g {
-      padding: 5px 4px;
-      background-color: #db4a39;
-    }
-    .container .forms-container .form-control .socials .fa-linkedin-in {
-      padding: 5px 6px;
-      background-color: #0e76a8;
-    }
-    .container .forms-container .form-control.signup-form {
-      opacity: 0;
-      z-index: 1;
-      left: 200%;
-    }
-    .container .forms-container .form-control.signin-form {
-      opacity: 1;
-      z-index: 2;
-      left: 0;
-    }
-    .container .intros-container {
-      position: relative;
-      left: 50%;
-      width: 50%;
-      text-align: center;
-    }
-    .container .intros-container .intro-control {
-      position: absolute;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      height: 480px;
-      color: #fff;
-      background: linear-gradient(170deg, #34d399, #059669);
-      transition: all 0.5s ease-in;
-    }
-    .container .intros-container .intro-control .intro-control__inner {
-      margin: 0 30px;
-    }
-    .container .intros-container .intro-control button {
-      border: none;
-      padding: 15px 30px;
-      background-color: #10b981;
-      border-radius: 50px;
-      color: #fff;
-      margin: 10px 0;
-      cursor: pointer;
-    }
-    .container .intros-container .intro-control button:hover {
-      background-color: #059669;
-    }
-    .container .intros-container .intro-control.signin-intro {
-      opacity: 1;
-      z-index: 2;
-    }
-    .container .intros-container .intro-control.signup-intro {
-      opacity: 0;
-      z-index: 1;
-    }
-    .change .forms-container .form-control.signup-form {
-      opacity: 1;
-      z-index: 2;
-      transform: translateX(-100%);
-    }
-    .change .forms-container .form-control.signup-form button {
-      background-color: #2563eb !important;
-    }
-    .change .forms-container .form-control.signin-form {
-      opacity: 0;
-      z-index: 1;
-      transform: translateX(-100%);
-    }
-    .change .intros-container .intro-control {
-      transform: translateX(-100%);
-      background: linear-gradient(170deg, #3b82f6, #2563eb);
-    }
-    .change .intros-container .intro-control #signin-btn {
-      background-color: #2563eb;
-    }
-    .change .intros-container .intro-control.signin-intro {
-      opacity: 0;
-      z-index: 1;
-    }
-    .change .intros-container .intro-control.signup-intro {
-      opacity: 1;
-      z-index: 2;
-    }
-    @media screen and (max-width: 480px) {
-      .container {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-      .container .forms-container {
-        order: 2;
-        width: 100%;
-        height: 50vh;
-      }
-      .container .forms-container .form-control {
-        height: 50vh;
-      }
-      .container .forms-container .form-control.signup-form {
-        left: 0;
-        margin-top: 70px;
-      }
-      .container .intros-container {
-        order: 1;
-        width: 100%;
-        left: 0;
-        height: 40vh;
-      }
-      .container .intros-container .intro-control {
-        height: 40vh;
-      }
-      .change .forms-container .form-control.signup-form,
-      .change .forms-container .form-control.signin-form,
-      .change .intros-container .intro-control {
-        transform: translateX(0);
-      }
-    }
-  </style>
+    <!-- Google Font & Css Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+    <style>
+        .auth-form-container {
+            max-width: 530px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        .auth-form-left, .auth-form-right {
+            flex: 1;
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch; /* Thêm dòng này để hai bên đều kéo dài bằng nhau */
+        }
+        .auth-form-left {
+            border-right: 1px solid #eee;
+            background: #f8f9fa;
+        }
+        .auth-form-right {
+            background: #fff;
+        }
+        .auth-form h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #111 !important; /* Chữ đen */
+            text-align: center;
+        }
+        .auth-form input,
+        .auth-form button[type="submit"] {
+            width: 100%;
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            display: block;
+        }
+        .auth-form input {
+            border: 1px solid #ddd;
+            background: #f7f7f7;
+            transition: border-color 0.2s;
+        }
+        .auth-form input:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+        .auth-form button[type="submit"] {
+            background: #111 !important; /* Nền đen */
+            color: #fff !important;      /* Chữ trắng */
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .auth-form button[type="submit"]:hover {
+            background: #333 !important;
+        }
+        .auth-form .switch-link,
+        .auth-form .forgot-link {
+            color: #111 !important;         /* Chữ đen */
+            text-decoration: none !important; /* Bỏ gạch chân */
+            cursor: pointer;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 600;               /* In đậm */
+            display: block;
+            margin-top: 12px;
+            transition: color 0.2s;
+        }
+        .auth-form .switch-link:hover,
+        .auth-form .forgot-link:hover {
+            color: #1976d2 !important;
+            text-decoration: underline;
+        }
+        .password-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #1976d2;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+        }
+        @media (max-width: 900px) {
+            .auth-form-container {
+                flex-direction: column;
+                max-width: 98vw;
+            }
+            .auth-form-left, .auth-form-right {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding: 32px 16px;
+            }
+            .auth-form-right {
+                border-bottom: none;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="forms-container">
-    <div class="form-control signup-form">
-      <form th:action="@{/register}" method="post" th:object="${user}">
-        <h2>Signup</h2>
-        <input type="text" th:field="*{username}" placeholder="Username" required />
-        <input type="email" th:field="*{email}" placeholder="Email" required />
-        <input type="password" th:field="*{password}" placeholder="Password" required />
-        <input type="password" th:field="*{confirmPassword}" placeholder="Confirm password" required />
-        <button type="submit">Signup</button>
-      </form>
-
-
-      <span>or signup with</span>
-      <div class="socials">
-        <i class="fab fa-facebook-f"></i>
-        <i class="fab fa-google-plus-g"></i>
-        <i class="fab fa-linkedin-in"></i>
-      </div>
-</div>
-
-    <div class="form-control signin-form">
-      <form action="/login" method="post">
-        <h2>Signin</h2>
-
-        <div th:if="${param.success}" style="color: green; font-weight: bold; margin-bottom: 10px;">
-          🎉 Đăng ký thành công! Vui lòng đăng nhập.
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-7">
+                    <div class="header__top__left">
+                        <p>Miễn phí vận chuyển, đảm bảo hoàn trả trong 30 ngày.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__links">
+                            <a href="#">Đăng nhập</a>
+                            <a href="#">FAQs</a>
+                        </div>
+                        <div class="header__top__hover">
+                            <span>VND <i class="arrow_carrot-down"></i></span>
+                            <ul>
+                                <li>VND</li>
+                                <li>USD</li>
+                                <li>EUR</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a href="/"><img src="/img/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="/shop">Cửa hàng</a></li>
+                        <li><a href="#">Trang</a>
+                            <ul class="dropdown">
+                                <li><a href="/about">Giới thiệu</a></li>
+                                <li><a href="/shop-details">Chi tiết sản phẩm</a></li>
+                                <li><a href="/shopping-cart">Giỏ hàng</a></li>
+                                <li><a href="/checkout">Thanh toán</a></li>
+                                <li><a href="/blog-details">Chi tiết blog</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/contact">Liên hệ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <div class="header__nav__option">
+                    <a href="#" class="search-switch"><img src="/img/icon/search.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/heart.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/cart.png" alt=""> <span th:text="${cartItemCount ?: 0}">0</span></a>
+                    <div class="price" th:text="'₫' + ${cartTotalPrice ?: '0.00'}">₫0.00</div>
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>
+<!-- Header Section End -->
 
-        <div th:if="${param.error}" style="color:red;">Sai thông tin đăng nhập!</div>
-
-        <input type="text" name="username" placeholder="Email" required />
-        <input type="password" name="password" placeholder="Password" required />
-        <button type="submit">Signin</button>
-      </form>
-      <span>or signin with</span>
-      <div class="socials">
-        <i class="fab fa-facebook-f"></i>
-        <i class="fab fa-google-plus-g"></i>
-        <i class="fab fa-linkedin-in"></i>
-      </div>
+<div class="auth-form-container" id="authFormContainer">
+    <!-- FORM ĐĂNG KÝ -->
+    <div class="auth-form-left" id="signupFormSection">
+        <form class="auth-form" th:action="@{/register}" method="post" th:object="${user}">
+            <h2>Đăng ký</h2>
+            <input type="text" th:field="*{username}" placeholder="Tên người dùng" required />
+            <input type="email" th:field="*{email}" placeholder="Email" required />
+            <div class="password-group">
+                <input type="password" th:field="*{password}" placeholder="Mật khẩu" required id="signupPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <div class="password-group">
+                <input type="password" th:field="*{confirmPassword}" placeholder="Nhập lại mật khẩu" required id="signupConfirmPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signupConfirmPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <button type="submit">Đăng ký</button>
+            <div class="switch-link" onclick="showSignin()">Đã có tài khoản? Đăng nhập</div>
+        </form>
     </div>
 
+    <!-- FORM ĐĂNG NHẬP -->
+    <div class="auth-form-right" id="signinFormSection" style="display:none;">
+        <form class="auth-form" th:action="@{/login}" method="post">
+            <h2>Đăng nhập</h2>
 
+            <div th:if="${param.success}" style="color: green; font-weight: bold; margin-bottom: 10px;">
+                🎉 Đăng ký thành công! Vui lòng đăng nhập.
+            </div>
+            <div th:if="${param.error}" style="color:red;">Sai thông tin đăng nhập!</div>
 
-
-  </div>
-  <div class="intros-container">
-    <div class="intro-control signin-intro">
-      <div class="intro-control__inner">
-        <h2>Welcome back!</h2>
-        <p>Welcome back! We are so happy to have you here. It's great to see you again. We hope you had a safe and enjoyable time away.</p>
-        <button id="signup-btn">No account yet? Signup.</button>
-      </div>
+            <input type="text" name="username" placeholder="Email hoặc tên người dùng" required />
+            <div class="password-group">
+                <input type="password" name="password" placeholder="Mật khẩu" required id="signinPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signinPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <a href="/forgot-password" class="forgot-link">Quên mật khẩu?</a>
+            <button type="submit">Đăng nhập</button>
+            <div class="switch-link" onclick="showSignup()">Chưa có tài khoản? Đăng ký</div>
+        </form>
     </div>
-    <div class="intro-control signup-intro">
-      <div class="intro-control__inner">
-        <h2>Come join us!</h2>
-        <p>We are so excited to have you here. If you haven't already, create an account to get access to exclusive offers, rewards, and discounts.</p>
-        <button id="signin-btn">Already have an account? Signin.</button>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- JS nhúng trực tiếp -->
-<script>
-  const signupButton = document.getElementById('signup-btn')
-  const signinButton = document.getElementById('signin-btn')
-  const container = document.querySelector('.container')
+<!-- Footer Section Begin -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="#"><img src="/img/footer-logo.png" alt=""></a>
+                    </div>
+                    <p>Khách hàng là trung tâm của mô hình kinh doanh độc đáo của chúng tôi, bao gồm cả thiết kế.</p>
+                    <a href="#"><img src="/img/payment.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Mua sắm</h6>
+                    <ul>
+                        <li><a href="#">Cửa hàng quần áo</a></li>
+                        <li><a href="#">Giày thịnh hành</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                        <li><a href="#">Khuyến mãi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Hỗ trợ</h6>
+                    <ul>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Phương thức thanh toán</a></li>
+                        <li><a href="#">Giao hàng</a></li>
+                        <li><a href="#">Đổi trả & hoàn tiền</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Nhận tin mới</h6>
+                    <div class="footer__newslatter">
+                        <p>Đăng ký để nhận thông tin về sản phẩm mới, ưu đãi và khuyến mãi!</p>
+                        <form action="#">
+                            <input type="text" placeholder="Email của bạn">
+                            <button type="submit"><span class="icon_mail_alt"></span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="footer__copyright__text">
+                    <p>Copyright ©
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        All rights reserved | This template is made with <i class="fa fa-heart-o"
+                                                                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer Section End -->
 
-  signupButton.addEventListener('click', () => {
-    container.classList.add('change')
-  })
-  signinButton.addEventListener('click', () => {
-    container.classList.remove('change')
-  })
+<!-- Js Plugins -->
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script>
+    function showSignin() {
+        document.getElementById('signupFormSection').style.display = 'none';
+        document.getElementById('signinFormSection').style.display = 'flex';
+    }
+    function showSignup() {
+        document.getElementById('signinFormSection').style.display = 'none';
+        document.getElementById('signupFormSection').style.display = 'flex';
+    }
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+            input.type = "password";
+            btn.innerHTML = '<i class="fa fa-eye"></i>';
+        }
+    }
 </script>
 </body>
 </html>

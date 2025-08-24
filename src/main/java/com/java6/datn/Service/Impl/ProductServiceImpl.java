@@ -21,17 +21,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final ProductMapper productMapper;
+private final ProductRepository productRepository;
+private final CategoryRepository categoryRepository;
+private final ProductMapper productMapper;
+private final com.java6.datn.Repository.ProductImageRepository productImageRepository;
+private final com.java6.datn.Repository.ProductSizeRepository productSizeRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository,
                               CategoryRepository categoryRepository,
-                              ProductMapper productMapper) {
+                              ProductMapper productMapper,
+                              com.java6.datn.Repository.ProductImageRepository productImageRepository,
+                              com.java6.datn.Repository.ProductSizeRepository productSizeRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.productMapper = productMapper;
+        this.productImageRepository = productImageRepository;
+        this.productSizeRepository = productSizeRepository;
+    }
+
+    @Override
+    public java.util.List<com.java6.datn.DTO.ProductImageDTO> getProductImagesByProductId(Integer productID) {
+        java.util.List<com.java6.datn.Entity.ProductImage> images = productImageRepository.findByProduct_ProductID(productID);
+        java.util.List<com.java6.datn.DTO.ProductImageDTO> dtos = new java.util.ArrayList<>();
+        for (com.java6.datn.Entity.ProductImage img : images) {
+            com.java6.datn.DTO.ProductImageDTO dto = new com.java6.datn.DTO.ProductImageDTO();
+            dto.setImageID(img.getImageID());
+            dto.setProductID(productID);
+            dto.setImageUrl(img.getImageUrl());
+            dto.setMain(img.isMain());
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     @Override
@@ -53,14 +74,45 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = productMapper.toEntity(productDTO);
         if (productDTO.getOldPrice() == null) {
-            product.setOldPrice(productDTO.getPrice()); // Set old price same as current price for new products
+            product.setOldPrice(productDTO.getPrice());
         }
         if (productDTO.getCategoryID() != null) {
             Category category = categoryRepository.findById(productDTO.getCategoryID())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             product.setCategory(category);
         }
-        return productMapper.toDTO(productRepository.save(product));
+        // Lưu sản phẩm trước để có productID
+        Product savedProduct = productRepository.save(product);
+
+        // Lưu hình ảnh vào ProductImages nếu có
+        if (productDTO.getImage() != null && !productDTO.getImage().isEmpty()) {
+            com.java6.datn.Entity.ProductImage img = new com.java6.datn.Entity.ProductImage();
+            img.setProduct(savedProduct);
+            img.setImageUrl(productDTO.getImage());
+            img.setMain(true);
+            productImageRepository.save(img);
+        }
+        if (productDTO.getProductImages() != null && !productDTO.getProductImages().isEmpty()) {
+            for (com.java6.datn.DTO.ProductImageDTO imgDTO : productDTO.getProductImages()) {
+                com.java6.datn.Entity.ProductImage img = new com.java6.datn.Entity.ProductImage();
+                img.setProduct(savedProduct);
+                img.setImageUrl(imgDTO.getImageUrl());
+                img.setMain(imgDTO.isMain());
+                productImageRepository.save(img);
+            }
+        }
+
+        // Lưu size vào ProductSize nếu có
+        if (productDTO.getSize() != null && !productDTO.getSize().isEmpty()) {
+            com.java6.datn.Entity.ProductSize size = new com.java6.datn.Entity.ProductSize();
+            size.setProduct(savedProduct);
+            size.setSize(productDTO.getSize());
+            size.setStock(productDTO.getStock());
+            productSizeRepository.save(size);
+        }
+
+        // Lấy lại sản phẩm đã lưu cùng ảnh và size
+        return productMapper.toDTO(productRepository.findById(savedProduct.getProductID()).orElse(savedProduct));
     }
 
     @Override
@@ -230,4 +282,18 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> dtos = productPage.getContent().stream().map(productMapper::toDTO).collect(Collectors.toList());
         return new PageImpl<>(dtos, PageRequest.of(page, size), productPage.getTotalElements());
     }
+
+
+
+    @Override
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
+
+    @Override
+    public List<Product> findByCategory(Integer categoryID) {
+        return productRepository.findByCategory_CategoryID(categoryID);
+    }
+
+
 }
