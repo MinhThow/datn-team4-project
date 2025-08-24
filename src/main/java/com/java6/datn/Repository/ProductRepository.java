@@ -1,6 +1,7 @@
 package com.java6.datn.Repository;
 
 import com.java6.datn.Entity.Product;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,5 +17,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     // Hoặc dùng @Query để rõ ràng hơn
     @Query("SELECT p FROM Product p WHERE p.category.categoryID = :categoryID")
     List<Product> findProductsByCategory(@Param("categoryID") Integer categoryID);
+
+    List<Product> findByCategoryCategoryID(Integer categoryId, Sort sort);
+
 }
 

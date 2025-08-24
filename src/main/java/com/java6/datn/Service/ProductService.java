@@ -7,6 +7,7 @@ import com.java6.datn.Repository.ProductRepository;
 import org.springframework.data.domain.Page;
 
 import com.java6.datn.DTO.ProductDTO;
+import org.springframework.data.domain.Sort;
 
 /**
  * ProductService - Interface định nghĩa các service methods cho quản lý sản phẩm
@@ -217,4 +218,10 @@ public interface ProductService {
 
     List<Product> findAll();
     List<Product> findByCategory(Integer categoryID);
+
+    List<ProductDTO> getProductsByCategorySorted(Integer categoryId, Sort sort);
+
+    List<ProductDTO> getAllProductsSorted(Sort sort);
+
+    List<ProductDTO> getProductsByCategorySorted(Integer categoryId, String sortOrder);
 }
