@@ -30,18 +30,13 @@ CREATE TABLE Users (
     Password NVARCHAR(255),
     Phone NVARCHAR(20),
     Address NVARCHAR(MAX),
-    Role NVARCHAR(20) DEFAULT 'customer' CHECK (Role IN ('customer', 'admin')),
-    CreatedAt DATETIME DEFAULT GETDATE()
-);
-
-
------------------------------------------------------------------------------
-CREATE TABLE VerificationToken (
-    id INT IDENTITY PRIMARY KEY,
-    token NVARCHAR(255),
-    user_id INT,
-    expiryDate DATETIME,
-    CONSTRAINT FK_VerificationToken_User FOREIGN KEY (user_id) REFERENCES Users(UserID)
+    Role NVARCHAR(20) DEFAULT N'customer',
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    Email_Verified BIT NOT NULL DEFAULT 0, -- ✅ Đã merge
+    Password_Changed_At DATETIME NULL,     -- ✅ Đã merge
+    CONSTRAINT CK_Users_Role CHECK (
+        Role IN (N'customer', N'admin')    -- ✅ Unicode chuẩn
+    )
 );
 
 
@@ -58,9 +53,11 @@ CREATE TABLE Products (
     Name NVARCHAR(150) NOT NULL,
     Description NVARCHAR(MAX),
     Price DECIMAL(10,2) NOT NULL,
+    OldPrice DECIMAL(10,2),  -- ✅ Đã merge vào
     CategoryID INT,
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
+
 
 -- Size sản phẩm
 CREATE TABLE ProductSizes (
@@ -96,8 +93,8 @@ CREATE TABLE Orders (
     ShippingAddress NVARCHAR(MAX),
     Note NVARCHAR(MAX),
     Total DECIMAL(10,2),
-    Status NVARCHAR(20) DEFAULT 'Chờ xác nhận' CHECK (
-        Status IN ('Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Đã giao', 'Đã hủy', 'Trả hàng')
+    Status NVARCHAR(20) DEFAULT 'Pending' CHECK (
+        Status IN ('Pending', 'Processing', 'Delivering', 'Completed', 'Canceled', 'Returned')
     ),
     OrderDate DATETIME DEFAULT GETDATE(),
     PaymentMethodID INT,
@@ -139,88 +136,146 @@ CREATE TABLE Reviews (
     ReviewID INT PRIMARY KEY IDENTITY(1,1),
     ProductID INT,
     UserID INT,
+    OrderID INT, -- ✅ Cột thêm mới, đã merge
     Rating INT CHECK (Rating BETWEEN 1 AND 5),
     Comment NVARCHAR(MAX),
     ReviewDate DATETIME DEFAULT GETDATE(),
+
+    -- 🔗 Khóa ngoại
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) -- ✅ Đã gộp luôn
+);
+CREATE TABLE VerificationToken (
+    id INT IDENTITY PRIMARY KEY,
+    otp NVARCHAR(6) NOT NULL,              -- GỌI RÕ LÀ OTP, thay vì "token"
+    user_id INT NOT NULL,
+    expiryDate DATETIME NOT NULL,
+    CONSTRAINT FK_VerificationToken_User FOREIGN KEY (user_id) REFERENCES Users(UserID)
 );
 
--- Tắt tất cả khóa ngoại
-EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
 
--- Xoá dữ liệu
-EXEC sp_msforeachtable "DELETE FROM ?"
+-- Dữ liệu mẫu: Danh mục
+INSERT INTO Categories (Name, Description) VALUES
+(N'Áo', N'Các loại áo thun, áo sơ mi, áo khoác...'),
+(N'Giày', N'Giày sneaker, giày thể thao, giày boot...'),
+(N'Balo', N'Balo thời trang, balo laptop, balo du lịch...'),
+(N'Phụ kiện', N'Nón, túi xách, thắt lưng, kính mát...');
 
--- Bật lại tất cả khóa ngoại
-EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL"
+-- Dữ liệu mẫu: Sản phẩm
+INSERT INTO Products (Name, Description, Price, CategoryID) VALUES
+(N'Áo thun nam basic', N'Chất liệu cotton 100%, form rộng dễ mặc.', 199000, 1),
+(N'Giày sneaker trắng', N'Mẫu giày hot trend, phối đồ dễ dàng.', 890000, 2),
+(N'Balo laptop chống sốc', N'Chứa được laptop 15.6 inch, chống nước.', 459000, 3),
+(N'Nước hoa', N'Lưu hương , quyến rũ', 299000, 4);
 
--- Reset ID của bảng Categories
-DBCC CHECKIDENT ('Categories', RESEED, 0);
+-- Size sản phẩm
+INSERT INTO ProductSizes (ProductID, Size, Stock) VALUES
+(1, 'S', 99), (1, 'M', 99), (1, 'L', 99), (1, 'XL', 99), (1, 'XXL', 99),
+(2, '38', 5), (2, '39', 8), (2, '40', 10), (2, '42', 6), (2, '43', 4);
 
+-- Ảnh sản phẩm
+INSERT INTO ProductImages (ProductID, ImageUrl, IsMain) VALUES
+(1, 'img/product/product-8.jpg', 1),
+(1, 'img/product/product-8.jpg', 0),
+(2, 'img/product/product-1.jpg', 1),
+(2, 'img/product/product-1.jpg', 0),
+(3, 'img/product/product-3.jpg', 1),
+(3, 'img/product/product-3.jpg', 0),
+(4, 'img/product/polo.jpg', 0);
+
+-- Phương thức thanh toán
+INSERT INTO PaymentMethods (Name, Description) VALUES
+(N'Thanh toán khi nhận hàng', N'Thanh toán trực tiếp khi giao hàng'),
+(N'Chuyển khoản ngân hàng', N'Qua tài khoản ngân hàng'),
+(N'Momo', N'Thanh toán ví Momo');
+
+-- Cập nhật vai trò admin
+UPDATE Users SET Role = 'admin' WHERE UserID = 1;
+
+-- Thêm admin (nếu chưa có)
+INSERT INTO Users (Name, Email, Password, Role)
+VALUES (N'admin', 'admin@mail.com', '$2a$10$J0AT51XX/N00bUNw3K6BqekEWxn8xWCy5SlEaZI3bkfk4WGz7WZg', 'admin');
+
+
+
+-- Kiểm tra dữ liệu (optional)
+-- SELECT * FROM Users;
+-- SELECT * FROM Products;
+-- SELECT * FROM ProductImages;
+-- SELECT * FROM CartItems;
+
+-- Reset dữ liệu (nếu cần)
+-- Tắt khóa ngoại
+-- EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
+-- Xóa dữ liệu
+-- EXEC sp_msforeachtable "DELETE FROM ?"
+-- Bật lại khóa ngoại
+-- EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL"
+
+
+--Danh mu?c
 INSERT INTO Categories (Name, Description)
 VALUES
-(N'Áo Polo', N'Các loại áo polo...'),
-(N'Áo Sơ Mi', N'Các loại áo sơ mi...'),
-(N'Áo Thun', N'Các loại áo thun'),
-(N'Áo TankTop', N'Các loại áo tanktop'),
-(N'Áo Khoác', N'Các loại áo khoác'),
-(N'Quần Short', N'Các loại quần short'),
-(N'Quần Jogger', N'Các loại quần jogger'),
-(N'Quần Jean', N'Các loại quần jean');
+(N'�o Polo', N'C�c lo?i �o polo...'),
+(N'�o S? Mi', N'C�c lo?i �o s? mi...'),
+(N'�o Thun', N'C�c lo?i �o thun'),
+(N'�o TankTop', N'C�c lo?i �o tanktop'),
+(N'�o Kho�c', N'C�c lo?i �o kho�c'),
+(N'Qu?n Short', N'C�c lo?i qu?n short'),
+(N'Qu?n Jogger', N'C�c lo?i qu?n jogger'),
+(N'Qu?n Jean', N'C�c lo?i qu?n jean');
 
 
+-- Sa?n ph�?m 
 INSERT INTO Products (Name, Description, Price, CategoryID)
 VALUES
--- Áo Polo
-(N'Áo Polo Premium Cotton', N'Chất liệu cotton 100%, form regular tôn dáng', 299000, 1),
-(N'Áo Polo Pique Cotton', N'Chất liệu cotton 100%, form regular tôn dáng', 259000, 1),
-(N'Áo Polo Ice Cooling', N'Chất liệu cotton 100%, form regular tôn dáng', 229000, 1),
-(N'Áo Polo Thể Thao', N'Chất liệu cotton 100%, form regular tôn dáng', 199000, 1),
+-- a?o polo
+(N'A?o Polo Premium Cotton', N'Ch?t li?u cotton 100%, form regular t�n da?ng', 299000, 1),
+(N'A?o Polo Pique Cotton', N'Ch?t li?u cotton 100%, form regular t�n da?ng', 259000, 1),
+(N'A?o Polo Ice Cooling', N'Ch?t li?u cotton 100%, form regular t�n da?ng', 229000, 1),
+(N'A?o Polo th�? thao', N'Ch?t li?u cotton 100%, form regular t�n da?ng', 199000, 1),
+-- A?o s? mi
+(N'A?o S? Mi Flannel 100% Cotton', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 299000, 2),
+(N'A?o S? Mi Overshirt 100% Cotton', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 359000, 2),
+(N'A?o S? Mi Da?i Tay Oxford ', N'Ch?t li?u cotton, thoa?i ma?i thoa?ng ma?t', 399000, 2),
+(N'A?o S? Mi Da?i Tay Premium', N'Ch?t li?u cotton , thoa?i ma?i thoa?ng ma?t', 299000, 2),
+--a?o thun
+(N'A?o Thun 100% Cotton', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 3),
+(N'A?o Thun Gym Th�? Thao', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 159000, 3),
+(N'A?o Thun Tshirt', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 3),
+(N'A?o Thun Premium Cotton', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 179000, 3),
+--a?o tanktop
+(N'A?o TankTop Cha?y B�?', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 4),
+(N'A?o TankTop AirRush', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 259000, 4),
+(N'A?o TankTop Thoa?ng Ma?t Nhanh Kh�', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 259000, 4),
+(N'A?o TankTop Traning Comfort', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 4),
+--A?o khoa?c
+(N'A?o Khoa?c Casual', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 359000, 5),
+(N'A?o Khoa?c Th�? Thao', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 399000, 5),
+(N'A?o Khoa?c Nylon', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 299000, 5),
+(N'A?o Khoa?c ?a N?ng', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 299000, 5),
+-- qu�?n short
+(N'Qu�?n Short Casual', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 6),
+(N'Qu�?n Short Th�? Thao', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 149000, 6),
+(N'Qu�?n Short Travel', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 159000, 6),
+(N'Qu�?n Short Chino', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 199000, 6),
 
--- Áo Sơ Mi
-(N'Áo Sơ Mi Flannel 100% Cotton', N'Chất liệu cotton 100%, thoải mái thoáng mát', 299000, 2),
-(N'Áo Sơ Mi Overshirt 100% Cotton', N'Chất liệu cotton 100%, thoải mái thoáng mát', 359000, 2),
-(N'Áo Sơ Mi Dài Tay Oxford', N'Chất liệu cotton, thoải mái thoáng mát', 399000, 2),
-(N'Áo Sơ Mi Dài Tay Premium', N'Chất liệu cotton, thoải mái thoáng mát', 299000, 2),
+-- Qu�?n Jogger
+(N'Qu�?n Jogger Th? Thao Fleece Track', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 339000, 7),
+(N'Qu�?n Jogger Casual', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 359000, 7),
+(N'Qu�?n Jogger Th? Thao ExDry', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 299000, 7),
+(N'Qu�?n Jogger Daily Wear', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 259000, 7),
 
--- Áo Thun
-(N'Áo Thun 100% Cotton', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 3),
-(N'Áo Thun Gym Thể Thao', N'Chất liệu cotton 100%, thoải mái thoáng mát', 159000, 3),
-(N'Áo Thun T-Shirt', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 3),
-(N'Áo Thun Premium Cotton', N'Chất liệu cotton 100%, thoải mái thoáng mát', 179000, 3),
-
--- Áo TankTop
-(N'Áo TankTop Chạy Bộ', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 4),
-(N'Áo TankTop AirRush', N'Chất liệu cotton 100%, thoải mái thoáng mát', 259000, 4),
-(N'Áo TankTop Thoáng Mát Nhanh Khô', N'Chất liệu cotton 100%, thoải mái thoáng mát', 259000, 4),
-(N'Áo TankTop Training Comfort', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 4),
-
--- Áo Khoác
-(N'Áo Khoác Casual', N'Chất liệu cotton 100%, thoải mái thoáng mát', 359000, 5),
-(N'Áo Khoác Thể Thao', N'Chất liệu cotton 100%, thoải mái thoáng mát', 399000, 5),
-(N'Áo Khoác Nylon', N'Chất liệu cotton 100%, thoải mái thoáng mát', 299000, 5),
-(N'Áo Khoác Đa Năng', N'Chất liệu cotton 100%, thoải mái thoáng mát', 299000, 5),
-
--- Quần Short
-(N'Quần Short Casual', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 6),
-(N'Quần Short Thể Thao', N'Chất liệu cotton 100%, thoải mái thoáng mát', 149000, 6),
-(N'Quần Short Travel', N'Chất liệu cotton 100%, thoải mái thoáng mát', 159000, 6),
-(N'Quần Short Chino', N'Chất liệu cotton 100%, thoải mái thoáng mát', 199000, 6),
-
--- Quần Jogger
-(N'Quần Jogger Thể Thao Fleece Track', N'Chất liệu cotton 100%, thoải mái thoáng mát', 339000, 7),
-(N'Quần Jogger Casual', N'Chất liệu cotton 100%, thoải mái thoáng mát', 359000, 7),
-(N'Quần Jogger Thể Thao ExDry', N'Chất liệu cotton 100%, thoải mái thoáng mát', 299000, 7),
-(N'Quần Jogger Daily Wear', N'Chất liệu cotton 100%, thoải mái thoáng mát', 259000, 7),
-
--- Quần Jean
-(N'Quần Jean Basics Dáng Straight', N'Chất liệu cotton 100%, thoải mái thoáng mát', 339000, 8),
-(N'Quần Jean Basics Dáng Slim', N'Chất liệu cotton 100%, thoải mái thoáng mát', 339000, 8),
-(N'Quần Jean Basics Dáng Slim Fit', N'Chất liệu cotton 100%, thoải mái thoáng mát', 339000, 8),
-(N'Quần Jean Basics Siêu Nhẹ', N'Chất liệu cotton 100%, thoải mái thoáng mát', 339000, 8);
+-- qu�?n jean
+(N'Qu�?n Jeans Basics Da?ng Straight', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 339000, 8),
+(N'Qu�?n Jeans Basics Da?ng Slim', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 339000, 8),
+(N'Qu�?n Jeans Basics Da?ng Slim Fit', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 339000, 8),
+(N'Qu�?n Jeans Basics Si�u Nhe?', N'Ch?t li?u cotton 100%, thoa?i ma?i thoa?ng ma?t', 339000, 8);
 
 
+select * from Products
+-- a?nh sa?n ph�?m 
 INSERT INTO ProductImages (ProductID, ImageUrl, IsMain)
 VALUES
 (1, 'img/products/polo1.jpg', 1),
@@ -328,20 +383,20 @@ VALUES
 (21, 'img/products/short12.jpg', 0),
 (21, 'img/products/short13.jpg', 0),
 
-(22, 'img/products/sort2.jpg', 1),
-(22, 'img/products/sort21.jpg', 0),
-(22, 'img/products/sort22.jpg', 0),
-(22, 'img/products/sort23.jpg', 0),
+(22, 'img/products/short2.jpg', 1),
+(22, 'img/products/short21.jpg', 0),
+(22, 'img/products/short22.jpg', 0),
+(22, 'img/products/short23.jpg', 0),
 
-(23, 'img/products/sort3.jpg', 1),
-(23, 'img/products/sort31.jpg', 0),
-(23, 'img/products/sort32.jpg', 0),
-(23, 'img/products/sort33.jpg', 0),
+(23, 'img/products/short3.jpg', 1),
+(23, 'img/products/short31.jpg', 0),
+(23, 'img/products/short32.jpg', 0),
+(23, 'img/products/short33.jpg', 0),
 
-(24, 'img/products/sort4.jpg', 1),
-(24, 'img/products/sort41.jpg', 0),
-(24, 'img/products/sort42.jpg', 0),
-(24, 'img/products/sort43.jpg', 0),
+(24, 'img/products/short4.jpg', 1),
+(24, 'img/products/short41.jpg', 0),
+(24, 'img/products/short42.jpg', 0),
+(24, 'img/products/short43.jpg', 0),
 
 (25, 'img/products/jogger1.jpg', 1),
 (25, 'img/products/jogger11.jpg', 0),
@@ -421,140 +476,5 @@ VALUES
 (31, 'S', 99), (31, 'M', 99), (31, 'L', 99), (31, 'XL', 99), (31, 'XXL', 99),
 (32, 'S', 99), (32, 'M', 99), (32, 'L', 99), (32, 'XL', 99), (32, 'XXL', 99);
 
-
--- Phương thức thanh toán
-INSERT INTO PaymentMethods (Name, Description) VALUES
-(N'Thanh toán khi nhận hàng', N'Thanh toán trực tiếp khi giao hàng'),
-(N'Chuyển khoản ngân hàng', N'Qua tài khoản ngân hàng'),
-(N'Momo', N'Thanh toán ví Momo');
-
--- Cập nhật vai trò admin
-UPDATE Users SET Role = 'admin' WHERE UserID = 1;
-
--- Thêm admin (nếu chưa có)
-INSERT INTO Users (Name, Email, Password, Role)
-VALUES (N'admin', 'admin@mail.com', '$2a$10$J0AT51XX/N00bUNw3K6BqekEWxn8xWCy5SlEaZI3bkfk4WGz7WZg', 'admin');
-
-
-
--- Kiểm tra dữ liệu (optional)
--- SELECT * FROM Users;
--- SELECT * FROM Products;
--- SELECT * FROM ProductImages;
--- SELECT * FROM CartItems;
-
--- Reset dữ liệu (nếu cần)
--- Tắt khóa ngoại
--- EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT ALL"
--- Xóa dữ liệu
--- EXEC sp_msforeachtable "DELETE FROM ?"
--- Bật lại khóa ngoại
--- EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL"
-
-
-
-
-
-
-ALTER TABLE Products ADD oldPrice DECIMAL(10, 2);
-
-
-ALTER TABLE Users ADD email_verified BIT NOT NULL DEFAULT 0;
-
-
-ALTER TABLE Users
-ADD password_changed_at DATETIME NULL;
-
--- ✅ Sử dụng N'Đã giao' với N đứng trước
-ALTER TABLE Orders DROP CONSTRAINT CK__Orders__Status__4CA06362;
-
-
-ALTER TABLE Orders ADD CONSTRAINT CK_Orders_Status
-CHECK ([Status] IN (
-    N'Chờ xác nhận',
-    N'Đang xử lý',
-    N'Đang giao',
-    N'Đã giao',
-    N'Đã hủy',
-    N'Trả hàng'
-));
-
-INSERT INTO [Orders] (
-    [UserID],
-    [RecipientName],
-    [Phone],
-    [ShippingAddress],
-    [Note],
-    [Total],
-    [Status],
-    [OrderDate],
-    [PaymentMethodID],
-    [PaymentMethodName]
-)
-VALUES (
-    2,
-    N'Nguyễn Văn A',
-    '0123456789',
-    N'123 Main Street',
-    N'Test đơn hàng completed',
-    199.99,
-    N'Đã giao',  -- ✅ Giờ đã hợp lệ
-    GETDATE(),
-    1,
-    N'Thanh toán khi nhận hàng'
-);
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderDate DESC;
-
-INSERT INTO [OrderItems] (
-    [OrderID],
-    [ProductID],
-    [ProductSizeID],
-    [ProductName],
-    [Size],
-    [Quantity],
-    [Price]
-)
-VALUES (
-    1,                -- Thay bằng OrderID đúng nếu khác
-    1,
-    1,
-    N'Áo thun nam basic',
-    N'S',
-    1,
-    199000.00
-);
-
-INSERT INTO Orders (UserID, RecipientName, Phone, ShippingAddress, Note, Total, Status, OrderDate, PaymentMethodID, PaymentMethodName)
-VALUES (2, N'Trần Văn A', '0123456789', N'123 Đường ABC', N'Giao giờ hành chính', 500000, N'Đang giao', GETDATE(), 1, N'Thanh toán khi nhận hàng');
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC;
-
-INSERT INTO OrderItems (OrderID, ProductID, ProductSizeID, ProductName, Size, Quantity, Price)
-VALUES (2, 2, 6, N'Giày sneaker trắng', '38', 2, 890000.00);
-
-INSERT INTO Orders (
-    UserID, RecipientName, Phone, ShippingAddress, Note, Total, Status, OrderDate, PaymentMethodID, PaymentMethodName
-)
-VALUES (
-    2, N'Nguyễn Văn B', '0912345678', N'456 Đường XYZ', N'Hủy vì thay đổi ý định', 200000, N'Đã hủy', GETDATE(), 1, N'Thanh toán khi nhận hàng'
-);
-
-SELECT TOP 1 OrderID FROM Orders ORDER BY OrderID DESC;
-
-INSERT INTO OrderItems (
-    OrderID, ProductID, ProductSizeID, ProductName, Size, Quantity, Price
-)
-VALUES (
-    3, 3, 21, N'Balo laptop chống sốc', 'S', 1, 459000.00
-);
-
-ALTER TABLE Reviews
-ADD OrderID INT;
-
-ALTER TABLE Reviews
-ADD CONSTRAINT FK_Reviews_Orders
-FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
-
-
-DELETE FROM Reviews;
+-----------------------------------------------------------------------------
+--Phần làm việc của Việt
