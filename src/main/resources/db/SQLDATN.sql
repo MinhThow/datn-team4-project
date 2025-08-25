@@ -9,6 +9,12 @@ GO
 USE DATN3;
 GO
 
+ALTER DATABASE DATN3 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+
+ALTER DATABASE DATN3 COLLATE Latin1_General_100_CI_AS_SC_UTF8;
+s
+
+
 -- Xóa bảng nếu tồn tại (theo thứ tự tránh lỗi khóa ngoại)
 IF OBJECT_ID('OrderItems', 'U') IS NOT NULL DROP TABLE OrderItems;
 IF OBJECT_ID('Orders', 'U') IS NOT NULL DROP TABLE Orders;
@@ -46,6 +52,14 @@ CREATE TABLE Categories (
     Name NVARCHAR(100) NOT NULL,
     Description NVARCHAR(MAX)
 );
+
+-- Thêm dữ liệu mẫu cho Categories
+INSERT INTO Categories (Name, Description)
+VALUES 
+(N'Áo sơ mi', N'Các loại áo sơ mi nam, nữ, nhiều kiểu dáng và chất liệu'),
+(N'Giày thể thao', N'Giày sneaker, giày chạy bộ, giày tập gym của nhiều thương hiệu');
+
+select * from ProdcutSizes
 
 -- Sản phẩm
 CREATE TABLE Products (
