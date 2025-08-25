@@ -362,73 +362,78 @@
     </div>
     <!-- Offcanvas Menu End -->
 
-    <!-- Header Section Begin -->
+    <!-- header.html -->
     <header class="header">
-    <div class="header__top">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-7">
+                        <div class="header__top__left">
+                            <p>Miễn phí vận chuyển, đảm bảo hoàn trả trong 30 ngày.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-5">
+                        <div class="header__top__right">
+                            <div class="header__top__links">
+                            <span th:if="${session.fullName != null}">
+                                <a href="/account" th:text="${session.greetingMessage + ', ' + session.fullName}">Xin chào, User</a>
+                                <a href="/logout">Đăng xuất</a>
+                            </span>
+                                <span th:if="${session.fullName == null}">
+                                <a href="/login">Đăng nhập</a>
+                            </span>
+                            </div>
+                            <div class="header__top__hover">
+                                <span>VNĐ </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 col-md-7">
-                    <div class="header__top__left">
-                        <p>Miễn phí vận chuyển, đảm bảo hoàn trả trong 30 ngày.</p>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="/"><img src="img/logo.png" alt=""></a>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-5">
-                    <div class="header__top__right">
-                        <div class="header__top__links">
-                            <a href="#">Đăng nhập</a>
-                            <a href="#">FAQs</a>
-                        </div>
-                        <div class="header__top__hover">
-                            <span>VND <i class="arrow_carrot-down"></i></span>
-                            <ul>
-                                <li>VND</li>
-                                <li>USD</li>
-                                <li>EUR</li>
-                            </ul>
-                        </div>
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li><a href="/home">Trang chủ</a></li>
+                            <li class=""><a href="/shop">Cửa hàng</a></li>
+                            <li class="has-mega">
+                                <a href="#">Danh mục</a>
+                                <ul class="dropdown mega-menu" id="mega-root">
+                                    <li class="col">
+                                        <span class="title">Áo</span>
+                                        <ul id="mega-ao"></ul>
+                                    </li>
+                                    <li class="col">
+                                        <span class="title">Quần</span>
+                                        <ul id="mega-quan"></ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><a href="/blog.html">Blog</a></li>
+                            <li><a href="/contact.html">Liên hệ</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                        <a href="/cart" style="color:black;">GIỎ HÀNG</a>
+
+                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+
                     </div>
                 </div>
             </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
         </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-3">
-                <div class="header__logo">
-                    <a href="/"><img src="/img/logo.png" alt=""></a>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <nav class="header__menu mobile-menu">
-                    <ul>
-                        <li><a href="/home">Trang chủ</a></li>
-                        <li class="active"><a href="/shop">Cửa hàng</a></li>
-                        <li><a href="#">Trang</a>
-                            <ul class="dropdown">
-                                <li><a href="/about.html">Giới thiệu</a></li>
-                                <li><a href="/shop-details.html">Chi tiết sản phẩm</a></li>
-                                <li><a href="/shopping-cart.html">Giỏ hàng</a></li>
-                                <li><a href="/checkout.html">Thanh toán</a></li>
-                                <li><a href="/blog-details.html">Chi tiết blog</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/blog.html">Blog</a></li>
-                        <li><a href="/contact.html">Liên hệ</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="header__nav__option">
-                    <a href="#" class="search-switch"><img src="/img/icon/search.png" alt=""></a>
-                    <a href="#"><img src="/img/icon/heart.png" alt=""></a>
-                    <a href="#"><img src="/img/icon/cart.png" alt=""> <span th:text="${cartItemCount ?: 0}">0</span></a>
-                    <div class="price" th:text="'₫' + ${cartTotalPrice ?: '0.00'}">₫0.00</div>
-                </div>
-            </div>
-        </div>
-        <div class="canvas__open"><i class="fa fa-bars"></i></div>
-    </div>
-</header>
+    </header>
     <!-- Header Section End -->
 
     <!-- Breadcrumb Section Begin -->

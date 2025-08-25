@@ -138,6 +138,16 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteCartItem(@RequestParam("id") Integer id) {
+        if (!cartItemRepo.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm trong giỏ");
+        }
+        cartItemRepo.deleteById(id);
+        return ResponseEntity.ok("Đã xóa sản phẩm khỏi giỏ");
+    }
+
+
 
 }
 

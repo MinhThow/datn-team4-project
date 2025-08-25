@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Đăng nhập & Đăng ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Font & Css Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+    <style>
+        .auth-form-container {
+            max-width: 530px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+        .auth-form-left, .auth-form-right {
+            flex: 1;
+            padding: 40px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch; /* Thêm dòng này để hai bên đều kéo dài bằng nhau */
+        }
+        .auth-form-left {
+            border-right: 1px solid #eee;
+            background: #f8f9fa;
+        }
+        .auth-form-right {
+            background: #fff;
+        }
+        .auth-form h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #1976d2;
+            text-align: center;
+        }
+        .auth-form input,
+        .auth-form button[type="submit"] {
+            width: 100%;
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            display: block;
+        }
+        .auth-form input {
+            border: 1px solid #ddd;
+            background: #f7f7f7;
+            transition: border-color 0.2s;
+        }
+        .auth-form input:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+        .auth-form button[type="submit"] {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .auth-form button[type="submit"]:hover {
+            background: #1565c0;
+        }
+        .auth-form .switch-link {
+            margin-top: 18px;
+            color: #1976d2;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 15px;
+            text-align: center;
+        }
+        .auth-form .forgot-link {
+            color: #1976d2;
+            text-decoration: underline;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 12px;
+            text-align: right;
+            cursor: pointer;
+        }
+        .password-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #1976d2;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+        }
+        @media (max-width: 900px) {
+            .auth-form-container {
+                flex-direction: column;
+                max-width: 98vw;
+            }
+            .auth-form-left, .auth-form-right {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                padding: 32px 16px;
+            }
+            .auth-form-right {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-7">
+                    <div class="header__top__left">
+                        <p>Miễn phí vận chuyển, đảm bảo hoàn trả trong 30 ngày.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__links">
+                            <a href="#">Đăng nhập</a>
+                            <a href="#">FAQs</a>
+                        </div>
+                        <div class="header__top__hover">
+                            <span>VND <i class="arrow_carrot-down"></i></span>
+                            <ul>
+                                <li>VND</li>
+                                <li>USD</li>
+                                <li>EUR</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="header__logo">
+                    <a href="/"><img src="/img/logo.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="/shop">Cửa hàng</a></li>
+                        <li><a href="#">Trang</a>
+                            <ul class="dropdown">
+                                <li><a href="/about">Giới thiệu</a></li>
+                                <li><a href="/shop-details">Chi tiết sản phẩm</a></li>
+                                <li><a href="/shopping-cart">Giỏ hàng</a></li>
+                                <li><a href="/checkout">Thanh toán</a></li>
+                                <li><a href="/blog-details">Chi tiết blog</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/contact">Liên hệ</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <div class="header__nav__option">
+                    <a href="#" class="search-switch"><img src="/img/icon/search.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/heart.png" alt=""></a>
+                    <a href="#"><img src="/img/icon/cart.png" alt=""> <span th:text="${cartItemCount ?: 0}">0</span></a>
+                    <div class="price" th:text="'₫' + ${cartTotalPrice ?: '0.00'}">₫0.00</div>
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>
+<!-- Header Section End -->
+
+<div class="auth-form-container" id="authFormContainer">
+    <!-- FORM ĐĂNG KÝ -->
+    <div class="auth-form-left" id="signupFormSection">
+        <form class="auth-form" th:action="@{/register}" method="post" th:object="${user}">
+            <h2>Đăng ký</h2>
+            <input type="text" th:field="*{username}" placeholder="Tên người dùng" required />
+            <input type="email" th:field="*{email}" placeholder="Email" required />
+            <div class="password-group">
+                <input type="password" th:field="*{password}" placeholder="Mật khẩu" required id="signupPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <div class="password-group">
+                <input type="password" th:field="*{confirmPassword}" placeholder="Nhập lại mật khẩu" required id="signupConfirmPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signupConfirmPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <button type="submit">Đăng ký</button>
+            <div class="switch-link" onclick="showSignin()">Đã có tài khoản? Đăng nhập</div>
+        </form>
+    </div>
+
+    <!-- FORM ĐĂNG NHẬP -->
+    <div class="auth-form-right" id="signinFormSection" style="display:none;">
+        <form class="auth-form" th:action="@{/login}" method="post">
+            <h2>Đăng nhập</h2>
+
+            <div th:if="${param.success}" style="color: green; font-weight: bold; margin-bottom: 10px;">
+                🎉 Đăng ký thành công! Vui lòng đăng nhập.
+            </div>
+            <div th:if="${param.error}" style="color:red;">Sai thông tin đăng nhập!</div>
+
+            <input type="text" name="username" placeholder="Email hoặc tên người dùng" required />
+            <div class="password-group">
+                <input type="password" name="password" placeholder="Mật khẩu" required id="signinPassword" />
+                <button type="button" class="toggle-password" onclick="togglePassword('signinPassword', this)">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </div>
+            <a href="/forgot-password" class="forgot-link">Quên mật khẩu?</a>
+            <button type="submit">Đăng nhập</button>
+            <div class="switch-link" onclick="showSignup()">Chưa có tài khoản? Đăng ký</div>
+        </form>
+    </div>
+</div>
+
+<!-- Footer Section Begin -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="footer__about">
+                    <div class="footer__logo">
+                        <a href="#"><img src="/img/footer-logo.png" alt=""></a>
+                    </div>
+                    <p>Khách hàng là trung tâm của mô hình kinh doanh độc đáo của chúng tôi, bao gồm cả thiết kế.</p>
+                    <a href="#"><img src="/img/payment.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Mua sắm</h6>
+                    <ul>
+                        <li><a href="#">Cửa hàng quần áo</a></li>
+                        <li><a href="#">Giày thịnh hành</a></li>
+                        <li><a href="#">Phụ kiện</a></li>
+                        <li><a href="#">Khuyến mãi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Hỗ trợ</h6>
+                    <ul>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Phương thức thanh toán</a></li>
+                        <li><a href="#">Giao hàng</a></li>
+                        <li><a href="#">Đổi trả & hoàn tiền</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
+                <div class="footer__widget">
+                    <h6>Nhận tin mới</h6>
+                    <div class="footer__newslatter">
+                        <p>Đăng ký để nhận thông tin về sản phẩm mới, ưu đãi và khuyến mãi!</p>
+                        <form action="#">
+                            <input type="text" placeholder="Email của bạn">
+                            <button type="submit"><span class="icon_mail_alt"></span></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="footer__copyright__text">
+                    <p>Copyright ©
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        All rights reserved | This template is made with <i class="fa fa-heart-o"
+                                                                            aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer Section End -->
+
+<!-- Js Plugins -->
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+<script>
+    function showSignin() {
+        document.getElementById('signupFormSection').style.display = 'none';
+        document.getElementById('signinFormSection').style.display = 'flex';
+    }
+    function showSignup() {
+        document.getElementById('signinFormSection').style.display = 'none';
+        document.getElementById('signupFormSection').style.display = 'flex';
+    }
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+            input.type = "password";
+            btn.innerHTML = '<i class="fa fa-eye"></i>';
+        }
+    }
+</script>
+</body>
+</html>
