@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán thành công</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .success-container {
+            max-width: 600px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-message {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .order-info {
+            margin: 20px 0;
+            font-size: 16px;
+            color: #555;
+        }
+        .btn-home {
+            background: #e53637;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn-home:hover {
+            background: #b81f24;
+            text-decoration: none;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="success-container">
+    <div class="success-icon">✔</div>
+    <div class="success-message">Thanh toán thành công!</div>
+    <div class="order-info">
+        Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được thanh toán thành công.<br>
+        Chúng tôi sẽ xử lý và giao hàng sớm nhất.
+    </div>
+    <a href="/account" class="btn-home">Về trang tài khoản</a>
+</div>
+</body>
+</html>
