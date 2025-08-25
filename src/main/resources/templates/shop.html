@@ -103,7 +103,7 @@
     </div>
     <!-- Offcanvas Menu End -->
 
-    <!-- Header Section Begin -->
+    <!-- header.html -->
     <header class="header">
         <div class="header__top">
             <div class="container">
@@ -116,22 +116,16 @@
                     <div class="col-lg-6 col-md-5">
                         <div class="header__top__right">
                             <div class="header__top__links">
-                                <span th:if="${session.fullName != null}">
-                                    <a href="/account" th:text="${session.greetingMessage + ', ' + session.fullName}">
-                                        Xin chào, User
-                                    </a>
-                                    <a href="/logout">Đăng xuất</a>
-                                </span>
+                            <span th:if="${session.fullName != null}">
+                                <a href="/account" th:text="${session.greetingMessage + ', ' + session.fullName}">Xin chào, User</a>
+                                <a href="/logout">Đăng xuất</a>
+                            </span>
                                 <span th:if="${session.fullName == null}">
-                                    <a href="/login">Đăng nhập</a>
-                                </span>
+                                <a href="/login">Đăng nhập</a>
+                            </span>
                             </div>
-
                             <div class="header__top__hover">
                                 <span>VNĐ </span>
-                                <!-- <ul>
-                                <li>VNĐ</li>
-                            </ul> -->
                             </div>
                         </div>
                     </div>
@@ -149,7 +143,7 @@
                     <nav class="header__menu mobile-menu">
                         <ul>
                             <li><a href="/home">Trang chủ</a></li>
-                            <li class="active"><a href="/shop">Cửa hàng</a></li>
+                            <li class=""><a href="/shop">Cửa hàng</a></li>
                             <li class="has-mega">
                                 <a href="#">Danh mục</a>
                                 <ul class="dropdown mega-menu" id="mega-root">
@@ -163,9 +157,6 @@
                                     </li>
                                 </ul>
                             </li>
-
-
-
                             <li><a href="/blog.html">Blog</a></li>
                             <li><a href="/contact.html">Liên hệ</a></li>
                         </ul>
@@ -174,9 +165,10 @@
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
-                        <div class="price">₫0.00</div>
+                        <a href="/cart" style="color:black;">GIỎ HÀNG</a>
+
+                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+
                     </div>
                 </div>
             </div>
