@@ -3,10 +3,12 @@ package com.java6.datn.Service.Impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.java6.datn.DTO.ProductImageDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.java6.datn.DTO.ProductDTO;
@@ -294,6 +296,68 @@ private final com.java6.datn.Repository.ProductSizeRepository productSizeReposit
     public List<Product> findByCategory(Integer categoryID) {
         return productRepository.findByCategory_CategoryID(categoryID);
     }
+
+    @Override
+    public List<ProductDTO> getProductsByCategorySorted(Integer categoryId, Sort sort) {
+        List<Product> products = productRepository.findByCategoryCategoryID(categoryId, sort);
+        return products.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDTO> getAllProductsSorted(Sort sort) {
+        List<Product> products = productRepository.findAll(sort);
+        return products.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<ProductDTO> getProductsByCategorySorted(Integer categoryId, String sortOrder) {
+        Sort sort = Sort.by("price");
+        if ("desc".equalsIgnoreCase(sortOrder)) {
+            sort = sort.descending();
+        }
+        List<Product> products = productRepository.findByCategoryCategoryID(categoryId, sort);
+        return products.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+
+    private ProductDTO convertToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setProductID(product.getProductID());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setOldPrice(product.getOldPrice());
+//        dto.setStock(product.getStock());
+//        dto.setImage(product.getImage());
+//        dto.setSize(product.getSize());
+        dto.setImageUrl(product.getImageUrl());
+
+        if (product.getCategory() != null) {
+            dto.setCategoryID(product.getCategory().getCategoryID());
+            dto.setCategoryName(product.getCategory().getName());
+        }
+
+        if (product.getProductImages() != null) {
+            dto.setProductImages(product.getProductImages()
+                    .stream()
+                    .map(img -> {
+                        ProductImageDTO imgDTO = new ProductImageDTO();
+                        imgDTO.setImageID(img.getImageID());
+                        imgDTO.setImageUrl(img.getImageUrl());
+                        return imgDTO;
+                    })
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
+    }
+
+
 
 
 }
