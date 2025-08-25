@@ -224,4 +224,7 @@ public interface ProductService {
     List<ProductDTO> getAllProductsSorted(Sort sort);
 
     List<ProductDTO> getProductsByCategorySorted(Integer categoryId, String sortOrder);
+
+    Page<ProductDTO> getAllProducts(int page, int size, String sortBy, String sortDir);
+
 }

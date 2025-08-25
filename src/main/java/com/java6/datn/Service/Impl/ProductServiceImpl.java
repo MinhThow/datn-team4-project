@@ -358,6 +358,19 @@ private final com.java6.datn.Repository.ProductSizeRepository productSizeReposit
     }
 
 
+    @Override
+    public Page<ProductDTO> getAllProducts(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageable = PageRequest.of(page, size, sort);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        List<ProductDTO> dtos = productPage.getContent()
+                .stream()
+                .map(productMapper::toDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, productPage.getTotalElements());
+    }
+
+
 
 
 }

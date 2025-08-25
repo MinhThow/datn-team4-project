@@ -4,6 +4,8 @@ import com.java6.datn.DTO.ProductDTO;
 import com.java6.datn.DTO.ReviewDTO;
 import com.java6.datn.Service.ProductService;
 import com.java6.datn.Service.ReviewService;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -112,4 +114,19 @@ public class ProductController {
         reviewDTO.setProductId(id);
         return reviewService.createReview(reviewDTO);
     }
+
+
+    @GetMapping("/sort")
+    public ResponseEntity<Page<ProductDTO>> getProductsSorted(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        Page<ProductDTO> products = productService.getAllProducts(page, size, sortBy, sortDir);
+        return ResponseEntity.ok(products);
+    }
+
+
+
 }
