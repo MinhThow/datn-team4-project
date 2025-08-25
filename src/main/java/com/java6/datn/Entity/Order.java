@@ -39,7 +39,7 @@ public class Order {
     @Column(name = "Total")
     private BigDecimal total;
 
-    @Column(name = "Status")
+    @Column(name = "Status", length = 20)
     private String status;
 
     @Column(name = "OrderDate")

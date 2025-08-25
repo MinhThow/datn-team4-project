@@ -15,7 +15,7 @@ public class VerificationToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(length = 6, nullable = false)
     private String otp; // Mã OTP 6 số
